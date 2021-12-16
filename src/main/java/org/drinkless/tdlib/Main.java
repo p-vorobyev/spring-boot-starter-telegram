@@ -12,6 +12,12 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Example from Tdlib.
+ *
+ * https://github.com/tdlib/td/tree/master/example/java
+ *
+ */
 public class Main {
     private static Client client = null;
 
@@ -209,7 +215,6 @@ public class Main {
                     client.send(new TdApi.GetChat(getChatId(commands[1])), defaultHandler);
                     break;
                 case "me":
-                    TdApi.GetChat getChat = new TdApi.GetChat();
                     client.send(new TdApi.GetMe(), defaultHandler);
                     break;
                 case "sm": {
