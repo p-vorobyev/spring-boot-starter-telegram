@@ -98,8 +98,8 @@ public class Main {
                 parameters.databaseDirectory = "tdlib";
                 parameters.useMessageDatabase = true;
                 parameters.useSecretChats = true;
-                parameters.apiId = 94575;
-                parameters.apiHash = "a3406de8d171bb422bb6ddf3bbd800e2";
+                parameters.apiId = Integer.parseInt("your_id");
+                parameters.apiHash = "your_hash";
                 parameters.systemLanguageCode = "en";
                 parameters.deviceModel = "Desktop";
                 parameters.applicationVersion = "1.0";
