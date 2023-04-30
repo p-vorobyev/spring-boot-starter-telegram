@@ -1,0 +1,203 @@
+{
+  "groups": [
+    {
+      "name": "spring.telegram.client",
+      "type": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.proxy",
+      "type": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "sourceMethod": "proxy()"
+    },
+    {
+      "name": "spring.telegram.client.proxy.http",
+      "type": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxyHttp",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy",
+      "sourceMethod": "http()"
+    },
+    {
+      "name": "spring.telegram.client.proxy.mtproto",
+      "type": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxyMtProto",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy",
+      "sourceMethod": "mtproto()"
+    },
+    {
+      "name": "spring.telegram.client.proxy.socks5",
+      "type": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxySocks5",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy",
+      "sourceMethod": "socks5()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.telegram.client.api-hash",
+      "type": "java.lang.String",
+      "description": "Application identifier hash for Telegram API access, which can be obtained at https://my.telegram.org",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.api-id",
+      "type": "java.lang.Integer",
+      "description": "Application identifier for Telegram API access, which can be obtained at https://my.telegram.org",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.telegram.client.phone",
+      "type": "java.lang.String",
+      "description": "The phone number of the user, in international format.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.application-version",
+      "type": "java.lang.String",
+      "description": "Application version; must be non-empty.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.database-directory",
+      "type": "java.lang.String",
+      "description": "The path to the directory for the persistent database; if empty, the current working directory will be used.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.database-encryption-key",
+      "type": "java.lang.String",
+      "description": "Encryption key for the database. If the encryption key is invalid, then an error with code 401 will be returned.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.device-model",
+      "type": "java.lang.String",
+      "description": "Model of the device the application is being run on; must be non-empty.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.enable-storage-optimizer",
+      "type": "java.lang.Boolean",
+      "description": "Pass true to automatically delete old files in background.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.telegram.client.files-directory",
+      "type": "java.lang.String",
+      "description": "The path to the directory for storing files; if empty, databaseDirectory will be used.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.ignore-file-names",
+      "type": "java.lang.Boolean",
+      "description": "Pass true to ignore original file names for downloaded files. Otherwise, downloaded files are saved under names as close as possible to the original name.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.telegram.client.system-language-code",
+      "type": "java.lang.String",
+      "description": "IETF language tag of the user's operating system language; must be non-empty.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.system-version",
+      "type": "java.lang.String",
+      "description": "Version of the operating system the application is being run on. If empty, the version is automatically detected by TDLib.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
+    },
+    {
+      "name": "spring.telegram.client.use-chat-info-database",
+      "type": "java.lang.Boolean",
+      "description": "Pass true to keep cache of users, basic groups, supergroups, channels and secret chats between restarts. Implies useFileDatabase.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.telegram.client.use-file-database",
+      "type": "java.lang.Boolean",
+      "description": "Pass true to keep information about downloaded and uploaded files between application restarts.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.telegram.client.use-message-database",
+      "type": "java.lang.Boolean",
+      "description": "Pass true to keep cache of chats and messages between restarts. Implies useChatInfoDatabase.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.telegram.client.use-secret-chats",
+      "type": "java.lang.Boolean",
+      "description": "Pass true to enable support for secret chats.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.telegram.client.use-test-dc",
+      "type": "java.lang.Boolean",
+      "description": "Pass true to use Telegram test environment instead of the production environment.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.telegram.client.proxy.port",
+      "type": "java.lang.Integer",
+      "description": "Proxy port.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.telegram.client.proxy.server",
+      "type": "java.lang.String",
+      "description": "Proxy server address.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy"
+    },
+    {
+      "name": "spring.telegram.client.proxy.http.http-only",
+      "type": "java.lang.Boolean",
+      "description": "Pass true if the proxy supports only HTTP requests and doesn't support transparent TCP connections via HTTP CONNECT method.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxyHttp",
+      "defaultValue": false
+    },
+    {
+      "name": "spring.telegram.client.proxy.http.password",
+      "type": "java.lang.String",
+      "description": "Http proxy password.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxyHttp"
+    },
+    {
+      "name": "spring.telegram.client.proxy.http.username",
+      "type": "java.lang.String",
+      "description": "Http proxy username.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxyHttp"
+    },
+    {
+      "name": "spring.telegram.client.proxy.mtproto.secret",
+      "type": "java.lang.String",
+      "description": "MtProto proxy secret.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxyMtProto"
+    },
+    {
+      "name": "spring.telegram.client.proxy.socks5.password",
+      "type": "java.lang.String",
+      "description": "Socks5 proxy password.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxySocks5"
+    },
+    {
+      "name": "spring.telegram.client.proxy.socks5.username",
+      "type": "java.lang.String",
+      "description": "Socks5 proxy username.",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties$Proxy$ProxySocks5"
+    },
+    {
+      "name": "spring.telegram.client.log-verbosity-level",
+      "type": "java.lang.Integer",
+      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
+      "description": "The maximum verbosity level of messages for which the callback will be called.",
+      "defaultValue": 0
+    }
+  ],
+  "hints": []
+}
