@@ -1,31 +1,36 @@
 package dev.voroby.springframework.telegram.controller;
 
 import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/authorization")
 public class AuthorizationController {
 
-    private final ClientAuthorizationState clientAuthorizationState;
+    private final ClientAuthorizationState authorizationState;
 
-    public AuthorizationController(ClientAuthorizationState clientAuthorizationState) {
-        this.clientAuthorizationState = clientAuthorizationState;
+    public AuthorizationController(ClientAuthorizationState authorizationState) {
+        this.authorizationState = authorizationState;
     }
 
-    @PostMapping(value = "/code/{codeValue}")
-    public void updateConfirmationCode(@PathVariable("codeValue") String code) {
-        clientAuthorizationState.checkAuthenticationCode(code);
+    record Credential(@NotBlank String value){}
+
+    @PostMapping(value = "/code", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updateConfirmationCode(@RequestBody @Valid Credential credential) {
+        authorizationState.checkAuthenticationCode(credential.value);
     }
 
-    @PostMapping(value = "/password/{passwordValue}")
-    public void updatePassword(@PathVariable("passwordValue") String password) {
-        clientAuthorizationState.checkAuthenticationPassword(password);
+    @PostMapping(value = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updatePassword(@RequestBody @Valid Credential credential) {
+        authorizationState.checkAuthenticationPassword(credential.value);
     }
 
     @GetMapping(value = "/status")
     public String authorizationStatus() {
-        return clientAuthorizationState.haveAuthorization() ? "AUTHORIZED" : "NOT_AUTHORIZED";
+        return authorizationState.haveAuthorization() ? "AUTHORIZED" : "NOT_AUTHORIZED";
     }
 
 }

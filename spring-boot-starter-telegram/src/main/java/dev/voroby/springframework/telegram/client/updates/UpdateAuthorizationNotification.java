@@ -7,8 +7,6 @@ import dev.voroby.springframework.telegram.exception.TelegramClientConfiguration
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
@@ -23,14 +21,19 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
 
     private TdApi.AuthorizationState authorizationState;
 
-    @Autowired
-    private TelegramProperties properties;
+    private final TelegramProperties properties;
 
-    @Autowired
-    private ClientAuthorizationState clientAuthorizationState;
+    private final TelegramClient telegramClient;
 
-    @Autowired @Lazy
-    private TelegramClient telegramClient;
+    private final ClientAuthorizationStateImpl clientAuthorizationState;
+
+    public UpdateAuthorizationNotification(TelegramProperties properties,
+                                           TelegramClient telegramClient,
+                                           ClientAuthorizationState clientAuthorizationState) {
+        this.properties = properties;
+        this.telegramClient = telegramClient;
+        this.clientAuthorizationState = (ClientAuthorizationStateImpl) clientAuthorizationState;
+    }
 
     /**
      * {@inheritDoc}
