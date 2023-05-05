@@ -2,7 +2,7 @@ package dev.voroby.springframework.telegram;
 
 import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
-import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
+import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationStateImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -23,7 +23,7 @@ public class TelegramClientApplication {
     private TelegramClient telegramClient;
 
     @Autowired
-    private ClientAuthorizationState authorizationState;
+    private ClientAuthorizationStateImpl authorizationState;
 
     @Bean
     public ApplicationRunner applicationRunner() {

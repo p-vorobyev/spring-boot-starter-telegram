@@ -1,6 +1,5 @@
 package dev.voroby.springframework.telegram.client;
 
-import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
@@ -25,22 +24,17 @@ public class TelegramClient {
 
     private final Client client;
 
-    private final ClientAuthorizationState clientAuthorizationState;
-
     private final Client.ResultHandler defaultHandler;
 
     /**
      * @param properties TDlib client properties
-     * @param clientAuthorizationState authorization state of the client
      * @param notificationHandlers registered notifications handlers
      * @param defaultHandler default handler for unhandled events
      */
     public TelegramClient(TelegramProperties properties,
-                          ClientAuthorizationState clientAuthorizationState,
                           Collection<UpdateNotificationListener<?>> notificationHandlers,
                           Client.ResultHandler defaultHandler) {
         this.defaultHandler = defaultHandler;
-        this.clientAuthorizationState = clientAuthorizationState;
         this.client = initializeNativeClient(properties, notificationHandlers);
     }
 

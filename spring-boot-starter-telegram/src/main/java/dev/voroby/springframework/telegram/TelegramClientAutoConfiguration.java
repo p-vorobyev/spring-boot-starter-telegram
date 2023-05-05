@@ -4,6 +4,7 @@ import dev.voroby.springframework.telegram.client.Client;
 import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
+import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationStateImpl;
 import dev.voroby.springframework.telegram.client.updates.UpdateAuthorizationNotification;
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.Collection;
 
@@ -61,10 +63,9 @@ public class TelegramClientAutoConfiguration {
      */
     @Bean
     public TelegramClient telegramClient(TelegramProperties properties,
-                                         ClientAuthorizationState clientAuthorizationState,
                                          Collection<UpdateNotificationListener<?>> notificationHandlers,
                                          Client.ResultHandler defaultHandler) {
-        return new TelegramClient(properties, clientAuthorizationState, notificationHandlers, defaultHandler);
+        return new TelegramClient(properties, notificationHandlers, defaultHandler);
     }
 
     /**
@@ -74,7 +75,7 @@ public class TelegramClientAutoConfiguration {
      */
     @Bean
     public ClientAuthorizationState clientAuthorizationState() {
-        return new ClientAuthorizationState();
+        return new ClientAuthorizationStateImpl();
     }
 
     /**
@@ -83,8 +84,10 @@ public class TelegramClientAutoConfiguration {
      * @return {@link UpdateNotificationListener<TdApi.UpdateAuthorizationState>}
      */
     @Bean
-    public UpdateNotificationListener<TdApi.UpdateAuthorizationState> updateAuthorizationNotification() {
-        return new UpdateAuthorizationNotification();
+    public UpdateNotificationListener<TdApi.UpdateAuthorizationState> updateAuthorizationNotification(TelegramProperties properties,
+                                                                                                      @Lazy TelegramClient telegramClient,
+                                                                                                      ClientAuthorizationState clientAuthorizationState) {
+        return new UpdateAuthorizationNotification(properties, telegramClient, clientAuthorizationState);
     }
 
     /**
