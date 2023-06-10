@@ -12,11 +12,11 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 
 <a name="requirements"></a>
 ## Requirements
-| Technology  | Version  |
-|-------------|----------|
-| jdk         | 17 or higher |
-| TDLib       | v1.8.13  |
-| Spring Boot | 3 or higher |
+| Technology  | Version |
+|-------------|---------|
+| jdk         | 17      |
+| TDLib       | v1.8.13 |
+| Spring Boot | 3       |
 
 <a name="installation"></a>
 ## Installation
@@ -42,7 +42,7 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 ```
 You can find compiled libraries for several platforms in `libs` directory.
 If you haven't found a library for your OS and architecture, you can build it yourself
-following this [instruction](https://tdlib.github.io/td/build.html?language=Java).
+following this [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
 <a name="configuration"></a>
 ## Configuration properties
