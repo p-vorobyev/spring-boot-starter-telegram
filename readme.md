@@ -32,7 +32,7 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
