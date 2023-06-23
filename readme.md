@@ -12,11 +12,11 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 
 <a name="requirements"></a>
 ## Requirements
-| Technology  | Version |
-|-------------|---------|
-| jdk         | 17      |
-| TDLib       | v1.8.13 |
-| Spring Boot | 3       |
+| Technology  | Version    |
+|-------------|------------|
+| jdk         | 17         |
+| TDLib       | [1.8.14](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
+| Spring Boot | 3          |
 
 <a name="installation"></a>
 ## Installation
@@ -32,7 +32,7 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -167,12 +167,12 @@ client(official app, etc.).
 
 4) **TDLib query usage examples**:
 
-- `TdApi.GetChat`:
+- An example of synchronous call. Let's get `TdApi.Chat` object by id:
 ```java
 TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(chatId), TdApi.Chat.class);
 ```
 
-- `TdApi.GetMe()` with callback:
+- An example of asynchronous call with callback. Let's get info about ourselves:
 ```java
 telegramClient.sendWithCallback(new TdApi.GetMe(), obj -> {
             TdApi.User user = (TdApi.User) obj;
@@ -181,7 +181,25 @@ telegramClient.sendWithCallback(new TdApi.GetMe(), obj -> {
         });
 ```
 
-5) **Register implementation of `UpdateNotificationListener` beans and handle updates from TDLib.** For example, let's 
+- An example of asynchronous call with `CompletableFuture`. Let's send hello message to ourselves:
+```java
+telegramClient.sendAsync(new TdApi.GetMe(), TdApi.User.class)
+                .thenApply(user -> user.usernames.activeUsernames[0])
+                .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1), TdApi.Chats.class))
+                .thenCompose(chatsFuture ->
+                        chatsFuture.thenApply(chats -> chats.chatIds[0]))
+                .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
+
+private TdApi.SendMessage sendMessageQuery(Long chatId) {
+        var content = new TdApi.InputMessageText();
+        var formattedText = new TdApi.FormattedText();
+        formattedText.text = "Hello!";
+        content.text = formattedText;
+        return new TdApi.SendMessage(chatId, 0, 0, null, null, content);
+    }
+```
+
+5) **Register implementations of `UpdateNotificationListener` and handle updates from TDLib.** For example, let's 
 listen an incoming messages notification: 
 
 ```java

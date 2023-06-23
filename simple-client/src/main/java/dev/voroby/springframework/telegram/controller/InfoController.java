@@ -25,7 +25,7 @@ public class InfoController {
         return telegramClient.sendSync(new TdApi.GetMe(), TdApi.User.class);
     }
 
-    @GetMapping(value = "/chatTitles")
+    @GetMapping("/chatTitles")
     public List<String> getMyChats() {
         TdApi.Chats chats = telegramClient.sendSync(new TdApi.GetChats(new TdApi.ChatListMain(), 100), TdApi.Chats.class);
         return Arrays.stream(chats.chatIds)
@@ -33,6 +33,24 @@ public class InfoController {
                     TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(chatId), TdApi.Chat.class);
                     return chat.title;
                 }).toList();
+    }
+
+    @GetMapping("/sendHello")
+    public void helloToYourself() {
+        telegramClient.sendAsync(new TdApi.GetMe(), TdApi.User.class)
+                .thenApply(user -> user.usernames.activeUsernames[0])
+                .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1), TdApi.Chats.class))
+                .thenCompose(chatsFuture ->
+                        chatsFuture.thenApply(chats -> chats.chatIds[0]))
+                .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
+    }
+
+    private TdApi.SendMessage sendMessageQuery(Long chatId) {
+        var content = new TdApi.InputMessageText();
+        var formattedText = new TdApi.FormattedText();
+        formattedText.text = "Hello!";
+        content.text = formattedText;
+        return new TdApi.SendMessage(chatId, 0, 0, null, null, content);
     }
 
 }
