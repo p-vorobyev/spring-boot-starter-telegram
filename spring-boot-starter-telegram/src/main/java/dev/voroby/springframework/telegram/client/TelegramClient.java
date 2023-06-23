@@ -11,6 +11,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -69,13 +71,17 @@ public class TelegramClient {
      * @param query object representing a query to the TDLib.
      * @param type response type
      * @param <T> parametrized response
-     * @throws ClassCastException if the object is not null and is not assignable to the type T.
+     * @throws TelegramClientTdApiException for request timeout or error response from TDLib.
      * @throws NullPointerException if query is null.
      * @return parametrized response from TDLib.
      */
     public <T extends TdApi.Object> T sendSync(TdApi.Function<? extends TdApi.Object> query,
                                                Class<T> type) {
-        return type.cast(sendSync(query));
+        TdApi.Object obj = sendSync(query);
+        if (obj instanceof TdApi.Error err) {
+            throw new TelegramClientTdApiException("Received error from TDLib. ", err);
+        }
+        return type.cast(obj);
     }
 
     /**
@@ -83,18 +89,53 @@ public class TelegramClient {
      *
      * @param query object representing a query to the TDLib.
      * @throws NullPointerException if query is null.
+     * @throws TelegramClientTdApiException for TDLib request timeout.
      * @return response from TDLib.
      */
     public TdApi.Object sendSync(TdApi.Function<? extends TdApi.Object> query) {
+        Objects.requireNonNull(query);
         var ref = new AtomicReference<TdApi.Object>();
         client.send(query, ref::set);
         var sent = Instant.now();
         while (ref.get() == null &&
-                sent.plus(30, ChronoUnit.SECONDS).isAfter(Instant.now())) {
+                sent.plus(60, ChronoUnit.SECONDS).isAfter(Instant.now())) {
             /*wait for result*/
         }
 
+        if (ref.get() == null) {
+            throw new TelegramClientTdApiException("TDLib request timeout.");
+        }
+
         return ref.get();
+    }
+
+    /**
+     * Sends a request to the TDLib asynchronously.
+     * If this stage completes exceptionally you can handle {@link TelegramClientTdApiException}
+     *
+     * @throws NullPointerException if query is null.
+     * @param query object representing a query to the TDLib.
+     * @return {@link CompletableFuture<TdApi.Object>} response from TDLib.
+     */
+    public CompletableFuture<TdApi.Object> sendAsync(TdApi.Function<? extends TdApi.Object> query) {
+        Objects.requireNonNull(query);
+        return CompletableFuture.supplyAsync(() -> sendSync(query));
+    }
+
+    /**
+     * Sends a request to the TDLib asynchronously.
+     * If this stage completes exceptionally you can handle {@link TelegramClientTdApiException}
+     *
+     * @param query object representing a query to the TDLib.
+     * @param type response type
+     * @param <T> parametrized response
+     * @throws NullPointerException if query is null.
+     * @return {@link CompletableFuture<T>} parametrized response from TDLib.
+     */
+    public <T extends TdApi.Object> CompletableFuture<T> sendAsync(TdApi.Function<? extends TdApi.Object> query,
+                                                                   Class<T> type) {
+        Objects.requireNonNull(query);
+        return CompletableFuture.supplyAsync(() -> sendSync(query, type));
     }
 
     /**
@@ -107,6 +148,7 @@ public class TelegramClient {
      */
     public void sendWithCallback(TdApi.Function<? extends TdApi.Object> query,
                                  Client.ResultHandler resultHandler) {
+        Objects.requireNonNull(query);
         client.send(query, resultHandler);
     }
 
