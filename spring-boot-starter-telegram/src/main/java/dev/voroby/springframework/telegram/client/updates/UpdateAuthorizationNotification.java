@@ -49,20 +49,14 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         }
         switch (this.authorizationState.getConstructor()) {
             case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR -> {
-                telegramClient.sendWithCallback(tdlibParameters(), new AuthorizationRequestHandler());
+                telegramClient.sendWithCallback(tdLibParameters(), new AuthorizationRequestHandler());
                 TelegramProperties.Proxy proxy = properties.proxy();
                 if (proxy != null) {
                     addProxy(proxy);
                 }
             }
-            case TdApi.AuthorizationStateWaitPhoneNumber.CONSTRUCTOR -> {
-                String phone = properties.phone();
-                if (phone == null) {
-                    throw new TelegramClientConfigurationException("The phone number of the user not filled. " +
-                            "Specify property spring.telegram.client.phone");
-                }
-                telegramClient.sendWithCallback(new TdApi.SetAuthenticationPhoneNumber(phone, null), new AuthorizationRequestHandler());
-            }
+            case TdApi.AuthorizationStateWaitPhoneNumber.CONSTRUCTOR ->
+                    telegramClient.sendWithCallback(new TdApi.SetAuthenticationPhoneNumber(properties.phone(), null), new AuthorizationRequestHandler());
             case TdApi.AuthorizationStateWaitOtherDeviceConfirmation.CONSTRUCTOR -> {
                 String link = ((TdApi.AuthorizationStateWaitOtherDeviceConfirmation) this.authorizationState).link;
                 log.info("Please confirm this login link on another device: " + link);
@@ -151,38 +145,18 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
      * Configure TDLib parameters.
      * @return {@link TdApi.SetTdlibParameters}
      */
-    private TdApi.SetTdlibParameters tdlibParameters() {
+    private TdApi.SetTdlibParameters tdLibParameters() {
         boolean useTestDc = properties.useTestDc();
         String databaseDirectory = checkStringOrEmpty(properties.databaseDirectory());
         String filesDirectory = checkStringOrEmpty(properties.filesDirectory());
-        if (!hasText(properties.databaseEncryptionKey())) {
-            throw new TelegramClientConfigurationException("Encryption key for the database is invalid. " +
-                    "Specify property spring.telegram.client.database-encryption-key");
-        }
         byte[] databaseEncryptionKey = properties.databaseEncryptionKey().getBytes(StandardCharsets.UTF_8);
         boolean useFileDatabase = properties.useFileDatabase();
         boolean useChatInfoDatabase = properties.useChatInfoDatabase();
         boolean useMessageDatabase = properties.useMessageDatabase();
         boolean useSecretChats = properties.useSecretChats();
-        if (properties.apiId() == 0) {
-            throw new TelegramClientConfigurationException("Application identifier for Telegram API access is invalid. " +
-                    "Specify property spring.telegram.client.api-id");
-        }
         int apiId = properties.apiId();
-        if (!hasText(properties.apiHash())) {
-            throw new TelegramClientConfigurationException("Application identifier hash for Telegram API access is invalid. " +
-                    "Specify property spring.telegram.client.api-hash");
-        }
         String apiHash = properties.apiHash();
-        if (!hasText(properties.systemLanguageCode())) {
-            throw new TelegramClientConfigurationException("IETF language tag of the user's operating system language; must be non-empty. " +
-                    "Specify property spring.telegram.client.system-language-code");
-        }
         String systemLanguageCode = properties.systemLanguageCode();
-        if (!hasText(properties.deviceModel())) {
-            throw new TelegramClientConfigurationException("Model of the device the application is being run on; must be non-empty. " +
-                    "Specify property spring.telegram.client.device-model");
-        }
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
         String applicationVersion = "1.8.14";
@@ -215,44 +189,18 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
      * @param proxy proxy properties
      */
     private void addProxy(TelegramProperties.Proxy proxy) {
-        TdApi.ProxyType proxyType = null;
         TelegramProperties.Proxy.ProxyHttp http = proxy.http();
-        if (http != null) {
-            if (!hasText(http.password()) || !hasText(http.username())) {
-                throw new TelegramClientConfigurationException("""
-                            Http proxy settings not filled. Specify properties:
-                             spring.telegram.client.proxy.http.username
-                             spring.telegram.client.proxy.http.password
-                             spring.telegram.client.proxy.http.http-only
-                             """);
-            }
-            proxyType = new TdApi.ProxyTypeHttp(http.username(), http.password(), http.httpOnly());
-        }
         TelegramProperties.Proxy.ProxySocks5 socks5 = proxy.socks5();
-        if (socks5 != null) {
-            if (!hasText(socks5.username()) || !hasText(socks5.password())) {
-                throw new TelegramClientConfigurationException("""
-                            Socks5 proxy settings not filled. Specify properties:
-                             spring.telegram.client.proxy.socks5.username
-                             spring.telegram.client.proxy.socks5.password
-                             """);
-            }
+        TelegramProperties.Proxy.ProxyMtProto mtProto = proxy.mtproto();
+        TdApi.ProxyType proxyType;
+        if (http != null) {
+            proxyType = new TdApi.ProxyTypeHttp(http.username(), http.password(), http.httpOnly());
+        } else if (socks5 != null) {
             proxyType = new TdApi.ProxyTypeSocks5(socks5.username(), socks5.password());
-        }
-        TelegramProperties.Proxy.ProxyMtProto mtproto = proxy.mtproto();
-        if (mtproto != null) {
-            if (!hasText(mtproto.secret())) {
-                throw new TelegramClientConfigurationException("MtProto proxy settings not filled. " +
-                        "Specify property spring.telegram.client.proxy.mtproto.secret");
-            }
-            proxyType = new TdApi.ProxyTypeMtproto(mtproto.secret());
-        }
-        if (!hasText(proxy.server()) || proxy.port() <= 0) {
-            throw new TelegramClientConfigurationException("""
-                        Proxy settings not filled. Specify properties:
-                         spring.telegram.client.proxy.server
-                         spring.telegram.client.proxy.port
-                        """);
+        } else if (mtProto != null) {
+            proxyType = new TdApi.ProxyTypeMtproto(mtProto.secret());
+        } else {
+            throw new TelegramClientConfigurationException("ProxyType not filled. Available types - http, socks5, mtProto");
         }
         var addProxy = new TdApi.AddProxy(proxy.server(), proxy.port(), true, proxyType);
         telegramClient.sendSync(addProxy);
