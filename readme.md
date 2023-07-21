@@ -36,6 +36,7 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 </dependency>
 ```
 Or just add `spring-boot-starter-telegram-1.1.1.jar` from the latest release to your project's classpath instead of the steps above.
+
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
 -Djava.library.path=<path_to_shared_library>
