@@ -1,6 +1,7 @@
 package dev.voroby.springframework.telegram.client;
 
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
+import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
 import jakarta.annotation.PreDestroy;
@@ -15,6 +16,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * Telegram client component. Wrapper of native {@link Client} with authorization logic and notification handlers.
@@ -37,7 +40,77 @@ public class TelegramClient {
                           Collection<UpdateNotificationListener<?>> notificationHandlers,
                           Client.ResultHandler defaultHandler) {
         this.defaultHandler = defaultHandler;
+        checkProperties(properties);
         this.client = initializeNativeClient(properties, notificationHandlers);
+    }
+
+    private void checkProperties(TelegramProperties properties) {
+        if (properties.phone() == null) {
+            throw new TelegramClientConfigurationException("The phone number of the user not filled. " +
+                    "Specify property spring.telegram.client.phone");
+        }
+        if (properties.apiId() == 0) {
+            throw new TelegramClientConfigurationException("Application identifier for Telegram API access is invalid. " +
+                    "Specify property spring.telegram.client.api-id");
+        }
+        if (!hasText(properties.apiHash())) {
+            throw new TelegramClientConfigurationException("Application identifier hash for Telegram API access is invalid. " +
+                    "Specify property spring.telegram.client.api-hash");
+        }
+        if (!hasText(properties.databaseEncryptionKey())) {
+            throw new TelegramClientConfigurationException("Encryption key for the database is invalid. " +
+                    "Specify property spring.telegram.client.database-encryption-key");
+        }
+        if (!hasText(properties.systemLanguageCode())) {
+            throw new TelegramClientConfigurationException("IETF language tag of the user's operating system language; must be non-empty. " +
+                    "Specify property spring.telegram.client.system-language-code");
+        }
+        if (!hasText(properties.deviceModel())) {
+            throw new TelegramClientConfigurationException("Model of the device the application is being run on; must be non-empty. " +
+                    "Specify property spring.telegram.client.device-model");
+        }
+        TelegramProperties.Proxy proxy = properties.proxy();
+        if (proxy != null) {
+            checkProxyProperties(proxy);
+        }
+    }
+
+    private static void checkProxyProperties(TelegramProperties.Proxy proxy) {
+        if (!hasText(proxy.server()) || proxy.port() <= 0) {
+            throw new TelegramClientConfigurationException("""
+                    Proxy settings not filled. Specify properties:
+                     spring.telegram.client.proxy.server
+                     spring.telegram.client.proxy.port
+                    """);
+        }
+        TelegramProperties.Proxy.ProxyHttp http = proxy.http();
+        TelegramProperties.Proxy.ProxySocks5 socks5 = proxy.socks5();
+        TelegramProperties.Proxy.ProxyMtProto mtProto = proxy.mtproto();
+        if (http != null) {
+            if (!hasText(http.password()) || !hasText(http.username())) {
+                throw new TelegramClientConfigurationException("""
+                        Http proxy settings not filled. Specify properties:
+                         spring.telegram.client.proxy.http.username
+                         spring.telegram.client.proxy.http.password
+                         spring.telegram.client.proxy.http.http-only
+                         """);
+            }
+        } else if (socks5 != null) {
+            if (!hasText(socks5.username()) || !hasText(socks5.password())) {
+                throw new TelegramClientConfigurationException("""
+                        Socks5 proxy settings not filled. Specify properties:
+                         spring.telegram.client.proxy.socks5.username
+                         spring.telegram.client.proxy.socks5.password
+                         """);
+            }
+        } else if (mtProto != null) {
+            if (!hasText(mtProto.secret())) {
+                throw new TelegramClientConfigurationException("MtProto proxy settings not filled. " +
+                        "Specify property spring.telegram.client.proxy.mtProto.secret");
+            }
+        } else {
+            throw new TelegramClientConfigurationException("ProxyType not filled. Available types - http, socks5, mtproto");
+        }
     }
 
     private Client initializeNativeClient(TelegramProperties properties, Collection<UpdateNotificationListener<?>> notificationHandlers) {

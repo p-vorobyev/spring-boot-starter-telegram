@@ -32,13 +32,13 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
--Djava.library.path=<path_to_your_shared_library>
+-Djava.library.path=<path_to_shared_library>
 ```
 You can find compiled libraries for several platforms in `libs` directory.
 If you haven't found a library for your OS and architecture, you can build it yourself

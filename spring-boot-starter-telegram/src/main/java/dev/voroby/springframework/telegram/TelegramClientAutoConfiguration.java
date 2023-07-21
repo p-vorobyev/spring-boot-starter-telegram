@@ -9,7 +9,6 @@ import dev.voroby.springframework.telegram.client.updates.UpdateAuthorizationNot
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,17 +23,6 @@ import java.util.Collection;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(
-        prefix = "spring.telegram.client",
-        name = {
-                "database-encryption-key",
-                "api-id",
-                "api-hash",
-                "phone",
-                "system-language-code",
-                "device-model"
-        }
-)
 @ConfigurationPropertiesScan(basePackages = "dev.voroby.springframework.telegram.properties")
 public class TelegramClientAutoConfiguration {
 
