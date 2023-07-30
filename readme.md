@@ -2,6 +2,8 @@
 
 Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https://github.com/tdlib/td).
 
+![](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/img/logo.png)
+
 ## Contents
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -12,11 +14,11 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 
 <a name="requirements"></a>
 ## Requirements
-| Technology  | Version    |
-|-------------|------------|
-| jdk         | 17         |
-| TDLib       | [1.8.14](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
-| Spring Boot | 3          |
+| Technology  | Version                                                                               |
+|-------------|---------------------------------------------------------------------------------------|
+| jdk         | 17                                                                                    |
+| TDLib       | [1.8.15](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
+| Spring Boot | 3                                                                                     |
 
 <a name="installation"></a>
 ## Installation
@@ -32,10 +34,10 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
 </dependency>
 ```
-Or just add `spring-boot-starter-telegram-1.1.1.jar` from the latest release to your project's classpath instead of the steps above.
+Or just add `spring-boot-starter-telegram-1.2.0.jar` from the latest release to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
