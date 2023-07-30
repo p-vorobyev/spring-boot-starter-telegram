@@ -50,7 +50,7 @@ public class InfoController {
         var formattedText = new TdApi.FormattedText();
         formattedText.text = "Hello!";
         content.text = formattedText;
-        return new TdApi.SendMessage(chatId, 0, 0, null, null, content);
+        return new TdApi.SendMessage(chatId, 0, null, null, null, content);
     }
 
 }
