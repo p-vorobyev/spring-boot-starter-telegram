@@ -19,6 +19,8 @@ public class ClientAuthorizationStateImpl implements ClientAuthorizationState {
 
     private final AtomicBoolean waitEmailAddress = new AtomicBoolean();
 
+    private final AtomicBoolean stateClosed = new AtomicBoolean();
+
     /*
     * code/password/emailAddress will be cleaned up after check
     */
@@ -76,6 +78,15 @@ public class ClientAuthorizationStateImpl implements ClientAuthorizationState {
     @Override
     public boolean haveAuthorization() {
         return haveAuthorization.get();
+    }
+
+    @Override
+    public boolean isStateClosed() {
+        return stateClosed.get();
+    }
+
+    void setStateClosed() {
+        stateClosed.set(true);
     }
 
     String getCode() {

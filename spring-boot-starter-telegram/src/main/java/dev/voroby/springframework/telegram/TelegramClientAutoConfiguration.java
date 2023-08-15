@@ -47,13 +47,15 @@ public class TelegramClientAutoConfiguration {
      * @param properties {@link TelegramProperties}
      * @param notificationHandlers collection of {@link UpdateNotificationListener} beans
      * @param defaultHandler default handler for incoming updates
+     * @param clientAuthorizationState authorization state of the client
      * @return {@link TelegramClient}
      */
     @Bean
     public TelegramClient telegramClient(TelegramProperties properties,
                                          Collection<UpdateNotificationListener<?>> notificationHandlers,
-                                         Client.ResultHandler defaultHandler) {
-        return new TelegramClient(properties, notificationHandlers, defaultHandler);
+                                         Client.ResultHandler defaultHandler,
+                                         ClientAuthorizationState clientAuthorizationState) {
+        return new TelegramClient(properties, notificationHandlers, defaultHandler, clientAuthorizationState);
     }
 
     /**

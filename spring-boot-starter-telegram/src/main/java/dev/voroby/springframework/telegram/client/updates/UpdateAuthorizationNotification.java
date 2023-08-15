@@ -49,7 +49,9 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         }
         switch (this.authorizationState.getConstructor()) {
             case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR -> {
-                telegramClient.sendWithCallback(tdLibParameters(), new AuthorizationRequestHandler());
+                TdApi.SetTdlibParameters tdLibParameters = tdLibParameters();
+                log.info("TDLib version: " + tdLibParameters.applicationVersion);
+                telegramClient.sendWithCallback(tdLibParameters, new AuthorizationRequestHandler());
                 TelegramProperties.Proxy proxy = properties.proxy();
                 if (proxy != null) {
                     addProxy(proxy);
@@ -128,7 +130,10 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
                 clientAuthorizationState.setHaveAuthorization(false);
                 log.info("Closing");
             }
-            case TdApi.AuthorizationStateClosed.CONSTRUCTOR -> log.info("Closed");
+            case TdApi.AuthorizationStateClosed.CONSTRUCTOR -> {
+                clientAuthorizationState.setStateClosed();
+                log.info("Closed");
+            }
             default -> log.error("Unsupported authorization state:\n" + this.authorizationState);
         }
     }

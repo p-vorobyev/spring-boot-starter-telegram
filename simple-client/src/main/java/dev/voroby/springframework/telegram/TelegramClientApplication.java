@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.concurrent.TimeUnit;
+
 @EnableScheduling
 @SpringBootApplication @Slf4j
 public class TelegramClientApplication {
@@ -28,7 +30,10 @@ public class TelegramClientApplication {
     @Bean
     public ApplicationRunner applicationRunner() {
         return args -> {
-            while (!authorizationState.haveAuthorization()) {/*wait for authorization*/}
+            while (!authorizationState.haveAuthorization()) {
+                /*wait for authorization*/
+                TimeUnit.MILLISECONDS.sleep(200);
+            }
             TdApi.LoadChats loadChatsQuery = new TdApi.LoadChats(new TdApi.ChatListMain(), 100);
             telegramClient.sendWithCallback(loadChatsQuery, this::loadChatsHandler);
         };

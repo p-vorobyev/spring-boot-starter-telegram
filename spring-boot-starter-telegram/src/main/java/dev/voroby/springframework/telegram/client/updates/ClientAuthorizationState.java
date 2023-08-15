@@ -51,4 +51,11 @@ public interface ClientAuthorizationState {
      * @return authorization status
      */
     boolean haveAuthorization();
+
+    /**
+     * All databases are closed and all resources are released. No other updates will be received after this.
+     * All queries will be responded to with error code 500.
+     * @return is TDLib client in its final state
+     */
+    boolean isStateClosed();
 }
