@@ -34,10 +34,10 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 </dependency>
 ```
-Or just add `spring-boot-starter-telegram-1.2.0.jar` from the latest release to your project's classpath instead of the steps above.
+Or just add `spring-boot-starter-telegram-1.2.1.jar` from the latest release to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
@@ -155,6 +155,13 @@ boolean isWaitEmailAddress();
  * @return authorization status
  */
 boolean haveAuthorization();
+
+/**
+ * All databases are closed and all resources are released. No other updates will be received after this.
+ * All queries will be responded to with error code 500.
+ * @return is TDLib client in its final state
+ */
+boolean isStateClosed();
 ```
 - application log 
 ```text
@@ -198,7 +205,7 @@ private TdApi.SendMessage sendMessageQuery(Long chatId) {
         var formattedText = new TdApi.FormattedText();
         formattedText.text = "Hello!";
         content.text = formattedText;
-        return new TdApi.SendMessage(chatId, 0, 0, null, null, content);
+        return new TdApi.SendMessage(chatId, 0, null, null, null, content);
     }
 ```
 

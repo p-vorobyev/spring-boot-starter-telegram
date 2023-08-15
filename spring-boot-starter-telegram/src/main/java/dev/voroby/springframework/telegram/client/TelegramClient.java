@@ -1,5 +1,6 @@
 package dev.voroby.springframework.telegram.client;
 
+import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -31,16 +33,21 @@ public class TelegramClient {
 
     private final Client.ResultHandler defaultHandler;
 
+    private final ClientAuthorizationState clientAuthorizationState;
+
     /**
      * @param properties TDlib client properties
      * @param notificationHandlers registered notifications handlers
      * @param defaultHandler default handler for unhandled events
+     * @param clientAuthorizationState authorization state of the client
      */
     public TelegramClient(TelegramProperties properties,
                           Collection<UpdateNotificationListener<?>> notificationHandlers,
-                          Client.ResultHandler defaultHandler) {
+                          Client.ResultHandler defaultHandler,
+                          ClientAuthorizationState clientAuthorizationState) {
         this.defaultHandler = defaultHandler;
         checkProperties(properties);
+        this.clientAuthorizationState = clientAuthorizationState;
         this.client = initializeNativeClient(properties, notificationHandlers);
     }
 
@@ -133,8 +140,15 @@ public class TelegramClient {
      * Properly closing the client.
      */
     @PreDestroy
-    void cleanUp() {
+    void cleanUp() throws InterruptedException {
         sendSync(new TdApi.Close());
+        Instant startAwait = Instant.now();
+        while (!clientAuthorizationState.isStateClosed() && startAwait.plusSeconds(30).isAfter(Instant.now())) {
+            TimeUnit.MILLISECONDS.sleep(200);
+        }
+        if (!clientAuthorizationState.isStateClosed()) {
+            log.warn("Closed, but TDLib client isn't in its final state");
+        }
         log.info("Goodbye!");
     }
 
