@@ -2732,6 +2732,68 @@ public class TdApi {
     }
 
     /**
+     * This class is an abstract base class.
+     * Describes a type of a block list.
+     */
+    public abstract static class BlockList extends Object {
+        /**
+         * Default class constructor.
+         */
+        public BlockList() {
+        }
+    }
+
+    /**
+     * The main block list that disallows writing messages to the current user, receiving their status and photo, viewing of stories, and some other actions.
+     */
+    public static class BlockListMain extends BlockList {
+
+        /**
+         * The main block list that disallows writing messages to the current user, receiving their status and photo, viewing of stories, and some other actions.
+         */
+        public BlockListMain() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1352930172;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The block list that disallows viewing of stories of the current user.
+     */
+    public static class BlockListStories extends BlockList {
+
+        /**
+         * The block list that disallows viewing of stories of the current user.
+         */
+        public BlockListStories() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 103323228;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Represents a command supported by a bot.
      */
     public static class BotCommand extends Object {
@@ -4361,6 +4423,169 @@ public class TdApi {
 
     /**
      * This class is an abstract base class.
+     * Represents result of checking whether the current user can send a story.
+     */
+    public abstract static class CanSendStoryResult extends Object {
+        /**
+         * Default class constructor.
+         */
+        public CanSendStoryResult() {
+        }
+    }
+
+    /**
+     * A story can be sent.
+     */
+    public static class CanSendStoryResultOk extends CanSendStoryResult {
+
+        /**
+         * A story can be sent.
+         */
+        public CanSendStoryResultOk() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1346171133;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The user must subscribe to Telegram Premium to be able to post stories.
+     */
+    public static class CanSendStoryResultPremiumNeeded extends CanSendStoryResult {
+
+        /**
+         * The user must subscribe to Telegram Premium to be able to post stories.
+         */
+        public CanSendStoryResultPremiumNeeded() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1451220585;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The limit for the number of active stories exceeded. The user can buy Telegram Premium, delete an active story, or wait for the oldest story to expire.
+     */
+    public static class CanSendStoryResultActiveStoryLimitExceeded extends CanSendStoryResult {
+
+        /**
+         * The limit for the number of active stories exceeded. The user can buy Telegram Premium, delete an active story, or wait for the oldest story to expire.
+         */
+        public CanSendStoryResultActiveStoryLimitExceeded() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1344689450;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The weekly limit for the number of posted stories exceeded. The user needs to buy Telegram Premium or wait specified time.
+     */
+    public static class CanSendStoryResultWeeklyLimitExceeded extends CanSendStoryResult {
+        /**
+         * Time left before the user can send the next story.
+         */
+        public int retryAfter;
+
+        /**
+         * The weekly limit for the number of posted stories exceeded. The user needs to buy Telegram Premium or wait specified time.
+         */
+        public CanSendStoryResultWeeklyLimitExceeded() {
+        }
+
+        /**
+         * The weekly limit for the number of posted stories exceeded. The user needs to buy Telegram Premium or wait specified time.
+         *
+         * @param retryAfter Time left before the user can send the next story.
+         */
+        public CanSendStoryResultWeeklyLimitExceeded(int retryAfter) {
+            this.retryAfter = retryAfter;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 323068088;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The monthly limit for the number of posted stories exceeded. The user needs to buy Telegram Premium or wait specified time.
+     */
+    public static class CanSendStoryResultMonthlyLimitExceeded extends CanSendStoryResult {
+        /**
+         * Time left before the user can send the next story.
+         */
+        public int retryAfter;
+
+        /**
+         * The monthly limit for the number of posted stories exceeded. The user needs to buy Telegram Premium or wait specified time.
+         */
+        public CanSendStoryResultMonthlyLimitExceeded() {
+        }
+
+        /**
+         * The monthly limit for the number of posted stories exceeded. The user needs to buy Telegram Premium or wait specified time.
+         *
+         * @param retryAfter Time left before the user can send the next story.
+         */
+        public CanSendStoryResultMonthlyLimitExceeded(int retryAfter) {
+            this.retryAfter = retryAfter;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -578665771;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * This class is an abstract base class.
      * Represents result of checking whether the current session can be used to transfer a chat ownership to another user.
      */
     public abstract static class CanTransferOwnershipResult extends Object {
@@ -4522,7 +4747,7 @@ public class TdApi {
          */
         public ChatPermissions permissions;
         /**
-         * Last message in the chat; may be null.
+         * Last message in the chat; may be null if none or unknown.
          */
         public Message lastMessage;
         /**
@@ -4533,6 +4758,10 @@ public class TdApi {
          * Identifier of a user or chat that is selected to send messages in the chat; may be null if the user can't change message sender.
          */
         public MessageSender messageSenderId;
+        /**
+         * Block list to which the chat is added; may be null if none.
+         */
+        public BlockList blockList;
         /**
          * True, if chat content can't be saved locally, forwarded, or copied.
          */
@@ -4545,10 +4774,6 @@ public class TdApi {
          * True, if the chat is marked as unread.
          */
         public boolean isMarkedAsUnread;
-        /**
-         * True, if the chat is blocked by the current user and private messages from the chat can't be received.
-         */
-        public boolean isBlocked;
         /**
          * True, if the chat has scheduled messages.
          */
@@ -4610,7 +4835,7 @@ public class TdApi {
          */
         public String themeName;
         /**
-         * Information about actions which must be possible to do through the chat action bar; may be null.
+         * Information about actions which must be possible to do through the chat action bar; may be null if none.
          */
         public ChatActionBar actionBar;
         /**
@@ -4618,7 +4843,7 @@ public class TdApi {
          */
         public VideoChat videoChat;
         /**
-         * Information about pending join requests; may be null.
+         * Information about pending join requests; may be null if none.
          */
         public ChatJoinRequestsInfo pendingJoinRequests;
         /**
@@ -4626,7 +4851,7 @@ public class TdApi {
          */
         public long replyMarkupMessageId;
         /**
-         * A draft of a message in the chat; may be null.
+         * A draft of a message in the chat; may be null if none.
          */
         public DraftMessage draftMessage;
         /**
@@ -4648,13 +4873,13 @@ public class TdApi {
          * @param title Chat title.
          * @param photo Chat photo; may be null.
          * @param permissions Actions that non-administrator chat members are allowed to take in the chat.
-         * @param lastMessage Last message in the chat; may be null.
+         * @param lastMessage Last message in the chat; may be null if none or unknown.
          * @param positions Positions of the chat in chat lists.
          * @param messageSenderId Identifier of a user or chat that is selected to send messages in the chat; may be null if the user can't change message sender.
+         * @param blockList Block list to which the chat is added; may be null if none.
          * @param hasProtectedContent True, if chat content can't be saved locally, forwarded, or copied.
          * @param isTranslatable True, if translation of all messages in the chat must be suggested to the user.
          * @param isMarkedAsUnread True, if the chat is marked as unread.
-         * @param isBlocked True, if the chat is blocked by the current user and private messages from the chat can't be received.
          * @param hasScheduledMessages True, if the chat has scheduled messages.
          * @param canBeDeletedOnlyForSelf True, if the chat messages can be deleted only for the current user while other users will continue to see the messages.
          * @param canBeDeletedForAllUsers True, if the chat messages can be deleted for all users.
@@ -4670,14 +4895,14 @@ public class TdApi {
          * @param messageAutoDeleteTime Current message auto-delete or self-destruct timer setting for the chat, in seconds; 0 if disabled. Self-destruct timer in secret chats starts after the message or its content is viewed. Auto-delete timer in other chats starts from the send date.
          * @param background Background set for the chat; may be null if none.
          * @param themeName If non-empty, name of a theme, set for the chat.
-         * @param actionBar Information about actions which must be possible to do through the chat action bar; may be null.
+         * @param actionBar Information about actions which must be possible to do through the chat action bar; may be null if none.
          * @param videoChat Information about video chat of the chat.
-         * @param pendingJoinRequests Information about pending join requests; may be null.
+         * @param pendingJoinRequests Information about pending join requests; may be null if none.
          * @param replyMarkupMessageId Identifier of the message from which reply markup needs to be used; 0 if there is no default custom reply markup in the chat.
-         * @param draftMessage A draft of a message in the chat; may be null.
+         * @param draftMessage A draft of a message in the chat; may be null if none.
          * @param clientData Application-specific data associated with the chat. (For example, the chat scroll position or local chat notification settings can be stored here.) Persistent if the message database is used.
          */
-        public Chat(long id, ChatType type, String title, ChatPhotoInfo photo, ChatPermissions permissions, Message lastMessage, ChatPosition[] positions, MessageSender messageSenderId, boolean hasProtectedContent, boolean isTranslatable, boolean isMarkedAsUnread, boolean isBlocked, boolean hasScheduledMessages, boolean canBeDeletedOnlyForSelf, boolean canBeDeletedForAllUsers, boolean canBeReported, boolean defaultDisableNotification, int unreadCount, long lastReadInboxMessageId, long lastReadOutboxMessageId, int unreadMentionCount, int unreadReactionCount, ChatNotificationSettings notificationSettings, ChatAvailableReactions availableReactions, int messageAutoDeleteTime, ChatBackground background, String themeName, ChatActionBar actionBar, VideoChat videoChat, ChatJoinRequestsInfo pendingJoinRequests, long replyMarkupMessageId, DraftMessage draftMessage, String clientData) {
+        public Chat(long id, ChatType type, String title, ChatPhotoInfo photo, ChatPermissions permissions, Message lastMessage, ChatPosition[] positions, MessageSender messageSenderId, BlockList blockList, boolean hasProtectedContent, boolean isTranslatable, boolean isMarkedAsUnread, boolean hasScheduledMessages, boolean canBeDeletedOnlyForSelf, boolean canBeDeletedForAllUsers, boolean canBeReported, boolean defaultDisableNotification, int unreadCount, long lastReadInboxMessageId, long lastReadOutboxMessageId, int unreadMentionCount, int unreadReactionCount, ChatNotificationSettings notificationSettings, ChatAvailableReactions availableReactions, int messageAutoDeleteTime, ChatBackground background, String themeName, ChatActionBar actionBar, VideoChat videoChat, ChatJoinRequestsInfo pendingJoinRequests, long replyMarkupMessageId, DraftMessage draftMessage, String clientData) {
             this.id = id;
             this.type = type;
             this.title = title;
@@ -4686,10 +4911,10 @@ public class TdApi {
             this.lastMessage = lastMessage;
             this.positions = positions;
             this.messageSenderId = messageSenderId;
+            this.blockList = blockList;
             this.hasProtectedContent = hasProtectedContent;
             this.isTranslatable = isTranslatable;
             this.isMarkedAsUnread = isMarkedAsUnread;
-            this.isBlocked = isBlocked;
             this.hasScheduledMessages = hasScheduledMessages;
             this.canBeDeletedOnlyForSelf = canBeDeletedOnlyForSelf;
             this.canBeDeletedForAllUsers = canBeDeletedForAllUsers;
@@ -4716,7 +4941,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 356800780;
+        public static final int CONSTRUCTOR = 1546777568;
 
         /**
          * @return this.CONSTRUCTOR
@@ -5293,7 +5518,7 @@ public class TdApi {
     }
 
     /**
-     * The chat is a private or secret chat, which can be reported using the method reportChat, or the other user can be blocked using the method toggleMessageSenderIsBlocked, or the other user can be added to the contact list using the method addContact. If the chat is a private chat with a user with an emoji status, then a notice about emoji status usage must be shown.
+     * The chat is a private or secret chat, which can be reported using the method reportChat, or the other user can be blocked using the method setMessageSenderBlockList, or the other user can be added to the contact list using the method addContact. If the chat is a private chat with a user with an emoji status, then a notice about emoji status usage must be shown.
      */
     public static class ChatActionBarReportAddBlock extends ChatActionBar {
         /**
@@ -5306,13 +5531,13 @@ public class TdApi {
         public int distance;
 
         /**
-         * The chat is a private or secret chat, which can be reported using the method reportChat, or the other user can be blocked using the method toggleMessageSenderIsBlocked, or the other user can be added to the contact list using the method addContact. If the chat is a private chat with a user with an emoji status, then a notice about emoji status usage must be shown.
+         * The chat is a private or secret chat, which can be reported using the method reportChat, or the other user can be blocked using the method setMessageSenderBlockList, or the other user can be added to the contact list using the method addContact. If the chat is a private chat with a user with an emoji status, then a notice about emoji status usage must be shown.
          */
         public ChatActionBarReportAddBlock() {
         }
 
         /**
-         * The chat is a private or secret chat, which can be reported using the method reportChat, or the other user can be blocked using the method toggleMessageSenderIsBlocked, or the other user can be added to the contact list using the method addContact. If the chat is a private chat with a user with an emoji status, then a notice about emoji status usage must be shown.
+         * The chat is a private or secret chat, which can be reported using the method reportChat, or the other user can be blocked using the method setMessageSenderBlockList, or the other user can be added to the contact list using the method addContact. If the chat is a private chat with a user with an emoji status, then a notice about emoji status usage must be shown.
          *
          * @param canUnarchive If true, the chat was automatically archived and can be moved back to the main chat list using addChatToList simultaneously with setting chat notification settings to default using setChatNotificationSettings.
          * @param distance If non-negative, the current user was found by the peer through searchChatsNearby and this is the distance between the users.
@@ -14548,7 +14773,7 @@ public class TdApi {
          */
         public ChatNotificationSettings notificationSettings;
         /**
-         * A draft of a message in the topic; may be null.
+         * A draft of a message in the topic; may be null if none.
          */
         public DraftMessage draftMessage;
 
@@ -14570,7 +14795,7 @@ public class TdApi {
          * @param unreadMentionCount Number of unread messages with a mention/reply in the topic.
          * @param unreadReactionCount Number of messages with unread reactions in the topic.
          * @param notificationSettings Notification settings for the topic.
-         * @param draftMessage A draft of a message in the topic; may be null.
+         * @param draftMessage A draft of a message in the topic; may be null if none.
          */
         public ForumTopic(ForumTopicInfo info, Message lastMessage, boolean isPinned, int unreadCount, long lastReadInboxMessageId, long lastReadOutboxMessageId, int unreadMentionCount, int unreadReactionCount, ChatNotificationSettings notificationSettings, DraftMessage draftMessage) {
             this.info = info;
@@ -21113,6 +21338,226 @@ public class TdApi {
     }
 
     /**
+     * Describes a clickable rectangle area on a story media to be added.
+     */
+    public static class InputStoryArea extends Object {
+        /**
+         * Position of the area.
+         */
+        public StoryAreaPosition position;
+        /**
+         * Type of the area.
+         */
+        public InputStoryAreaType type;
+
+        /**
+         * Describes a clickable rectangle area on a story media to be added.
+         */
+        public InputStoryArea() {
+        }
+
+        /**
+         * Describes a clickable rectangle area on a story media to be added.
+         *
+         * @param position Position of the area.
+         * @param type Type of the area.
+         */
+        public InputStoryArea(StoryAreaPosition position, InputStoryAreaType type) {
+            this.position = position;
+            this.type = type;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 122859135;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * This class is an abstract base class.
+     * Describes type of a clickable rectangle area on a story media to be added.
+     */
+    public abstract static class InputStoryAreaType extends Object {
+        /**
+         * Default class constructor.
+         */
+        public InputStoryAreaType() {
+        }
+    }
+
+    /**
+     * An area pointing to a location.
+     */
+    public static class InputStoryAreaTypeLocation extends InputStoryAreaType {
+        /**
+         * The location.
+         */
+        public Location location;
+
+        /**
+         * An area pointing to a location.
+         */
+        public InputStoryAreaTypeLocation() {
+        }
+
+        /**
+         * An area pointing to a location.
+         *
+         * @param location The location.
+         */
+        public InputStoryAreaTypeLocation(Location location) {
+            this.location = location;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1749669730;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * An area pointing to a venue found by the bot getOption(&quot;venue_search_bot_username&quot;).
+     */
+    public static class InputStoryAreaTypeFoundVenue extends InputStoryAreaType {
+        /**
+         * Identifier of the inline query, used to found the venue.
+         */
+        public long queryId;
+        /**
+         * Identifier of the inline query result.
+         */
+        public String resultId;
+
+        /**
+         * An area pointing to a venue found by the bot getOption(&quot;venue_search_bot_username&quot;).
+         */
+        public InputStoryAreaTypeFoundVenue() {
+        }
+
+        /**
+         * An area pointing to a venue found by the bot getOption(&quot;venue_search_bot_username&quot;).
+         *
+         * @param queryId Identifier of the inline query, used to found the venue.
+         * @param resultId Identifier of the inline query result.
+         */
+        public InputStoryAreaTypeFoundVenue(long queryId, String resultId) {
+            this.queryId = queryId;
+            this.resultId = resultId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1395809130;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * An area pointing to a venue already added to the story.
+     */
+    public static class InputStoryAreaTypePreviousVenue extends InputStoryAreaType {
+        /**
+         * Provider of the venue.
+         */
+        public String venueProvider;
+        /**
+         * Identifier of the venue in the provider database.
+         */
+        public String venueId;
+
+        /**
+         * An area pointing to a venue already added to the story.
+         */
+        public InputStoryAreaTypePreviousVenue() {
+        }
+
+        /**
+         * An area pointing to a venue already added to the story.
+         *
+         * @param venueProvider Provider of the venue.
+         * @param venueId Identifier of the venue in the provider database.
+         */
+        public InputStoryAreaTypePreviousVenue(String venueProvider, String venueId) {
+            this.venueProvider = venueProvider;
+            this.venueId = venueId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1846693388;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains a list of story areas to be added.
+     */
+    public static class InputStoryAreas extends Object {
+        /**
+         * List of input story areas.
+         */
+        public InputStoryArea[] areas;
+
+        /**
+         * Contains a list of story areas to be added.
+         */
+        public InputStoryAreas() {
+        }
+
+        /**
+         * Contains a list of story areas to be added.
+         *
+         * @param areas List of input story areas.
+         */
+        public InputStoryAreas(InputStoryArea[] areas) {
+            this.areas = areas;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -883247088;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * This class is an abstract base class.
      * The content of a story to send.
      */
@@ -21129,7 +21574,7 @@ public class TdApi {
      */
     public static class InputStoryContentPhoto extends InputStoryContent {
         /**
-         * Photo to send. The photo must be at most 10 MB in size. The photo size must be 720x1280.
+         * Photo to send. The photo must be at most 10 MB in size. The photo size must be 1080x1920.
          */
         public InputFile photo;
         /**
@@ -21146,7 +21591,7 @@ public class TdApi {
         /**
          * A photo story.
          *
-         * @param photo Photo to send. The photo must be at most 10 MB in size. The photo size must be 720x1280.
+         * @param photo Photo to send. The photo must be at most 10 MB in size. The photo size must be 1080x1920.
          * @param addedStickerFileIds File identifiers of the stickers added to the photo, if applicable.
          */
         public InputStoryContentPhoto(InputFile photo, int[] addedStickerFileIds) {
@@ -24530,11 +24975,11 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * The sending state of the message; may be null.
+         * The sending state of the message; may be null if the message isn't being sent and didn't fail to be sent.
          */
         public MessageSendingState sendingState;
         /**
-         * The scheduling state of the message; may be null.
+         * The scheduling state of the message; may be null if the message isn't scheduled.
          */
         public MessageSchedulingState schedulingState;
         /**
@@ -24614,11 +25059,11 @@ public class TdApi {
          */
         public int editDate;
         /**
-         * Information about the initial message sender; may be null.
+         * Information about the initial message sender; may be null if none or unknown.
          */
         public MessageForwardInfo forwardInfo;
         /**
-         * Information about interactions with the message; may be null.
+         * Information about interactions with the message; may be null if none.
          */
         public MessageInteractionInfo interactionInfo;
         /**
@@ -24666,7 +25111,7 @@ public class TdApi {
          */
         public MessageContent content;
         /**
-         * Reply markup for the message; may be null.
+         * Reply markup for the message; may be null if none.
          */
         public ReplyMarkup replyMarkup;
 
@@ -24682,8 +25127,8 @@ public class TdApi {
          * @param id Message identifier; unique for the chat to which the message belongs.
          * @param senderId Identifier of the sender of the message.
          * @param chatId Chat identifier.
-         * @param sendingState The sending state of the message; may be null.
-         * @param schedulingState The scheduling state of the message; may be null.
+         * @param sendingState The sending state of the message; may be null if the message isn't being sent and didn't fail to be sent.
+         * @param schedulingState The scheduling state of the message; may be null if the message isn't scheduled.
          * @param isOutgoing True, if the message is outgoing.
          * @param isPinned True, if the message is pinned.
          * @param canBeEdited True, if the message can be edited. For live location and poll messages this fields shows whether editMessageLiveLocation or stopPoll can be used with this message by the application.
@@ -24703,8 +25148,8 @@ public class TdApi {
          * @param containsUnreadMention True, if the message contains an unread mention for the current user.
          * @param date Point in time (Unix timestamp) when the message was sent.
          * @param editDate Point in time (Unix timestamp) when the message was last edited.
-         * @param forwardInfo Information about the initial message sender; may be null.
-         * @param interactionInfo Information about interactions with the message; may be null.
+         * @param forwardInfo Information about the initial message sender; may be null if none or unknown.
+         * @param interactionInfo Information about interactions with the message; may be null if none.
          * @param unreadReactions Information about unread reactions added to the message.
          * @param replyTo Information about the message or the story this message is replying to; may be null if none.
          * @param messageThreadId If non-zero, the identifier of the message thread the message belongs to; unique within the chat to which the message belongs.
@@ -24716,7 +25161,7 @@ public class TdApi {
          * @param mediaAlbumId Unique identifier of an album this message belongs to. Only audios, documents, photos and videos can be grouped together in albums.
          * @param restrictionReason If non-empty, contains a human-readable description of the reason why access to this message must be restricted.
          * @param content Content of the message.
-         * @param replyMarkup Reply markup for the message; may be null.
+         * @param replyMarkup Reply markup for the message; may be null if none.
          */
         public Message(long id, MessageSender senderId, long chatId, MessageSendingState sendingState, MessageSchedulingState schedulingState, boolean isOutgoing, boolean isPinned, boolean canBeEdited, boolean canBeForwarded, boolean canBeSaved, boolean canBeDeletedOnlyForSelf, boolean canBeDeletedForAllUsers, boolean canGetAddedReactions, boolean canGetStatistics, boolean canGetMessageThread, boolean canGetViewers, boolean canGetMediaTimestampLinks, boolean canReportReactions, boolean hasTimestampedMedia, boolean isChannelPost, boolean isTopicMessage, boolean containsUnreadMention, int date, int editDate, MessageForwardInfo forwardInfo, MessageInteractionInfo interactionInfo, UnreadReaction[] unreadReactions, MessageReplyTo replyTo, long messageThreadId, int selfDestructTime, double selfDestructIn, double autoDeleteIn, long viaBotUserId, String authorSignature, long mediaAlbumId, String restrictionReason, MessageContent content, ReplyMarkup replyMarkup) {
             this.id = id;
@@ -29694,7 +30139,7 @@ public class TdApi {
          */
         public Message[] messages;
         /**
-         * A draft of a message in the message thread; may be null.
+         * A draft of a message in the message thread; may be null if none.
          */
         public DraftMessage draftMessage;
 
@@ -29712,7 +30157,7 @@ public class TdApi {
          * @param replyInfo Information about the message thread; may be null for forum topic threads.
          * @param unreadMessageCount Approximate number of unread messages in the message thread.
          * @param messages The messages from which the thread starts. The messages are returned in a reverse chronological order (i.e., in order of decreasing messageId).
-         * @param draftMessage A draft of a message in the message thread; may be null.
+         * @param draftMessage A draft of a message in the message thread; may be null if none.
          */
         public MessageThreadInfo(long chatId, long messageThreadId, MessageReplyInfo replyInfo, int unreadMessageCount, Message[] messages, DraftMessage draftMessage) {
             this.chatId = chatId;
@@ -35623,12 +36068,12 @@ public class TdApi {
     }
 
     /**
-     * A emoji status shown along with the user's name.
+     * An emoji status shown along with the user's name.
      */
     public static class PremiumFeatureEmojiStatus extends PremiumFeature {
 
         /**
-         * A emoji status shown along with the user's name.
+         * An emoji status shown along with the user's name.
          */
         public PremiumFeatureEmojiStatus() {
         }
@@ -35737,6 +36182,31 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1143471488;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Allowed to use many additional features for stories.
+     */
+    public static class PremiumFeatureUpgradedStories extends PremiumFeature {
+
+        /**
+         * Allowed to use many additional features for stories.
+         */
+        public PremiumFeatureUpgradedStories() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1878522597;
 
         /**
          * @return this.CONSTRUCTOR
@@ -36229,6 +36699,81 @@ public class TdApi {
     }
 
     /**
+     * The maximum number of stories sent per week.
+     */
+    public static class PremiumLimitTypeWeeklySentStoryCount extends PremiumLimitType {
+
+        /**
+         * The maximum number of stories sent per week.
+         */
+        public PremiumLimitTypeWeeklySentStoryCount() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 40485707;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The maximum number of stories sent per month.
+     */
+    public static class PremiumLimitTypeMonthlySentStoryCount extends PremiumLimitType {
+
+        /**
+         * The maximum number of stories sent per month.
+         */
+        public PremiumLimitTypeMonthlySentStoryCount() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 819481475;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The maximum length of captions of sent stories.
+     */
+    public static class PremiumLimitTypeStoryCaptionLength extends PremiumLimitType {
+
+        /**
+         * The maximum length of captions of sent stories.
+         */
+        public PremiumLimitTypeStoryCaptionLength() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1093324030;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Describes an option for buying Telegram Premium to a user.
      */
     public static class PremiumPaymentOption extends Object {
@@ -36374,6 +36919,44 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 445813541;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A user tried to use a Premium story feature.
+     */
+    public static class PremiumSourceStoryFeature extends PremiumSource {
+        /**
+         * The used feature.
+         */
+        public PremiumStoryFeature feature;
+
+        /**
+         * A user tried to use a Premium story feature.
+         */
+        public PremiumSourceStoryFeature() {
+        }
+
+        /**
+         * A user tried to use a Premium story feature.
+         *
+         * @param feature The used feature.
+         */
+        public PremiumSourceStoryFeature(PremiumStoryFeature feature) {
+            this.feature = feature;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1030737556;
 
         /**
          * @return this.CONSTRUCTOR
@@ -36543,6 +37126,168 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 2097591673;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * This class is an abstract base class.
+     * Describes a story feature available to Premium users.
+     */
+    public abstract static class PremiumStoryFeature extends Object {
+        /**
+         * Default class constructor.
+         */
+        public PremiumStoryFeature() {
+        }
+    }
+
+    /**
+     * User stories are displayed before stories of non-premium contacts.
+     */
+    public static class PremiumStoryFeaturePriorityOrder extends PremiumStoryFeature {
+
+        /**
+         * User stories are displayed before stories of non-premium contacts.
+         */
+        public PremiumStoryFeaturePriorityOrder() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1880001849;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The ability to hide the fact that the user viewed other's stories.
+     */
+    public static class PremiumStoryFeatureStealthMode extends PremiumStoryFeature {
+
+        /**
+         * The ability to hide the fact that the user viewed other's stories.
+         */
+        public PremiumStoryFeatureStealthMode() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1194605988;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The ability to check who opened the current user's stories after they expire.
+     */
+    public static class PremiumStoryFeaturePermanentViewsHistory extends PremiumStoryFeature {
+
+        /**
+         * The ability to check who opened the current user's stories after they expire.
+         */
+        public PremiumStoryFeaturePermanentViewsHistory() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1029683296;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The ability to set custom expiration duration for stories.
+     */
+    public static class PremiumStoryFeatureCustomExpirationDuration extends PremiumStoryFeature {
+
+        /**
+         * The ability to set custom expiration duration for stories.
+         */
+        public PremiumStoryFeatureCustomExpirationDuration() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -593229162;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The ability to save other's unprotected stories.
+     */
+    public static class PremiumStoryFeatureSaveStories extends PremiumStoryFeature {
+
+        /**
+         * The ability to save other's unprotected stories.
+         */
+        public PremiumStoryFeatureSaveStories() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1501286467;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The ability to use links and formatting in story caption.
+     */
+    public static class PremiumStoryFeatureLinksAndFormatting extends PremiumStoryFeature {
+
+        /**
+         * The ability to use links and formatting in story caption.
+         */
+        public PremiumStoryFeatureLinksAndFormatting() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -622623753;
 
         /**
          * @return this.CONSTRUCTOR
@@ -42919,6 +43664,10 @@ public class TdApi {
          */
         public int date;
         /**
+         * True, if the story is being sent by the current user.
+         */
+        public boolean isBeingSent;
+        /**
          * True, if the story is being edited by the current user.
          */
         public boolean isBeingEdited;
@@ -42955,6 +43704,10 @@ public class TdApi {
          */
         public StoryInteractionInfo interactionInfo;
         /**
+         * Type of the chosen reaction; may be null if none.
+         */
+        public ReactionType chosenReactionType;
+        /**
          * Privacy rules affecting story visibility; may be approximate for non-owned stories.
          */
         public StoryPrivacySettings privacySettings;
@@ -42962,6 +43715,10 @@ public class TdApi {
          * Content of the story.
          */
         public StoryContent content;
+        /**
+         * Clickable areas to be shown on the story content.
+         */
+        public StoryArea[] areas;
         /**
          * Caption of the story.
          */
@@ -42979,6 +43736,7 @@ public class TdApi {
          * @param id Unique story identifier among stories of the given sender.
          * @param senderChatId Identifier of the chat that posted the story.
          * @param date Point in time (Unix timestamp) when the story was published.
+         * @param isBeingSent True, if the story is being sent by the current user.
          * @param isBeingEdited True, if the story is being edited by the current user.
          * @param isEdited True, if the story was edited.
          * @param isPinned True, if the story is saved in the sender's profile and will be available there after expiration.
@@ -42988,14 +43746,17 @@ public class TdApi {
          * @param canGetViewers True, if users viewed the story can be received through getStoryViewers.
          * @param hasExpiredViewers True, if users viewed the story can't be received, because the story has expired more than getOption(&quot;story_viewers_expiration_delay&quot;) seconds ago.
          * @param interactionInfo Information about interactions with the story; may be null if the story isn't owned or there were no interactions.
+         * @param chosenReactionType Type of the chosen reaction; may be null if none.
          * @param privacySettings Privacy rules affecting story visibility; may be approximate for non-owned stories.
          * @param content Content of the story.
+         * @param areas Clickable areas to be shown on the story content.
          * @param caption Caption of the story.
          */
-        public Story(int id, long senderChatId, int date, boolean isBeingEdited, boolean isEdited, boolean isPinned, boolean isVisibleOnlyForSelf, boolean canBeForwarded, boolean canBeReplied, boolean canGetViewers, boolean hasExpiredViewers, StoryInteractionInfo interactionInfo, StoryPrivacySettings privacySettings, StoryContent content, FormattedText caption) {
+        public Story(int id, long senderChatId, int date, boolean isBeingSent, boolean isBeingEdited, boolean isEdited, boolean isPinned, boolean isVisibleOnlyForSelf, boolean canBeForwarded, boolean canBeReplied, boolean canGetViewers, boolean hasExpiredViewers, StoryInteractionInfo interactionInfo, ReactionType chosenReactionType, StoryPrivacySettings privacySettings, StoryContent content, StoryArea[] areas, FormattedText caption) {
             this.id = id;
             this.senderChatId = senderChatId;
             this.date = date;
+            this.isBeingSent = isBeingSent;
             this.isBeingEdited = isBeingEdited;
             this.isEdited = isEdited;
             this.isPinned = isPinned;
@@ -43005,15 +43766,211 @@ public class TdApi {
             this.canGetViewers = canGetViewers;
             this.hasExpiredViewers = hasExpiredViewers;
             this.interactionInfo = interactionInfo;
+            this.chosenReactionType = chosenReactionType;
             this.privacySettings = privacySettings;
             this.content = content;
+            this.areas = areas;
             this.caption = caption;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 892170908;
+        public static final int CONSTRUCTOR = 1807257120;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Describes a clickable rectangle area on a story media.
+     */
+    public static class StoryArea extends Object {
+        /**
+         * Position of the area.
+         */
+        public StoryAreaPosition position;
+        /**
+         * Type of the area.
+         */
+        public StoryAreaType type;
+
+        /**
+         * Describes a clickable rectangle area on a story media.
+         */
+        public StoryArea() {
+        }
+
+        /**
+         * Describes a clickable rectangle area on a story media.
+         *
+         * @param position Position of the area.
+         * @param type Type of the area.
+         */
+        public StoryArea(StoryAreaPosition position, StoryAreaType type) {
+            this.position = position;
+            this.type = type;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -906033314;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Describes position of a clickable rectangle area on a story media.
+     */
+    public static class StoryAreaPosition extends Object {
+        /**
+         * The abscissa of the rectangle's center, as a percentage of the media width.
+         */
+        public double xPercentage;
+        /**
+         * The ordinate of the rectangle's center, as a percentage of the media height.
+         */
+        public double yPercentage;
+        /**
+         * The width of the rectangle, as a percentage of the media width.
+         */
+        public double widthPercentage;
+        /**
+         * The ordinate of the rectangle's center, as a percentage of the media height.
+         */
+        public double heightPercentage;
+        /**
+         * Clockwise rotation angle of the rectangle, in degrees; 0-360.
+         */
+        public double rotationAngle;
+
+        /**
+         * Describes position of a clickable rectangle area on a story media.
+         */
+        public StoryAreaPosition() {
+        }
+
+        /**
+         * Describes position of a clickable rectangle area on a story media.
+         *
+         * @param xPercentage The abscissa of the rectangle's center, as a percentage of the media width.
+         * @param yPercentage The ordinate of the rectangle's center, as a percentage of the media height.
+         * @param widthPercentage The width of the rectangle, as a percentage of the media width.
+         * @param heightPercentage The ordinate of the rectangle's center, as a percentage of the media height.
+         * @param rotationAngle Clockwise rotation angle of the rectangle, in degrees; 0-360.
+         */
+        public StoryAreaPosition(double xPercentage, double yPercentage, double widthPercentage, double heightPercentage, double rotationAngle) {
+            this.xPercentage = xPercentage;
+            this.yPercentage = yPercentage;
+            this.widthPercentage = widthPercentage;
+            this.heightPercentage = heightPercentage;
+            this.rotationAngle = rotationAngle;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 104371833;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * This class is an abstract base class.
+     * Describes type of a clickable rectangle area on a story media.
+     */
+    public abstract static class StoryAreaType extends Object {
+        /**
+         * Default class constructor.
+         */
+        public StoryAreaType() {
+        }
+    }
+
+    /**
+     * An area pointing to a location.
+     */
+    public static class StoryAreaTypeLocation extends StoryAreaType {
+        /**
+         * The location.
+         */
+        public Location location;
+
+        /**
+         * An area pointing to a location.
+         */
+        public StoryAreaTypeLocation() {
+        }
+
+        /**
+         * An area pointing to a location.
+         *
+         * @param location The location.
+         */
+        public StoryAreaTypeLocation(Location location) {
+            this.location = location;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1631710842;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * An area pointing to a venue.
+     */
+    public static class StoryAreaTypeVenue extends StoryAreaType {
+        /**
+         * Information about the venue.
+         */
+        public Venue venue;
+
+        /**
+         * An area pointing to a venue.
+         */
+        public StoryAreaTypeVenue() {
+        }
+
+        /**
+         * An area pointing to a venue.
+         *
+         * @param venue Information about the venue.
+         */
+        public StoryAreaTypeVenue(Venue venue) {
+            this.venue = venue;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 414076166;
 
         /**
          * @return this.CONSTRUCTOR
@@ -43202,6 +44159,10 @@ public class TdApi {
          */
         public int viewCount;
         /**
+         * Number of reactions added to the story.
+         */
+        public int reactionCount;
+        /**
          * Identifiers of at most 3 recent viewers of the story.
          */
         public long[] recentViewerUserIds;
@@ -43216,17 +44177,19 @@ public class TdApi {
          * Contains information about interactions with a story.
          *
          * @param viewCount Number of times the story was viewed.
+         * @param reactionCount Number of reactions added to the story.
          * @param recentViewerUserIds Identifiers of at most 3 recent viewers of the story.
          */
-        public StoryInteractionInfo(int viewCount, long[] recentViewerUserIds) {
+        public StoryInteractionInfo(int viewCount, int reactionCount, long[] recentViewerUserIds) {
             this.viewCount = viewCount;
+            this.reactionCount = reactionCount;
             this.recentViewerUserIds = recentViewerUserIds;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -953220330;
+        public static final int CONSTRUCTOR = 1396789129;
 
         /**
          * @return this.CONSTRUCTOR
@@ -43315,6 +44278,10 @@ public class TdApi {
      * The story can be viewed by everyone.
      */
     public static class StoryPrivacySettingsEveryone extends StoryPrivacySettings {
+        /**
+         * Identifiers of the users that can't see the story; always unknown and empty for non-owned stories.
+         */
+        public long[] exceptUserIds;
 
         /**
          * The story can be viewed by everyone.
@@ -43323,9 +44290,18 @@ public class TdApi {
         }
 
         /**
+         * The story can be viewed by everyone.
+         *
+         * @param exceptUserIds Identifiers of the users that can't see the story; always unknown and empty for non-owned stories.
+         */
+        public StoryPrivacySettingsEveryone(long[] exceptUserIds) {
+            this.exceptUserIds = exceptUserIds;
+        }
+
+        /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -1474279308;
+        public static final int CONSTRUCTOR = 890847843;
 
         /**
          * @return this.CONSTRUCTOR
@@ -43341,7 +44317,7 @@ public class TdApi {
      */
     public static class StoryPrivacySettingsContacts extends StoryPrivacySettings {
         /**
-         * User identifiers of the contacts that can't see the story; always empty for non-owned stories.
+         * User identifiers of the contacts that can't see the story; always unknown and empty for non-owned stories.
          */
         public long[] exceptUserIds;
 
@@ -43354,7 +44330,7 @@ public class TdApi {
         /**
          * The story can be viewed by all contacts except chosen users.
          *
-         * @param exceptUserIds User identifiers of the contacts that can't see the story; always empty for non-owned stories.
+         * @param exceptUserIds User identifiers of the contacts that can't see the story; always unknown and empty for non-owned stories.
          */
         public StoryPrivacySettingsContacts(long[] exceptUserIds) {
             this.exceptUserIds = exceptUserIds;
@@ -43404,7 +44380,7 @@ public class TdApi {
      */
     public static class StoryPrivacySettingsSelectedContacts extends StoryPrivacySettings {
         /**
-         * Identifiers of the users; always empty for non-owned stories.
+         * Identifiers of the users; always unknown and empty for non-owned stories.
          */
         public long[] userIds;
 
@@ -43417,7 +44393,7 @@ public class TdApi {
         /**
          * The story can be viewed by certain specified users.
          *
-         * @param userIds Identifiers of the users; always empty for non-owned stories.
+         * @param userIds Identifiers of the users; always unknown and empty for non-owned stories.
          */
         public StoryPrivacySettingsSelectedContacts(long[] userIds) {
             this.userIds = userIds;
@@ -43513,6 +44489,112 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 140020643;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Represents a viewer of a story.
+     */
+    public static class StoryViewer extends Object {
+        /**
+         * User identifier of the viewer.
+         */
+        public long userId;
+        /**
+         * Approximate point in time (Unix timestamp) when the story was viewed.
+         */
+        public int viewDate;
+        /**
+         * Block list to which the user is added; may be null if none.
+         */
+        public BlockList blockList;
+        /**
+         * Type of the reaction that was chosen by the user; may be null if none.
+         */
+        public ReactionType chosenReactionType;
+
+        /**
+         * Represents a viewer of a story.
+         */
+        public StoryViewer() {
+        }
+
+        /**
+         * Represents a viewer of a story.
+         *
+         * @param userId User identifier of the viewer.
+         * @param viewDate Approximate point in time (Unix timestamp) when the story was viewed.
+         * @param blockList Block list to which the user is added; may be null if none.
+         * @param chosenReactionType Type of the reaction that was chosen by the user; may be null if none.
+         */
+        public StoryViewer(long userId, int viewDate, BlockList blockList, ReactionType chosenReactionType) {
+            this.userId = userId;
+            this.viewDate = viewDate;
+            this.blockList = blockList;
+            this.chosenReactionType = chosenReactionType;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -821055182;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Represents a list of story viewers.
+     */
+    public static class StoryViewers extends Object {
+        /**
+         * Approximate total number of story viewers found.
+         */
+        public int totalCount;
+        /**
+         * List of story viewers.
+         */
+        public StoryViewer[] viewers;
+        /**
+         * The offset for the next request. If empty, there are no more results.
+         */
+        public String nextOffset;
+
+        /**
+         * Represents a list of story viewers.
+         */
+        public StoryViewers() {
+        }
+
+        /**
+         * Represents a list of story viewers.
+         *
+         * @param totalCount Approximate total number of story viewers found.
+         * @param viewers List of story viewers.
+         * @param nextOffset The offset for the next request. If empty, there are no more results.
+         */
+        public StoryViewers(int totalCount, StoryViewer[] viewers, String nextOffset) {
+            this.totalCount = totalCount;
+            this.viewers = viewers;
+            this.nextOffset = nextOffset;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -216607432;
 
         /**
          * @return this.CONSTRUCTOR
@@ -44007,7 +45089,7 @@ public class TdApi {
          */
         public long stickerSetId;
         /**
-         * Location to which the supergroup is connected; may be null.
+         * Location to which the supergroup is connected; may be null if none.
          */
         public ChatLocation location;
         /**
@@ -44055,7 +45137,7 @@ public class TdApi {
          * @param isAllHistoryAvailable True, if new chat members will have access to old messages. In public, discussion, of forum groups and all channels, old messages are always available, so this option affects only private non-forum supergroups without a linked chat. The value of this field is only available to chat administrators.
          * @param hasAggressiveAntiSpamEnabled True, if aggressive anti-spam checks are enabled in the supergroup. The value of this field is only available to chat administrators.
          * @param stickerSetId Identifier of the supergroup sticker set; 0 if none.
-         * @param location Location to which the supergroup is connected; may be null.
+         * @param location Location to which the supergroup is connected; may be null if none.
          * @param inviteLink Primary invite link for the chat; may be null. For chat administrators with canInviteUsers right only.
          * @param botCommands List of commands of bots in the group.
          * @param upgradedFromBasicGroupId Identifier of the basic group from which supergroup was upgraded; 0 if none.
@@ -46130,12 +47212,12 @@ public class TdApi {
     }
 
     /**
-     * The thumbnail is in static GIF format. It will be used only for some bot inline results.
+     * The thumbnail is in static GIF format. It will be used only for some bot inline query results.
      */
     public static class ThumbnailFormatGif extends ThumbnailFormat {
 
         /**
-         * The thumbnail is in static GIF format. It will be used only for some bot inline results.
+         * The thumbnail is in static GIF format. It will be used only for some bot inline query results.
          */
         public ThumbnailFormatGif() {
         }
@@ -48313,37 +49395,37 @@ public class TdApi {
     /**
      * A chat was blocked or unblocked.
      */
-    public static class UpdateChatIsBlocked extends Update {
+    public static class UpdateChatBlockList extends Update {
         /**
          * Chat identifier.
          */
         public long chatId;
         /**
-         * New value of isBlocked.
+         * Block list to which the chat is added; may be null if none.
          */
-        public boolean isBlocked;
+        public BlockList blockList;
 
         /**
          * A chat was blocked or unblocked.
          */
-        public UpdateChatIsBlocked() {
+        public UpdateChatBlockList() {
         }
 
         /**
          * A chat was blocked or unblocked.
          *
          * @param chatId Chat identifier.
-         * @param isBlocked New value of isBlocked.
+         * @param blockList Block list to which the chat is added; may be null if none.
          */
-        public UpdateChatIsBlocked(long chatId, boolean isBlocked) {
+        public UpdateChatBlockList(long chatId, BlockList blockList) {
             this.chatId = chatId;
-            this.isBlocked = isBlocked;
+            this.blockList = blockList;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -1998946752;
+        public static final int CONSTRUCTOR = -2027228018;
 
         /**
          * @return this.CONSTRUCTOR
@@ -49999,6 +51081,106 @@ public class TdApi {
     }
 
     /**
+     * A story has been successfully sent.
+     */
+    public static class UpdateStorySendSucceeded extends Update {
+        /**
+         * The sent story.
+         */
+        public Story story;
+        /**
+         * The previous temporary story identifier.
+         */
+        public int oldStoryId;
+
+        /**
+         * A story has been successfully sent.
+         */
+        public UpdateStorySendSucceeded() {
+        }
+
+        /**
+         * A story has been successfully sent.
+         *
+         * @param story The sent story.
+         * @param oldStoryId The previous temporary story identifier.
+         */
+        public UpdateStorySendSucceeded(Story story, int oldStoryId) {
+            this.story = story;
+            this.oldStoryId = oldStoryId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1188651433;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A story failed to send. If the story sending is canceled, then updateStoryDeleted will be received instead of this update.
+     */
+    public static class UpdateStorySendFailed extends Update {
+        /**
+         * The failed to send story.
+         */
+        public Story story;
+        /**
+         * The cause of the failure; may be null if unknown.
+         */
+        public CanSendStoryResult error;
+        /**
+         * An error code.
+         */
+        public int errorCode;
+        /**
+         * Error message.
+         */
+        public String errorMessage;
+
+        /**
+         * A story failed to send. If the story sending is canceled, then updateStoryDeleted will be received instead of this update.
+         */
+        public UpdateStorySendFailed() {
+        }
+
+        /**
+         * A story failed to send. If the story sending is canceled, then updateStoryDeleted will be received instead of this update.
+         *
+         * @param story The failed to send story.
+         * @param error The cause of the failure; may be null if unknown.
+         * @param errorCode An error code.
+         * @param errorMessage Error message.
+         */
+        public UpdateStorySendFailed(Story story, CanSendStoryResult error, int errorCode, String errorMessage) {
+            this.story = story;
+            this.error = error;
+            this.errorCode = errorCode;
+            this.errorMessage = errorMessage;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1142471842;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * The list of active stories posted by a specific chat has changed.
      */
     public static class UpdateChatActiveStories extends Update {
@@ -50070,6 +51252,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -2009871041;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Story stealth mode settings have changed.
+     */
+    public static class UpdateStoryStealthMode extends Update {
+        /**
+         * Point in time (Unix timestamp) until stealth mode is active; 0 if it is disabled.
+         */
+        public int activeUntilDate;
+        /**
+         * Point in time (Unix timestamp) when stealth mode can be enabled again; 0 if there is no active cooldown.
+         */
+        public int cooldownUntilDate;
+
+        /**
+         * Story stealth mode settings have changed.
+         */
+        public UpdateStoryStealthMode() {
+        }
+
+        /**
+         * Story stealth mode settings have changed.
+         *
+         * @param activeUntilDate Point in time (Unix timestamp) until stealth mode is active; 0 if it is disabled.
+         * @param cooldownUntilDate Point in time (Unix timestamp) when stealth mode can be enabled again; 0 if there is no active cooldown.
+         */
+        public UpdateStoryStealthMode(int activeUntilDate, int cooldownUntilDate) {
+            this.activeUntilDate = activeUntilDate;
+            this.cooldownUntilDate = cooldownUntilDate;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1878506778;
 
         /**
          * @return this.CONSTRUCTOR
@@ -51997,9 +53223,9 @@ public class TdApi {
          */
         public ChatPhoto publicPhoto;
         /**
-         * True, if the user is blocked by the current user.
+         * Block list to which the user is added; may be null if none.
          */
-        public boolean isBlocked;
+        public BlockList blockList;
         /**
          * True, if the user can be called.
          */
@@ -52041,7 +53267,7 @@ public class TdApi {
          */
         public int groupInCommonCount;
         /**
-         * For bots, information about the bot; may be null.
+         * For bots, information about the bot; may be null if the user isn't a bot.
          */
         public BotInfo botInfo;
 
@@ -52057,7 +53283,7 @@ public class TdApi {
          * @param personalPhoto User profile photo set by the current user for the contact; may be null. If null and user.profilePhoto is null, then the photo is empty; otherwise, it is unknown. If non-null, then it is the same photo as in user.profilePhoto and chat.photo. This photo isn't returned in the list of user photos.
          * @param photo User profile photo; may be null. If null and user.profilePhoto is null, then the photo is empty; otherwise, it is unknown. If non-null and personalPhoto is null, then it is the same photo as in user.profilePhoto and chat.photo.
          * @param publicPhoto User profile photo visible if the main photo is hidden by privacy settings; may be null. If null and user.profilePhoto is null, then the photo is empty; otherwise, it is unknown. If non-null and both photo and personalPhoto are null, then it is the same photo as in user.profilePhoto and chat.photo. This photo isn't returned in the list of user photos.
-         * @param isBlocked True, if the user is blocked by the current user.
+         * @param blockList Block list to which the user is added; may be null if none.
          * @param canBeCalled True, if the user can be called.
          * @param supportsVideoCalls True, if a video call can be created with the user.
          * @param hasPrivateCalls True, if the user can't be called due to their privacy settings.
@@ -52068,13 +53294,13 @@ public class TdApi {
          * @param bio A short user bio; may be null for bots.
          * @param premiumGiftOptions The list of available options for gifting Telegram Premium to the user.
          * @param groupInCommonCount Number of group chats where both the other user and the current user are a member; 0 for the current user.
-         * @param botInfo For bots, information about the bot; may be null.
+         * @param botInfo For bots, information about the bot; may be null if the user isn't a bot.
          */
-        public UserFullInfo(ChatPhoto personalPhoto, ChatPhoto photo, ChatPhoto publicPhoto, boolean isBlocked, boolean canBeCalled, boolean supportsVideoCalls, boolean hasPrivateCalls, boolean hasPrivateForwards, boolean hasRestrictedVoiceAndVideoNoteMessages, boolean hasPinnedStories, boolean needPhoneNumberPrivacyException, FormattedText bio, PremiumPaymentOption[] premiumGiftOptions, int groupInCommonCount, BotInfo botInfo) {
+        public UserFullInfo(ChatPhoto personalPhoto, ChatPhoto photo, ChatPhoto publicPhoto, BlockList blockList, boolean canBeCalled, boolean supportsVideoCalls, boolean hasPrivateCalls, boolean hasPrivateForwards, boolean hasRestrictedVoiceAndVideoNoteMessages, boolean hasPinnedStories, boolean needPhoneNumberPrivacyException, FormattedText bio, PremiumPaymentOption[] premiumGiftOptions, int groupInCommonCount, BotInfo botInfo) {
             this.personalPhoto = personalPhoto;
             this.photo = photo;
             this.publicPhoto = publicPhoto;
-            this.isBlocked = isBlocked;
+            this.blockList = blockList;
             this.canBeCalled = canBeCalled;
             this.supportsVideoCalls = supportsVideoCalls;
             this.hasPrivateCalls = hasPrivateCalls;
@@ -52091,7 +53317,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1487392697;
+        public static final int CONSTRUCTOR = -842820179;
 
         /**
          * @return this.CONSTRUCTOR
@@ -54132,6 +55358,35 @@ public class TdApi {
     }
 
     /**
+     * Activates stealth mode for stories, which hides all views of stories from the current user in the last &quot;story_stealth_mode_past_period&quot; seconds and for the next &quot;story_stealth_mode_future_period&quot; seconds; for Telegram Premium users only.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class ActivateStoryStealthMode extends Function<Ok> {
+
+        /**
+         * Default constructor for a function, which activates stealth mode for stories, which hides all views of stories from the current user in the last &quot;story_stealth_mode_past_period&quot; seconds and for the next &quot;story_stealth_mode_future_period&quot; seconds; for Telegram Premium users only.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public ActivateStoryStealthMode() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1009023855;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Adds server-provided application changelog as messages to the chat 777000 (Telegram) or as a stories; for official applications only. Returns a 404 error if nothing changed.
      *
      * <p> Returns {@link Ok Ok} </p>
@@ -55729,6 +56984,35 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -371319616;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Checks whether the current user can send a story.
+     *
+     * <p> Returns {@link CanSendStoryResult CanSendStoryResult} </p>
+     */
+    public static class CanSendStory extends Function<CanSendStoryResult> {
+
+        /**
+         * Default constructor for a function, which checks whether the current user can send a story.
+         *
+         * <p> Returns {@link CanSendStoryResult CanSendStoryResult} </p>
+         */
+        public CanSendStory() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -303744410;
 
         /**
          * @return this.CONSTRUCTOR
@@ -60736,6 +62020,10 @@ public class TdApi {
          */
         public InputStoryContent content;
         /**
+         * New clickable rectangle areas to be shown on the story media; pass null to keep the current areas.
+         */
+        public InputStoryAreas areas;
+        /**
          * New story caption; pass null to keep the current caption.
          */
         public FormattedText caption;
@@ -60755,18 +62043,20 @@ public class TdApi {
          *
          * @param storyId Identifier of the story to edit.
          * @param content New content of the story; pass null to keep the current content.
+         * @param areas New clickable rectangle areas to be shown on the story media; pass null to keep the current areas.
          * @param caption New story caption; pass null to keep the current caption.
          */
-        public EditStory(int storyId, InputStoryContent content, FormattedText caption) {
+        public EditStory(int storyId, InputStoryContent content, InputStoryAreas areas, FormattedText caption) {
             this.storyId = storyId;
             this.content = content;
+            this.areas = areas;
             this.caption = caption;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -897065130;
+        public static final int CONSTRUCTOR = -1439940986;
 
         /**
          * @return this.CONSTRUCTOR
@@ -61865,6 +63155,10 @@ public class TdApi {
      */
     public static class GetBlockedMessageSenders extends Function<MessageSenders> {
         /**
+         * Block list from which to return users.
+         */
+        public BlockList blockList;
+        /**
          * Number of users and chats to skip in the result; must be non-negative.
          */
         public int offset;
@@ -61886,10 +63180,12 @@ public class TdApi {
          *
          * <p> Returns {@link MessageSenders MessageSenders} </p>
          *
+         * @param blockList Block list from which to return users.
          * @param offset Number of users and chats to skip in the result; must be non-negative.
          * @param limit The maximum number of users and chats to return; up to 100.
          */
-        public GetBlockedMessageSenders(int offset, int limit) {
+        public GetBlockedMessageSenders(BlockList blockList, int offset, int limit) {
+            this.blockList = blockList;
             this.offset = offset;
             this.limit = limit;
         }
@@ -61897,7 +63193,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1947079776;
+        public static final int CONSTRUCTOR = -1931137258;
 
         /**
          * @return this.CONSTRUCTOR
@@ -65431,7 +66727,7 @@ public class TdApi {
          */
         public String query;
         /**
-         * Offset of the first entry to return.
+         * Offset of the first entry to return; use empty string to get the first chunk of results.
          */
         public String offset;
 
@@ -65452,7 +66748,7 @@ public class TdApi {
          * @param chatId Identifier of the chat where the query was sent.
          * @param userLocation Location of the user; pass null if unknown or the bot doesn't need user's location.
          * @param query Text of the query.
-         * @param offset Offset of the first entry to return.
+         * @param offset Offset of the first entry to return; use empty string to get the first chunk of results.
          */
         public GetInlineQueryResults(long botUserId, long chatId, Location userLocation, String query, String offset) {
             this.botUserId = botUserId;
@@ -68968,6 +70264,50 @@ public class TdApi {
     }
 
     /**
+     * Returns reactions, which can be chosen for a story.
+     *
+     * <p> Returns {@link AvailableReactions AvailableReactions} </p>
+     */
+    public static class GetStoryAvailableReactions extends Function<AvailableReactions> {
+        /**
+         * Number of reaction per row, 5-25.
+         */
+        public int rowSize;
+
+        /**
+         * Default constructor for a function, which returns reactions, which can be chosen for a story.
+         *
+         * <p> Returns {@link AvailableReactions AvailableReactions} </p>
+         */
+        public GetStoryAvailableReactions() {
+        }
+
+        /**
+         * Creates a function, which returns reactions, which can be chosen for a story.
+         *
+         * <p> Returns {@link AvailableReactions AvailableReactions} </p>
+         *
+         * @param rowSize Number of reaction per row, 5-25.
+         */
+        public GetStoryAvailableReactions(int rowSize) {
+            this.rowSize = rowSize;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 595938619;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Returns list of chats with non-default notification settings for stories.
      *
      * <p> Returns {@link Chats Chats} </p>
@@ -68997,51 +70337,69 @@ public class TdApi {
     }
 
     /**
-     * Returns viewers of a recent outgoing story. The method can be called if story.canGetViewers == true. The views are returned in a reverse chronological order (i.e., in order of decreasing viewDate) For optimal performance, the number of returned stories is chosen by TDLib.
+     * Returns viewers of a story. The method can be called if story.canGetViewers == true.
      *
-     * <p> Returns {@link MessageViewers MessageViewers} </p>
+     * <p> Returns {@link StoryViewers StoryViewers} </p>
      */
-    public static class GetStoryViewers extends Function<MessageViewers> {
+    public static class GetStoryViewers extends Function<StoryViewers> {
         /**
          * Story identifier.
          */
         public int storyId;
         /**
-         * A viewer from which to return next viewers; pass null to get results from the beginning.
+         * Query to search for in names and usernames of the viewers; may be empty to get all relevant viewers.
          */
-        public MessageViewer offsetViewer;
+        public String query;
         /**
-         * The maximum number of story viewers to return For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit.
+         * Pass true to get only contacts; pass false to get all relevant viewers.
+         */
+        public boolean onlyContacts;
+        /**
+         * Pass true to get viewers with reaction first; pass false to get viewers sorted just by viewDate.
+         */
+        public boolean preferWithReaction;
+        /**
+         * Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results.
+         */
+        public String offset;
+        /**
+         * The maximum number of story viewers to return.
          */
         public int limit;
 
         /**
-         * Default constructor for a function, which returns viewers of a recent outgoing story. The method can be called if story.canGetViewers == true. The views are returned in a reverse chronological order (i.e., in order of decreasing viewDate) For optimal performance, the number of returned stories is chosen by TDLib.
+         * Default constructor for a function, which returns viewers of a story. The method can be called if story.canGetViewers == true.
          *
-         * <p> Returns {@link MessageViewers MessageViewers} </p>
+         * <p> Returns {@link StoryViewers StoryViewers} </p>
          */
         public GetStoryViewers() {
         }
 
         /**
-         * Creates a function, which returns viewers of a recent outgoing story. The method can be called if story.canGetViewers == true. The views are returned in a reverse chronological order (i.e., in order of decreasing viewDate) For optimal performance, the number of returned stories is chosen by TDLib.
+         * Creates a function, which returns viewers of a story. The method can be called if story.canGetViewers == true.
          *
-         * <p> Returns {@link MessageViewers MessageViewers} </p>
+         * <p> Returns {@link StoryViewers StoryViewers} </p>
          *
          * @param storyId Story identifier.
-         * @param offsetViewer A viewer from which to return next viewers; pass null to get results from the beginning.
-         * @param limit The maximum number of story viewers to return For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit.
+         * @param query Query to search for in names and usernames of the viewers; may be empty to get all relevant viewers.
+         * @param onlyContacts Pass true to get only contacts; pass false to get all relevant viewers.
+         * @param preferWithReaction Pass true to get viewers with reaction first; pass false to get viewers sorted just by viewDate.
+         * @param offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results.
+         * @param limit The maximum number of story viewers to return.
          */
-        public GetStoryViewers(int storyId, MessageViewer offsetViewer, int limit) {
+        public GetStoryViewers(int storyId, String query, boolean onlyContacts, boolean preferWithReaction, String offset, int limit) {
             this.storyId = storyId;
-            this.offsetViewer = offsetViewer;
+            this.query = query;
+            this.onlyContacts = onlyContacts;
+            this.preferWithReaction = preferWithReaction;
+            this.offset = offset;
             this.limit = limit;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -1424531845;
+        public static final int CONSTRUCTOR = 1088392634;
 
         /**
          * @return this.CONSTRUCTOR
@@ -76182,7 +77540,7 @@ public class TdApi {
          */
         public long queryId;
         /**
-         * Identifier of the inline result.
+         * Identifier of the inline query result.
          */
         public String resultId;
         /**
@@ -76208,7 +77566,7 @@ public class TdApi {
          * @param replyTo Identifier of the replied message or story; pass null if none.
          * @param options Options to be used to send the message; pass null to use default options.
          * @param queryId Identifier of the inline query.
-         * @param resultId Identifier of the inline result.
+         * @param resultId Identifier of the inline query result.
          * @param hideViaBot Pass true to hide the bot, via which the message is sent. Can be used only for bots getOption(&quot;animation_search_bot_username&quot;), getOption(&quot;photo_search_bot_username&quot;), and getOption(&quot;venue_search_bot_username&quot;).
          */
         public SendInlineQueryResultMessage(long chatId, long messageThreadId, MessageReplyTo replyTo, MessageSendOptions options, long queryId, String resultId, boolean hideViaBot) {
@@ -76614,7 +77972,7 @@ public class TdApi {
     }
 
     /**
-     * Sends a new story. Returns a temporary story with identifier 0.
+     * Sends a new story. Returns a temporary story.
      *
      * <p> Returns {@link Story Story} </p>
      */
@@ -76624,6 +77982,10 @@ public class TdApi {
          */
         public InputStoryContent content;
         /**
+         * Clickable rectangle areas to be shown on the story media; pass null if none.
+         */
+        public InputStoryAreas areas;
+        /**
          * Story caption; pass null to use an empty caption; 0-getOption(&quot;story_caption_length_max&quot;) characters.
          */
         public FormattedText caption;
@@ -76632,7 +77994,7 @@ public class TdApi {
          */
         public StoryPrivacySettings privacySettings;
         /**
-         * Period after which the story is moved to archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, 2 * 86400, 3 * 86400, or 7 * 86400 for Telegram Premium users, and 86400 otherwise.
+         * Period after which the story is moved to archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or 2 * 86400 for Telegram Premium users, and 86400 otherwise.
          */
         public int activePeriod;
         /**
@@ -76645,7 +78007,7 @@ public class TdApi {
         public boolean protectContent;
 
         /**
-         * Default constructor for a function, which sends a new story. Returns a temporary story with identifier 0.
+         * Default constructor for a function, which sends a new story. Returns a temporary story.
          *
          * <p> Returns {@link Story Story} </p>
          */
@@ -76653,19 +78015,21 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which sends a new story. Returns a temporary story with identifier 0.
+         * Creates a function, which sends a new story. Returns a temporary story.
          *
          * <p> Returns {@link Story Story} </p>
          *
          * @param content Content of the story.
+         * @param areas Clickable rectangle areas to be shown on the story media; pass null if none.
          * @param caption Story caption; pass null to use an empty caption; 0-getOption(&quot;story_caption_length_max&quot;) characters.
          * @param privacySettings The privacy settings for the story.
-         * @param activePeriod Period after which the story is moved to archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, 2 * 86400, 3 * 86400, or 7 * 86400 for Telegram Premium users, and 86400 otherwise.
+         * @param activePeriod Period after which the story is moved to archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or 2 * 86400 for Telegram Premium users, and 86400 otherwise.
          * @param isPinned Pass true to keep the story accessible after expiration.
          * @param protectContent Pass true if the content of the story must be protected from forwarding and screenshotting.
          */
-        public SendStory(InputStoryContent content, FormattedText caption, StoryPrivacySettings privacySettings, int activePeriod, boolean isPinned, boolean protectContent) {
+        public SendStory(InputStoryContent content, InputStoryAreas areas, FormattedText caption, StoryPrivacySettings privacySettings, int activePeriod, boolean isPinned, boolean protectContent) {
             this.content = content;
+            this.areas = areas;
             this.caption = caption;
             this.privacySettings = privacySettings;
             this.activePeriod = activePeriod;
@@ -76676,7 +78040,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1304349546;
+        public static final int CONSTRUCTOR = 1085929528;
 
         /**
          * @return this.CONSTRUCTOR
@@ -78612,7 +79976,7 @@ public class TdApi {
      */
     public static class SetDefaultChannelAdministratorRights extends Function<Ok> {
         /**
-         * Default administrator rights for adding the bot to channels; may be null.
+         * Default administrator rights for adding the bot to channels; pass null to remove default rights.
          */
         public ChatAdministratorRights defaultChannelAdministratorRights;
 
@@ -78629,7 +79993,7 @@ public class TdApi {
          *
          * <p> Returns {@link Ok Ok} </p>
          *
-         * @param defaultChannelAdministratorRights Default administrator rights for adding the bot to channels; may be null.
+         * @param defaultChannelAdministratorRights Default administrator rights for adding the bot to channels; pass null to remove default rights.
          */
         public SetDefaultChannelAdministratorRights(ChatAdministratorRights defaultChannelAdministratorRights) {
             this.defaultChannelAdministratorRights = defaultChannelAdministratorRights;
@@ -78656,7 +80020,7 @@ public class TdApi {
      */
     public static class SetDefaultGroupAdministratorRights extends Function<Ok> {
         /**
-         * Default administrator rights for adding the bot to basic group and supergroup chats; may be null.
+         * Default administrator rights for adding the bot to basic group and supergroup chats; pass null to remove default rights.
          */
         public ChatAdministratorRights defaultGroupAdministratorRights;
 
@@ -78673,7 +80037,7 @@ public class TdApi {
          *
          * <p> Returns {@link Ok Ok} </p>
          *
-         * @param defaultGroupAdministratorRights Default administrator rights for adding the bot to basic group and supergroup chats; may be null.
+         * @param defaultGroupAdministratorRights Default administrator rights for adding the bot to basic group and supergroup chats; pass null to remove default rights.
          */
         public SetDefaultGroupAdministratorRights(ChatAdministratorRights defaultGroupAdministratorRights) {
             this.defaultGroupAdministratorRights = defaultGroupAdministratorRights;
@@ -79551,6 +80915,56 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1269841599;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Changes the block list of a message sender. Currently, only users and supergroup chats can be blocked.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetMessageSenderBlockList extends Function<Ok> {
+        /**
+         * Identifier of a message sender to block/unblock.
+         */
+        public MessageSender senderId;
+        /**
+         * New block list for the message sender; pass null to unblock the message sender.
+         */
+        public BlockList blockList;
+
+        /**
+         * Default constructor for a function, which changes the block list of a message sender. Currently, only users and supergroup chats can be blocked.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetMessageSenderBlockList() {
+        }
+
+        /**
+         * Creates a function, which changes the block list of a message sender. Currently, only users and supergroup chats can be blocked.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param senderId Identifier of a message sender to block/unblock.
+         * @param blockList New block list for the message sender; pass null to unblock the message sender.
+         */
+        public SetMessageSenderBlockList(MessageSender senderId, BlockList blockList) {
+            this.senderId = senderId;
+            this.blockList = blockList;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1987355503;
 
         /**
          * @return this.CONSTRUCTOR
@@ -80525,6 +81939,68 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -655801550;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Changes chosen reaction on a story.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetStoryReaction extends Function<Ok> {
+        /**
+         * The identifier of the sender of the story.
+         */
+        public long storySenderChatId;
+        /**
+         * The identifier of the story.
+         */
+        public int storyId;
+        /**
+         * Type of the reaction to set; pass null to remove the reaction. `reactionTypeCustomEmoji` reactions can be used only by Telegram Premium users.
+         */
+        public ReactionType reactionType;
+        /**
+         * Pass true if the reaction needs to be added to recent reactions.
+         */
+        public boolean updateRecentReactions;
+
+        /**
+         * Default constructor for a function, which changes chosen reaction on a story.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetStoryReaction() {
+        }
+
+        /**
+         * Creates a function, which changes chosen reaction on a story.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param storySenderChatId The identifier of the sender of the story.
+         * @param storyId The identifier of the story.
+         * @param reactionType Type of the reaction to set; pass null to remove the reaction. `reactionTypeCustomEmoji` reactions can be used only by Telegram Premium users.
+         * @param updateRecentReactions Pass true if the reaction needs to be added to recent reactions.
+         */
+        public SetStoryReaction(long storySenderChatId, int storyId, ReactionType reactionType, boolean updateRecentReactions) {
+            this.storySenderChatId = storySenderChatId;
+            this.storyId = storyId;
+            this.reactionType = reactionType;
+            this.updateRecentReactions = updateRecentReactions;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1400156249;
 
         /**
          * @return this.CONSTRUCTOR
@@ -83090,56 +84566,6 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1602530464;
-
-        /**
-         * @return this.CONSTRUCTOR
-         */
-        @Override
-        public int getConstructor() {
-            return CONSTRUCTOR;
-        }
-    }
-
-    /**
-     * Changes the block state of a message sender. Currently, only users and supergroup chats can be blocked.
-     *
-     * <p> Returns {@link Ok Ok} </p>
-     */
-    public static class ToggleMessageSenderIsBlocked extends Function<Ok> {
-        /**
-         * Identifier of a message sender to block/unblock.
-         */
-        public MessageSender senderId;
-        /**
-         * New value of isBlocked.
-         */
-        public boolean isBlocked;
-
-        /**
-         * Default constructor for a function, which changes the block state of a message sender. Currently, only users and supergroup chats can be blocked.
-         *
-         * <p> Returns {@link Ok Ok} </p>
-         */
-        public ToggleMessageSenderIsBlocked() {
-        }
-
-        /**
-         * Creates a function, which changes the block state of a message sender. Currently, only users and supergroup chats can be blocked.
-         *
-         * <p> Returns {@link Ok Ok} </p>
-         *
-         * @param senderId Identifier of a message sender to block/unblock.
-         * @param isBlocked New value of isBlocked.
-         */
-        public ToggleMessageSenderIsBlocked(MessageSender senderId, boolean isBlocked) {
-            this.senderId = senderId;
-            this.isBlocked = isBlocked;
-        }
-
-        /**
-         * Identifier uniquely determining type of the object.
-         */
-        public static final int CONSTRUCTOR = -2008084779;
 
         /**
          * @return this.CONSTRUCTOR

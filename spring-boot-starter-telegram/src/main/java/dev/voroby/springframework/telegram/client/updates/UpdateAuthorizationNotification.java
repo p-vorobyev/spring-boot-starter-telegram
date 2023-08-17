@@ -164,7 +164,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         String systemLanguageCode = properties.systemLanguageCode();
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
-        String applicationVersion = "1.8.15";
+        String applicationVersion = "1.8.16";
         boolean enableStorageOptimizer = properties.enableStorageOptimizer();
         boolean ignoreFileNames = properties.ignoreFileNames();
         return new TdApi.SetTdlibParameters(
