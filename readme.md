@@ -22,9 +22,41 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 
 <a name="installation"></a>
 ## Installation
-1) Clone repository:
+1) Download by one of two options:
+ - 1.1 Clone source code:
 ```shell
 git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
+```
+ - 1.2 Download artifact from GitHub Packages:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify `github` server with your credentials in `settings.xml` for Apache Maven. See GitHub [docs](https://docs.github.com/ru/enterprise-cloud@latest/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) how to generate personal token.
+
+```xml
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <servers>
+        <server>
+            <id>github</id>
+            <username>GITHUB_LOGIN</username>
+            <password>GITHUB_TOKEN</password>
+        </server>
+    </servers>
+
+</settings>
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add repository to `pom.xml` of your project.
+
+```xml
+<repositories>
+    <repository>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/p-vorobyev/*</url>
+    </repository>
+</repositories>
 ```
 
 2) Create your Spring Boot module.
@@ -37,13 +69,14 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
     <version>1.3.0</version>
 </dependency>
 ```
-Or just add `spring-boot-starter-telegram-1.3.0.jar` from the latest release to your project's classpath instead of the steps above.
+Or just download artifact by path `Releases -> 1.3.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.3.0.jar` 
+from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
 -Djava.library.path=<path_to_shared_library>
 ```
-You can find compiled libraries for several platforms in `libs` directory.
+You can find compiled libraries for several platforms in `libs` directory of the source code from the latest release.
 If you haven't found a library for your OS and architecture, you can build it yourself
 following this [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
