@@ -37,7 +37,7 @@ public class TelegramClientAutoConfiguration {
             }
             System.loadLibrary("tdjni");
         } catch (UnsatisfiedLinkError e) {
-            log.error(e.getMessage(), e);
+            log.error(e.getMessage());
         }
     }
 
