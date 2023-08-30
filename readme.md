@@ -27,6 +27,9 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 ```shell
 git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 ```
+
+&nbsp;&nbsp;&nbsp;&nbsp;or
+
  - 1.2 Download artifact from GitHub Packages:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify `github` server with your credentials in `settings.xml` for Apache Maven. See GitHub [docs](https://docs.github.com/ru/enterprise-cloud@latest/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) how to generate personal token.
