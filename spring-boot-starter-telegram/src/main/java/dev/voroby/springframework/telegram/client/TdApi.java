@@ -8642,6 +8642,18 @@ public class TdApi {
          * True, if the chat is a public supergroup or channel, i.e. it has a username or it is a location-based supergroup.
          */
         public boolean isPublic;
+        /**
+         * True, if the chat is verified.
+         */
+        public boolean isVerified;
+        /**
+         * True, if many users reported this chat as a scam.
+         */
+        public boolean isScam;
+        /**
+         * True, if many users reported this chat as a fake account.
+         */
+        public boolean isFake;
 
         /**
          * Contains information about a chat invite link.
@@ -8662,8 +8674,11 @@ public class TdApi {
          * @param memberUserIds User identifiers of some chat members that may be known to the current user.
          * @param createsJoinRequest True, if the link only creates join request.
          * @param isPublic True, if the chat is a public supergroup or channel, i.e. it has a username or it is a location-based supergroup.
+         * @param isVerified True, if the chat is verified.
+         * @param isScam True, if many users reported this chat as a scam.
+         * @param isFake True, if many users reported this chat as a fake account.
          */
-        public ChatInviteLinkInfo(long chatId, int accessibleFor, ChatType type, String title, ChatPhotoInfo photo, String description, int memberCount, long[] memberUserIds, boolean createsJoinRequest, boolean isPublic) {
+        public ChatInviteLinkInfo(long chatId, int accessibleFor, ChatType type, String title, ChatPhotoInfo photo, String description, int memberCount, long[] memberUserIds, boolean createsJoinRequest, boolean isPublic, boolean isVerified, boolean isScam, boolean isFake) {
             this.chatId = chatId;
             this.accessibleFor = accessibleFor;
             this.type = type;
@@ -8674,12 +8689,15 @@ public class TdApi {
             this.memberUserIds = memberUserIds;
             this.createsJoinRequest = createsJoinRequest;
             this.isPublic = isPublic;
+            this.isVerified = isVerified;
+            this.isScam = isScam;
+            this.isFake = isFake;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 546234276;
+        public static final int CONSTRUCTOR = -1283267867;
 
         /**
          * @return this.CONSTRUCTOR
@@ -9863,7 +9881,7 @@ public class TdApi {
          */
         public boolean useDefaultMuteStories;
         /**
-         * True, if story notifications are received without sound.
+         * True, if story notifications are disabled for the chat.
          */
         public boolean muteStories;
         /**
@@ -9915,7 +9933,7 @@ public class TdApi {
          * @param useDefaultShowPreview If true, showPreview is ignored and the value for the relevant type of chat or the forum chat is used instead.
          * @param showPreview True, if message content must be displayed in notifications.
          * @param useDefaultMuteStories If true, muteStories is ignored and the value for the relevant type of chat is used instead.
-         * @param muteStories True, if story notifications are received without sound.
+         * @param muteStories True, if story notifications are disabled for the chat.
          * @param useDefaultStorySound If true, the value for the relevant type of chat is used instead of storySoundId.
          * @param storySoundId Identifier of the notification sound to be played for stories; 0 if sound is disabled.
          * @param useDefaultShowStorySender If true, showStorySender is ignored and the value for the relevant type of chat is used instead.
@@ -15167,6 +15185,50 @@ public class TdApi {
     }
 
     /**
+     * Contains 0-based positions of matched objects.
+     */
+    public static class FoundPositions extends Object {
+        /**
+         * Total number of matched objects.
+         */
+        public int totalCount;
+        /**
+         * The positions of the matched objects.
+         */
+        public int[] positions;
+
+        /**
+         * Contains 0-based positions of matched objects.
+         */
+        public FoundPositions() {
+        }
+
+        /**
+         * Contains 0-based positions of matched objects.
+         *
+         * @param totalCount Total number of matched objects.
+         * @param positions The positions of the matched objects.
+         */
+        public FoundPositions(int totalCount, int[] positions) {
+            this.totalCount = totalCount;
+            this.positions = positions;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -80518368;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Contains information about a Web App found by its short name.
      */
     public static class FoundWebApp extends Object {
@@ -17908,7 +17970,7 @@ public class TdApi {
     }
 
     /**
-     * A file defined by its unique ID.
+     * A file defined by its unique identifier.
      */
     public static class InputFileId extends InputFile {
         /**
@@ -17917,13 +17979,13 @@ public class TdApi {
         public int id;
 
         /**
-         * A file defined by its unique ID.
+         * A file defined by its unique identifier.
          */
         public InputFileId() {
         }
 
         /**
-         * A file defined by its unique ID.
+         * A file defined by its unique identifier.
          *
          * @param id Unique file identifier.
          */
@@ -17946,7 +18008,7 @@ public class TdApi {
     }
 
     /**
-     * A file defined by its remote ID. The remote ID is guaranteed to be usable only if the corresponding file is still accessible to the user and known to TDLib. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
+     * A file defined by its remote identifier. The remote identifier is guaranteed to be usable only if the corresponding file is still accessible to the user and known to TDLib. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
      */
     public static class InputFileRemote extends InputFile {
         /**
@@ -17955,13 +18017,13 @@ public class TdApi {
         public String id;
 
         /**
-         * A file defined by its remote ID. The remote ID is guaranteed to be usable only if the corresponding file is still accessible to the user and known to TDLib. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
+         * A file defined by its remote identifier. The remote identifier is guaranteed to be usable only if the corresponding file is still accessible to the user and known to TDLib. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
          */
         public InputFileRemote() {
         }
 
         /**
-         * A file defined by its remote ID. The remote ID is guaranteed to be usable only if the corresponding file is still accessible to the user and known to TDLib. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
+         * A file defined by its remote identifier. The remote identifier is guaranteed to be usable only if the corresponding file is still accessible to the user and known to TDLib. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
          *
          * @param id Remote file identifier.
          */
@@ -21524,7 +21586,7 @@ public class TdApi {
      */
     public static class InputStoryAreas extends Object {
         /**
-         * List of input story areas.
+         * List of 0-10 input story areas.
          */
         public InputStoryArea[] areas;
 
@@ -21537,7 +21599,7 @@ public class TdApi {
         /**
          * Contains a list of story areas to be added.
          *
-         * @param areas List of input story areas.
+         * @param areas List of 0-10 input story areas.
          */
         public InputStoryAreas(InputStoryArea[] areas) {
             this.areas = areas;
@@ -27795,6 +27857,10 @@ public class TdApi {
          * Information about the Web App, which requested the access; may be null if none or the Web App was opened from the attachment menu.
          */
         public WebApp webApp;
+        /**
+         * True, if user allowed the bot to send messages by an explicit call to allowBotToSendMessages.
+         */
+        public boolean byRequest;
 
         /**
          * The user allowed the bot to send messages.
@@ -27806,15 +27872,17 @@ public class TdApi {
          * The user allowed the bot to send messages.
          *
          * @param webApp Information about the Web App, which requested the access; may be null if none or the Web App was opened from the attachment menu.
+         * @param byRequest True, if user allowed the bot to send messages by an explicit call to allowBotToSendMessages.
          */
-        public MessageBotWriteAccessAllowed(WebApp webApp) {
+        public MessageBotWriteAccessAllowed(WebApp webApp, boolean byRequest) {
             this.webApp = webApp;
+            this.byRequest = byRequest;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -1055588088;
+        public static final int CONSTRUCTOR = 841874858;
 
         /**
          * @return this.CONSTRUCTOR
@@ -31210,7 +31278,7 @@ public class TdApi {
      */
     public static class NotificationTypeNewPushMessage extends NotificationType {
         /**
-         * The message identifier. The message will not be available in the chat history, but the ID can be used in viewMessages, or as a message to reply.
+         * The message identifier. The message will not be available in the chat history, but the identifier can be used in viewMessages, or as a message to reply.
          */
         public long messageId;
         /**
@@ -31239,7 +31307,7 @@ public class TdApi {
         /**
          * New message was received through a push notification.
          *
-         * @param messageId The message identifier. The message will not be available in the chat history, but the ID can be used in viewMessages, or as a message to reply.
+         * @param messageId The message identifier. The message will not be available in the chat history, but the identifier can be used in viewMessages, or as a message to reply.
          * @param senderId Identifier of the sender of the message. Corresponding user or chat may be inaccessible.
          * @param senderName Name of the sender.
          * @param isOutgoing True, if the message is outgoing.
@@ -39252,7 +39320,7 @@ public class TdApi {
      */
     public static class RemoteFile extends Object {
         /**
-         * Remote file identifier; may be empty. Can be used by the current user across application restarts or even from other devices. Uniquely identifies a file, but a file can have a lot of different valid identifiers. If the ID starts with &quot;http://&quot; or &quot;https://&quot;, it represents the HTTP URL of the file. TDLib is currently unable to download files if only their URL is known. If downloadFile/addFileToDownloads is called on such a file or if it is sent to a secret chat, TDLib starts a file generation process by sending updateFileGenerationStart to the application with the HTTP URL in the originalPath and &quot;#url#&quot; as the conversion string. Application must generate the file by downloading it to the specified location.
+         * Remote file identifier; may be empty. Can be used by the current user across application restarts or even from other devices. Uniquely identifies a file, but a file can have a lot of different valid identifiers. If the identifier starts with &quot;http://&quot; or &quot;https://&quot;, it represents the HTTP URL of the file. TDLib is currently unable to download files if only their URL is known. If downloadFile/addFileToDownloads is called on such a file or if it is sent to a secret chat, TDLib starts a file generation process by sending updateFileGenerationStart to the application with the HTTP URL in the originalPath and &quot;#url#&quot; as the conversion string. Application must generate the file by downloading it to the specified location.
          */
         public String id;
         /**
@@ -39281,7 +39349,7 @@ public class TdApi {
         /**
          * Represents a remote file.
          *
-         * @param id Remote file identifier; may be empty. Can be used by the current user across application restarts or even from other devices. Uniquely identifies a file, but a file can have a lot of different valid identifiers. If the ID starts with &quot;http://&quot; or &quot;https://&quot;, it represents the HTTP URL of the file. TDLib is currently unable to download files if only their URL is known. If downloadFile/addFileToDownloads is called on such a file or if it is sent to a secret chat, TDLib starts a file generation process by sending updateFileGenerationStart to the application with the HTTP URL in the originalPath and &quot;#url#&quot; as the conversion string. Application must generate the file by downloading it to the specified location.
+         * @param id Remote file identifier; may be empty. Can be used by the current user across application restarts or even from other devices. Uniquely identifies a file, but a file can have a lot of different valid identifiers. If the identifier starts with &quot;http://&quot; or &quot;https://&quot;, it represents the HTTP URL of the file. TDLib is currently unable to download files if only their URL is known. If downloadFile/addFileToDownloads is called on such a file or if it is sent to a secret chat, TDLib starts a file generation process by sending updateFileGenerationStart to the application with the HTTP URL in the originalPath and &quot;#url#&quot; as the conversion string. Application must generate the file by downloading it to the specified location.
          * @param uniqueId Unique file identifier; may be empty if unknown. The unique file identifier which is the same for the same file even for different users and is persistent over time.
          * @param isUploadingActive True, if the file is currently being uploaded (or a remote copy is being generated by some other means).
          * @param isUploadingCompleted True, if a remote copy is fully available.
@@ -40757,11 +40825,11 @@ public class TdApi {
          */
         public boolean showPreview;
         /**
-         * If true, muteStories is ignored and stories are unmuted only for the first 5 chats from topChatCategoryUsers.
+         * If true, muteStories is ignored and story notifications are received only for the first 5 chats from topChatCategoryUsers.
          */
         public boolean useDefaultMuteStories;
         /**
-         * True, if story notifications are received without sound.
+         * True, if story notifications are disabled for the chat.
          */
         public boolean muteStories;
         /**
@@ -40793,8 +40861,8 @@ public class TdApi {
          * @param muteFor Time left before notifications will be unmuted, in seconds.
          * @param soundId Identifier of the notification sound to be played; 0 if sound is disabled.
          * @param showPreview True, if message content must be displayed in notifications.
-         * @param useDefaultMuteStories If true, muteStories is ignored and stories are unmuted only for the first 5 chats from topChatCategoryUsers.
-         * @param muteStories True, if story notifications are received without sound.
+         * @param useDefaultMuteStories If true, muteStories is ignored and story notifications are received only for the first 5 chats from topChatCategoryUsers.
+         * @param muteStories True, if story notifications are disabled for the chat.
          * @param storySoundId Identifier of the notification sound to be played for stories; 0 if sound is disabled.
          * @param showStorySender True, if the sender of stories must be displayed in notifications.
          * @param disablePinnedMessageNotifications True, if notifications for incoming pinned messages will be created as for an ordinary unread message.
@@ -44564,6 +44632,10 @@ public class TdApi {
          */
         public int totalCount;
         /**
+         * Approximate total number of reactions set by found story viewers.
+         */
+        public int totalReactionCount;
+        /**
          * List of story viewers.
          */
         public StoryViewer[] viewers;
@@ -44582,11 +44654,13 @@ public class TdApi {
          * Represents a list of story viewers.
          *
          * @param totalCount Approximate total number of story viewers found.
+         * @param totalReactionCount Approximate total number of reactions set by found story viewers.
          * @param viewers List of story viewers.
          * @param nextOffset The offset for the next request. If empty, there are no more results.
          */
-        public StoryViewers(int totalCount, StoryViewer[] viewers, String nextOffset) {
+        public StoryViewers(int totalCount, int totalReactionCount, StoryViewer[] viewers, String nextOffset) {
             this.totalCount = totalCount;
+            this.totalReactionCount = totalReactionCount;
             this.viewers = viewers;
             this.nextOffset = nextOffset;
         }
@@ -44594,7 +44668,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -216607432;
+        public static final int CONSTRUCTOR = 920230351;
 
         /**
          * @return this.CONSTRUCTOR
@@ -49729,11 +49803,11 @@ public class TdApi {
          */
         public int totalCount;
         /**
-         * List of added group notifications, sorted by notification ID.
+         * List of added group notifications, sorted by notification identifier.
          */
         public Notification[] addedNotifications;
         /**
-         * Identifiers of removed group notifications, sorted by notification ID.
+         * Identifiers of removed group notifications, sorted by notification identifier.
          */
         public int[] removedNotificationIds;
 
@@ -49752,8 +49826,8 @@ public class TdApi {
          * @param notificationSettingsChatId Chat identifier, which notification settings must be applied to the added notifications.
          * @param notificationSoundId Identifier of the notification sound to be played; 0 if sound is disabled.
          * @param totalCount Total number of unread notifications in the group, can be bigger than number of active notifications.
-         * @param addedNotifications List of added group notifications, sorted by notification ID.
-         * @param removedNotificationIds Identifiers of removed group notifications, sorted by notification ID.
+         * @param addedNotifications List of added group notifications, sorted by notification identifier.
+         * @param removedNotificationIds Identifiers of removed group notifications, sorted by notification identifier.
          */
         public UpdateNotificationGroup(int notificationGroupId, NotificationGroupType type, long chatId, long notificationSettingsChatId, long notificationSoundId, int totalCount, Notification[] addedNotifications, int[] removedNotificationIds) {
             this.notificationGroupId = notificationGroupId;
@@ -56367,6 +56441,50 @@ public class TdApi {
     }
 
     /**
+     * Allows the specified bot to send messages to the user.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class AllowBotToSendMessages extends Function<Ok> {
+        /**
+         * Identifier of the target bot.
+         */
+        public long botUserId;
+
+        /**
+         * Default constructor for a function, which allows the specified bot to send messages to the user.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public AllowBotToSendMessages() {
+        }
+
+        /**
+         * Creates a function, which allows the specified bot to send messages to the user.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param botUserId Identifier of the target bot.
+         */
+        public AllowBotToSendMessages(long botUserId) {
+            this.botUserId = botUserId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1776928142;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Sets the result of a callback query; for bots only.
      *
      * <p> Returns {@link Ok Ok} </p>
@@ -56940,6 +57058,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1214384757;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Checks whether the specified bot can send messages to the user. Returns a 404 error if can't and the access can be granted by call to allowBotToSendMessages.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class CanBotSendMessages extends Function<Ok> {
+        /**
+         * Identifier of the target bot.
+         */
+        public long botUserId;
+
+        /**
+         * Default constructor for a function, which checks whether the specified bot can send messages to the user. Returns a 404 error if can't and the access can be granted by call to allowBotToSendMessages.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public CanBotSendMessages() {
+        }
+
+        /**
+         * Creates a function, which checks whether the specified bot can send messages to the user. Returns a 404 error if can't and the access can be granted by call to allowBotToSendMessages.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param botUserId Identifier of the target bot.
+         */
+        public CanBotSendMessages(long botUserId) {
+            this.botUserId = botUserId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 544052364;
 
         /**
          * @return this.CONSTRUCTOR
@@ -62020,7 +62182,7 @@ public class TdApi {
          */
         public InputStoryContent content;
         /**
-         * New clickable rectangle areas to be shown on the story media; pass null to keep the current areas.
+         * New clickable rectangle areas to be shown on the story media; pass null to keep the current areas. Areas can't be edited if story content isn't changed.
          */
         public InputStoryAreas areas;
         /**
@@ -62043,7 +62205,7 @@ public class TdApi {
          *
          * @param storyId Identifier of the story to edit.
          * @param content New content of the story; pass null to keep the current content.
-         * @param areas New clickable rectangle areas to be shown on the story media; pass null to keep the current areas.
+         * @param areas New clickable rectangle areas to be shown on the story media; pass null to keep the current areas. Areas can't be edited if story content isn't changed.
          * @param caption New story caption; pass null to keep the current caption.
          */
         public EditStory(int storyId, InputStoryContent content, InputStoryAreas areas, FormattedText caption) {
@@ -62500,6 +62662,68 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -2038945045;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Returns unique emoji that correspond to stickers to be found by the getStickers(stickerType, query, 1000000, chatId).
+     *
+     * <p> Returns {@link Emojis Emojis} </p>
+     */
+    public static class GetAllStickerEmojis extends Function<Emojis> {
+        /**
+         * Type of the stickers to search for.
+         */
+        public StickerType stickerType;
+        /**
+         * Search query.
+         */
+        public String query;
+        /**
+         * Chat identifier for which to find stickers.
+         */
+        public long chatId;
+        /**
+         * Pass true if only main emoji for each found sticker must be included in the result.
+         */
+        public boolean returnOnlyMainEmoji;
+
+        /**
+         * Default constructor for a function, which returns unique emoji that correspond to stickers to be found by the getStickers(stickerType, query, 1000000, chatId).
+         *
+         * <p> Returns {@link Emojis Emojis} </p>
+         */
+        public GetAllStickerEmojis() {
+        }
+
+        /**
+         * Creates a function, which returns unique emoji that correspond to stickers to be found by the getStickers(stickerType, query, 1000000, chatId).
+         *
+         * <p> Returns {@link Emojis Emojis} </p>
+         *
+         * @param stickerType Type of the stickers to search for.
+         * @param query Search query.
+         * @param chatId Chat identifier for which to find stickers.
+         * @param returnOnlyMainEmoji Pass true if only main emoji for each found sticker must be included in the result.
+         */
+        public GetAllStickerEmojis(StickerType stickerType, String query, long chatId, boolean returnOnlyMainEmoji) {
+            this.stickerType = stickerType;
+            this.query = query;
+            this.chatId = chatId;
+            this.returnOnlyMainEmoji = returnOnlyMainEmoji;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 296562224;
 
         /**
          * @return this.CONSTRUCTOR
@@ -69610,7 +69834,7 @@ public class TdApi {
     }
 
     /**
-     * Returns information about a file by its remote ID; this is an offline request. Can be used to register a URL as a file for further uploading, or sending as a message. Even the request succeeds, the file can be used only if it is still accessible to the user. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
+     * Returns information about a file by its remote identifier; this is an offline request. Can be used to register a URL as a file for further uploading, or sending as a message. Even the request succeeds, the file can be used only if it is still accessible to the user. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
      *
      * <p> Returns {@link File File} </p>
      */
@@ -69625,7 +69849,7 @@ public class TdApi {
         public FileType fileType;
 
         /**
-         * Default constructor for a function, which returns information about a file by its remote ID; this is an offline request. Can be used to register a URL as a file for further uploading, or sending as a message. Even the request succeeds, the file can be used only if it is still accessible to the user. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
+         * Default constructor for a function, which returns information about a file by its remote identifier; this is an offline request. Can be used to register a URL as a file for further uploading, or sending as a message. Even the request succeeds, the file can be used only if it is still accessible to the user. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
          *
          * <p> Returns {@link File File} </p>
          */
@@ -69633,7 +69857,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns information about a file by its remote ID; this is an offline request. Can be used to register a URL as a file for further uploading, or sending as a message. Even the request succeeds, the file can be used only if it is still accessible to the user. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
+         * Creates a function, which returns information about a file by its remote identifier; this is an offline request. Can be used to register a URL as a file for further uploading, or sending as a message. Even the request succeeds, the file can be used only if it is still accessible to the user. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application.
          *
          * <p> Returns {@link File File} </p>
          *
@@ -70888,7 +71112,7 @@ public class TdApi {
     }
 
     /**
-     * Returns a list of frequently used chats. Supported only if the chat info database is enabled.
+     * Returns a list of frequently used chats.
      *
      * <p> Returns {@link Chats Chats} </p>
      */
@@ -70903,7 +71127,7 @@ public class TdApi {
         public int limit;
 
         /**
-         * Default constructor for a function, which returns a list of frequently used chats. Supported only if the chat info database is enabled.
+         * Default constructor for a function, which returns a list of frequently used chats.
          *
          * <p> Returns {@link Chats Chats} </p>
          */
@@ -70911,7 +71135,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns a list of frequently used chats. Supported only if the chat info database is enabled.
+         * Creates a function, which returns a list of frequently used chats.
          *
          * <p> Returns {@link Chats Chats} </p>
          *
@@ -76914,6 +77138,68 @@ public class TdApi {
     }
 
     /**
+     * Searches specified query by word prefixes in the provided strings. Returns 0-based positions of strings that matched. Can be called synchronously.
+     *
+     * <p> Returns {@link FoundPositions FoundPositions} </p>
+     */
+    public static class SearchStringsByPrefix extends Function<FoundPositions> {
+        /**
+         * The strings to search in for the query.
+         */
+        public String[] strings;
+        /**
+         * Query to search for.
+         */
+        public String query;
+        /**
+         * The maximum number of objects to return.
+         */
+        public int limit;
+        /**
+         * Pass true to receive no results for an empty query.
+         */
+        public boolean returnNoneForEmptyQuery;
+
+        /**
+         * Default constructor for a function, which searches specified query by word prefixes in the provided strings. Returns 0-based positions of strings that matched. Can be called synchronously.
+         *
+         * <p> Returns {@link FoundPositions FoundPositions} </p>
+         */
+        public SearchStringsByPrefix() {
+        }
+
+        /**
+         * Creates a function, which searches specified query by word prefixes in the provided strings. Returns 0-based positions of strings that matched. Can be called synchronously.
+         *
+         * <p> Returns {@link FoundPositions FoundPositions} </p>
+         *
+         * @param strings The strings to search in for the query.
+         * @param query Query to search for.
+         * @param limit The maximum number of objects to return.
+         * @param returnNoneForEmptyQuery Pass true to receive no results for an empty query.
+         */
+        public SearchStringsByPrefix(String[] strings, String query, int limit, boolean returnNoneForEmptyQuery) {
+            this.strings = strings;
+            this.query = query;
+            this.limit = limit;
+            this.returnNoneForEmptyQuery = returnNoneForEmptyQuery;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -2023251463;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Searches a user by their phone number. Returns a 404 error if the user can't be found.
      *
      * <p> Returns {@link User User} </p>
@@ -78041,6 +78327,62 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 1085929528;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Sends a custom request from a Web App.
+     *
+     * <p> Returns {@link CustomRequestResult CustomRequestResult} </p>
+     */
+    public static class SendWebAppCustomRequest extends Function<CustomRequestResult> {
+        /**
+         * Identifier of the bot.
+         */
+        public long botUserId;
+        /**
+         * The method name.
+         */
+        public String method;
+        /**
+         * JSON-serialized method parameters.
+         */
+        public String parameters;
+
+        /**
+         * Default constructor for a function, which sends a custom request from a Web App.
+         *
+         * <p> Returns {@link CustomRequestResult CustomRequestResult} </p>
+         */
+        public SendWebAppCustomRequest() {
+        }
+
+        /**
+         * Creates a function, which sends a custom request from a Web App.
+         *
+         * <p> Returns {@link CustomRequestResult CustomRequestResult} </p>
+         *
+         * @param botUserId Identifier of the bot.
+         * @param method The method name.
+         * @param parameters JSON-serialized method parameters.
+         */
+        public SendWebAppCustomRequest(long botUserId, String method, String parameters) {
+            this.botUserId = botUserId;
+            this.method = method;
+            this.parameters = parameters;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 922705352;
 
         /**
          * @return this.CONSTRUCTOR
@@ -79832,7 +80174,7 @@ public class TdApi {
      */
     public static class SetCustomLanguagePack extends Function<Ok> {
         /**
-         * Information about the language pack. Language pack ID must start with 'X', consist only of English letters, digits and hyphens, and must not exceed 64 characters. Can be called before authorization.
+         * Information about the language pack. Language pack identifier must start with 'X', consist only of English letters, digits and hyphens, and must not exceed 64 characters. Can be called before authorization.
          */
         public LanguagePackInfo info;
         /**
@@ -79853,7 +80195,7 @@ public class TdApi {
          *
          * <p> Returns {@link Ok Ok} </p>
          *
-         * @param info Information about the language pack. Language pack ID must start with 'X', consist only of English letters, digits and hyphens, and must not exceed 64 characters. Can be called before authorization.
+         * @param info Information about the language pack. Language pack identifier must start with 'X', consist only of English letters, digits and hyphens, and must not exceed 64 characters. Can be called before authorization.
          * @param strings Strings of the new language pack.
          */
         public SetCustomLanguagePack(LanguagePackInfo info, LanguagePackString[] strings) {

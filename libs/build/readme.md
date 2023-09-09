@@ -1,7 +1,7 @@
 ## Build native library
 
 * To build TDLib you must follow official [instructions](https://tdlib.github.io/td/build.html?language=Java).
-* Commit hash for v1.8.16 in TDLib repository - `cde095db`.
+* Commit hash for v1.8.17 in TDLib repository - `edc52845`.
 * After step `cd example/java` 
 replace original `CMakeLists.txt` to [CMakeLists.txt](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/CMakeLists.txt) 
 and copy directory [dev](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/dev): 
