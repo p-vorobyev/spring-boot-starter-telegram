@@ -8,6 +8,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 public abstract class AbstractTest {
 
     @MockBean
-    TelegramClient telegramClient;
+    public TelegramClient telegramClient;
 
 }
