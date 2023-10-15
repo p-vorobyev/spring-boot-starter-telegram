@@ -6,7 +6,8 @@ import dev.voroby.springframework.telegram.exception.TelegramClientConfiguration
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
 import jakarta.annotation.PreDestroy;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -26,8 +27,9 @@ import static org.springframework.util.StringUtils.hasText;
  *
  * @author Pavel Vorobyev
  */
-@Slf4j
 public class TelegramClient {
+
+    private final Logger log = LoggerFactory.getLogger(TelegramClient.class);
 
     private final Client client;
 
@@ -187,6 +189,12 @@ public class TelegramClient {
         while (ref.get() == null &&
                 sent.plus(60, ChronoUnit.SECONDS).isAfter(Instant.now())) {
             /*wait for result*/
+            try {
+                TimeUnit.MILLISECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e.getMessage());
+            }
         }
 
         if (ref.get() == null) {

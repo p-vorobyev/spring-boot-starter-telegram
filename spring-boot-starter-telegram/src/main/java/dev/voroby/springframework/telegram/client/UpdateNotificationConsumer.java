@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * @param <T> listener type
  * @author Pavel Vorobyev
  */
-class UpdateNotificationConsumer<T extends TdApi.Update> implements Consumer<TdApi.Object> {
+final class UpdateNotificationConsumer<T extends TdApi.Update> implements Consumer<TdApi.Object> {
 
     private final UpdateNotificationListener<T> notificationListener;
 

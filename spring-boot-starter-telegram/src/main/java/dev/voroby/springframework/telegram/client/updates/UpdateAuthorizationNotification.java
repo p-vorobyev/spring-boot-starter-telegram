@@ -5,8 +5,8 @@ import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
@@ -16,8 +16,9 @@ import static org.springframework.util.StringUtils.hasText;
 /**
  * Handler of {@link TdApi.AuthorizationState} updates.
  */
-@Slf4j
 public class UpdateAuthorizationNotification implements UpdateNotificationListener<TdApi.UpdateAuthorizationState> {
+
+    private final Logger log = LoggerFactory.getLogger(UpdateAuthorizationNotification.class);
 
     private TdApi.AuthorizationState authorizationState;
 
@@ -39,7 +40,6 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
      * {@inheritDoc}
      */
     @Override
-    @SneakyThrows(InterruptedException.class)
     public void handleNotification(TdApi.UpdateAuthorizationState notification) {
         if (notification != null) {
             TdApi.AuthorizationState newAuthorizationState = notification.authorizationState;
@@ -69,7 +69,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
                         clientAuthorizationState.setWaitAuthenticationCode();
                         while (!hasText(clientAuthorizationState.getCode())) {
                             log.info("Please enter authentication code");
-                            TimeUnit.SECONDS.sleep(3);
+                            awaitInput();
                         }
                     }
                     telegramClient.sendWithCallback(new TdApi.CheckAuthenticationCode(clientAuthorizationState.getCode()), new AuthorizationRequestHandler());
@@ -83,7 +83,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
                         clientAuthorizationState.setWaitAuthenticationPassword();
                         while (!hasText(clientAuthorizationState.getPassword())) {
                             log.info("Please enter password");
-                            TimeUnit.SECONDS.sleep(3);
+                            awaitInput();
                         }
                     }
                     telegramClient.sendWithCallback(new TdApi.CheckAuthenticationPassword(clientAuthorizationState.getPassword()), new AuthorizationRequestHandler());
@@ -97,7 +97,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
                         clientAuthorizationState.setWaitEmailAddress();
                         while (!hasText(clientAuthorizationState.getEmailAddress())) {
                             log.info("Please enter email");
-                            TimeUnit.SECONDS.sleep(3);
+                            awaitInput();
                         }
                     }
                     telegramClient.sendWithCallback(new TdApi.SetAuthenticationEmailAddress(clientAuthorizationState.getEmailAddress()), new AuthorizationRequestHandler());
@@ -111,7 +111,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
                         clientAuthorizationState.setWaitAuthenticationCode();
                         while (!hasText(clientAuthorizationState.getCode())) {
                             log.info("Please enter authentication code");
-                            TimeUnit.SECONDS.sleep(3);
+                            awaitInput();
                         }
                     }
                     var emailAuth = new TdApi.EmailAddressAuthenticationCode(clientAuthorizationState.getCode());
@@ -146,6 +146,15 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         return TdApi.UpdateAuthorizationState.class;
     }
 
+    private void awaitInput() {
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     /**
      * Configure TDLib parameters.
      * @return {@link TdApi.SetTdlibParameters}
@@ -164,7 +173,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         String systemLanguageCode = properties.systemLanguageCode();
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
-        String applicationVersion = "1.8.17";
+        String applicationVersion = "1.8.20";
         boolean enableStorageOptimizer = properties.enableStorageOptimizer();
         boolean ignoreFileNames = properties.ignoreFileNames();
         return new TdApi.SetTdlibParameters(
