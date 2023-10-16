@@ -8,7 +8,8 @@ import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationSta
 import dev.voroby.springframework.telegram.client.updates.UpdateAuthorizationNotification;
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,10 +22,11 @@ import java.util.Collection;
  *
  * @author Pavel Vorobyev
  */
-@Slf4j
 @Configuration
 @ConfigurationPropertiesScan(basePackages = "dev.voroby.springframework.telegram.properties")
 public class TelegramClientAutoConfiguration {
+
+    private final static Logger log = LoggerFactory.getLogger(TelegramClientAutoConfiguration.class);
 
     //Loading TDLib library
     static {

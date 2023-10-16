@@ -6,18 +6,16 @@ import dev.voroby.springframework.telegram.exception.TelegramClientConfiguration
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
 import jakarta.annotation.PreDestroy;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -26,8 +24,9 @@ import static org.springframework.util.StringUtils.hasText;
  *
  * @author Pavel Vorobyev
  */
-@Slf4j
 public class TelegramClient {
+
+    private final Logger log = LoggerFactory.getLogger(TelegramClient.class);
 
     private final Client client;
 
@@ -132,7 +131,7 @@ public class TelegramClient {
         };
         Client.setLogMessageHandler(properties.logVerbosityLevel(), logMessageHandler);
 
-        return Client.create(new CoreHandler(notificationHandlers), null, null);
+        return Client.create(new CoreHandler(notificationHandlers, defaultHandler), null, null);
     }
 
     /**
@@ -187,6 +186,12 @@ public class TelegramClient {
         while (ref.get() == null &&
                 sent.plus(60, ChronoUnit.SECONDS).isAfter(Instant.now())) {
             /*wait for result*/
+            try {
+                TimeUnit.MILLISECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e.getMessage());
+            }
         }
 
         if (ref.get() == null) {
@@ -239,37 +244,4 @@ public class TelegramClient {
         client.send(query, resultHandler);
     }
 
-    /**
-     * The main handler for incoming updates from TDLib.
-     */
-   private final class CoreHandler implements Client.ResultHandler {
-
-        private final Map<Integer, Consumer<TdApi.Object>> tdUpdateHandlers = new HashMap<>();
-
-        private CoreHandler(Collection<UpdateNotificationListener<?>> notifications) {
-            notifications.forEach(ntf -> {
-                var handler = new UpdateNotificationConsumer(ntf, ntf.notificationType());
-                tdUpdateHandlers.putIfAbsent(getConstructorNumberOfType(ntf), handler);
-            });
-        }
-
-        private int getConstructorNumberOfType(UpdateNotificationListener<?> updateNotification) {
-            try {
-                TdApi.Update tmp = updateNotification.notificationType().getConstructor().newInstance();
-                return tmp.getConstructor();
-            } catch (ReflectiveOperationException e) {
-                throw new TelegramClientTdApiException(e.getMessage());
-            }
-        }
-
-       /**
-        * {@inheritDoc}
-        */
-        @Override
-        public void onResult(TdApi.Object object) {
-            tdUpdateHandlers.getOrDefault(object.getConstructor(), defaultHandler::onResult).
-                    accept(object);
-        }
-
-    }
 }
