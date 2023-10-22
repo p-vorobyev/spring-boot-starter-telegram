@@ -9,6 +9,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 - [Installation](#installation)
 - [Configuration properties](#configuration)
 - [Example](#example)
+- [Javadoc](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram)
 - [Notice](#notice)
 - [License](#license)
 
