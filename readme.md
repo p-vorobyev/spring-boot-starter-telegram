@@ -21,6 +21,12 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 | TDLib       | [1.8.20](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
 | Spring Boot | 3                                                                                     |
 
+TDLib [depends](https://github.com/tdlib/td#dependencies) on:
+
+- C++14 compatible compiler (Clang 3.4+, GCC 4.9+, MSVC 19.0+ (Visual Studio 2015+), Intel C++ Compiler 17+)
+- OpenSSL
+- zlib
+
 <a name="installation"></a>
 ## Installation
 1) Download by one of two options:
@@ -80,7 +86,7 @@ from the latest release and add it to your project's classpath instead of the st
 ```shell
 -Djava.library.path=<path_to_shared_library>
 ```
-You can find compiled libraries for several platforms in `libs` directory of the source code from the latest release.
+You can find compiled libraries for several platforms in [libs](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) directory of the source code from the latest release.
 If you haven't found a library for your OS and architecture, you can build it yourself
 following this [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
