@@ -34,7 +34,7 @@ public class TelegramClientService {
             }
             TdApi.MessageContent content = message.content;
             if (content instanceof TdApi.MessageText mt) {
-                TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(message.chatId), TdApi.Chat.class);
+                TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(message.chatId));
                 log.info("Incoming text message:\n[\n\ttitle: {},\n\tmessage: {}\n]", chat.title, mt.text.text);
             }
         }

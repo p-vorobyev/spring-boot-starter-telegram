@@ -160,7 +160,12 @@ public class TelegramClient {
      * @throws TelegramClientTdApiException for request timeout or error response from TDLib.
      * @throws NullPointerException if query is null.
      * @return parametrized response from TDLib.
+     * @deprecated unnecessary type casting for query result. Use
+     * <pre>{@code
+     *  sendSync(TdApi.Function<T> query)
+     * }</pre>
      */
+    @Deprecated(since = "1.6.0", forRemoval = true)
     public <T extends TdApi.Object> T sendSync(TdApi.Function<? extends TdApi.Object> query,
                                                Class<T> type) {
         TdApi.Object obj = sendSync(query);
@@ -175,10 +180,10 @@ public class TelegramClient {
      *
      * @param query object representing a query to the TDLib.
      * @throws NullPointerException if query is null.
-     * @throws TelegramClientTdApiException for TDLib request timeout.
+     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
      * @return response from TDLib.
      */
-    public TdApi.Object sendSync(TdApi.Function<? extends TdApi.Object> query) {
+    public <T extends TdApi.Object> T sendSync(TdApi.Function<T> query) {
         Objects.requireNonNull(query);
         var ref = new AtomicReference<TdApi.Object>();
         client.send(query, ref::set);
@@ -194,22 +199,27 @@ public class TelegramClient {
             }
         }
 
-        if (ref.get() == null) {
+        TdApi.Object obj = ref.get();
+        if (obj == null) {
             throw new TelegramClientTdApiException("TDLib request timeout.");
         }
+        if (obj instanceof TdApi.Error err) {
+            throw new TelegramClientTdApiException("Received error from TDLib. ", err, query);
+        }
 
-        return ref.get();
+        return (T) obj;
     }
 
     /**
      * Sends a request to the TDLib asynchronously.
-     * If this stage completes exceptionally you can handle {@link TelegramClientTdApiException}
+     * If this stage completes exceptionally you can handle cause {@link TelegramClientTdApiException}
      *
      * @throws NullPointerException if query is null.
+     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
      * @param query object representing a query to the TDLib.
      * @return {@link CompletableFuture<TdApi.Object>} response from TDLib.
      */
-    public CompletableFuture<TdApi.Object> sendAsync(TdApi.Function<? extends TdApi.Object> query) {
+    public <T extends TdApi.Object> CompletableFuture<T> sendAsync(TdApi.Function<T> query) {
         Objects.requireNonNull(query);
         return CompletableFuture.supplyAsync(() -> sendSync(query));
     }
@@ -223,7 +233,12 @@ public class TelegramClient {
      * @param <T> parametrized response
      * @throws NullPointerException if query is null.
      * @return {@link CompletableFuture<T>} parametrized response from TDLib.
+     * @deprecated unnecessary type casting for query result. Use
+     * <pre>{@code
+     *  sendAsync(TdApi.Function<T> query)
+     * }</pre>
      */
+    @Deprecated(since = "1.6.0", forRemoval = true)
     public <T extends TdApi.Object> CompletableFuture<T> sendAsync(TdApi.Function<? extends TdApi.Object> query,
                                                                    Class<T> type) {
         Objects.requireNonNull(query);

@@ -22,24 +22,24 @@ public class InfoController {
 
     @GetMapping("/getMe")
     public TdApi.User getMe() {
-        return telegramClient.sendSync(new TdApi.GetMe(), TdApi.User.class);
+        return telegramClient.sendSync(new TdApi.GetMe());
     }
 
     @GetMapping("/chatTitles")
     public List<String> getMyChats() {
-        TdApi.Chats chats = telegramClient.sendSync(new TdApi.GetChats(new TdApi.ChatListMain(), 100), TdApi.Chats.class);
+        TdApi.Chats chats = telegramClient.sendSync(new TdApi.GetChats(new TdApi.ChatListMain(), 100));
         return Arrays.stream(chats.chatIds)
                 .mapToObj(chatId -> {
-                    TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(chatId), TdApi.Chat.class);
+                    TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(chatId));
                     return chat.title;
                 }).toList();
     }
 
     @GetMapping("/sendHello")
     public void helloToYourself() {
-        telegramClient.sendAsync(new TdApi.GetMe(), TdApi.User.class)
+        telegramClient.sendAsync(new TdApi.GetMe())
                 .thenApply(user -> user.usernames.activeUsernames[0])
-                .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1), TdApi.Chats.class))
+                .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1)))
                 .thenCompose(chatsFuture ->
                         chatsFuture.thenApply(chats -> chats.chatIds[0]))
                 .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
