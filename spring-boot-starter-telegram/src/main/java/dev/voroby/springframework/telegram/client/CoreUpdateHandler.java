@@ -11,13 +11,13 @@ import java.util.function.Consumer;
 /**
  * The main handler for incoming updates from TDLib.
  */
-final class CoreHandler implements Client.ResultHandler {
+final class CoreUpdateHandler implements Client.ResultHandler {
 
     private final Map<Integer, Consumer<TdApi.Object>> tdUpdateHandlers = new HashMap<>();
 
     private final Client.ResultHandler defaultHandler;
 
-    CoreHandler(Collection<UpdateNotificationListener<?>> notifications, Client.ResultHandler defaultHandler) {
+    CoreUpdateHandler(Collection<UpdateNotificationListener<?>> notifications, Client.ResultHandler defaultHandler) {
         this.defaultHandler = defaultHandler;
         notifications.forEach(ntf -> {
             var handler = new UpdateNotificationConsumer(ntf, ntf.notificationType());

@@ -1,6 +1,6 @@
 package dev.voroby.springframework.telegram.client.updates;
 
-import dev.voroby.springframework.telegram.client.Client;
+import dev.voroby.springframework.telegram.client.QueryResultHandler;
 import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
@@ -224,21 +224,18 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         return hasText(s) ? s : "";
     }
 
-    private class AuthorizationRequestHandler implements Client.ResultHandler {
+    private class AuthorizationRequestHandler implements QueryResultHandler<TdApi.Ok> {
+
         /**
          * {@inheritDoc}
          */
         @Override
-        public void onResult(TdApi.Object object) {
-            switch (object.getConstructor()) {
-                case TdApi.Error.CONSTRUCTOR -> {
-                    log.error("Receive an error:\n" + object);
-                    handleNotification(null); // repeat last action
-                }
-                // result is already received through UpdateAuthorizationState, nothing to do
-                case TdApi.Ok.CONSTRUCTOR -> {}
-                default -> log.error("Receive wrong response from TDLib:\n" + object);
+        public void onResult(TdApi.Ok obj, TdApi.Error error) {
+            if (error != null) {
+                log.error("Receive an error:\n" + error);
+                handleNotification(null); // repeat last action
             }
+            //result is already received through UpdateAuthorizationState, nothing to do
         }
     }
 

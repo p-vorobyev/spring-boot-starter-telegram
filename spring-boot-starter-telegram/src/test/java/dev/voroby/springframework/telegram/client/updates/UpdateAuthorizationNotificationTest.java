@@ -1,7 +1,7 @@
 package dev.voroby.springframework.telegram.client.updates;
 
 import dev.voroby.springframework.telegram.AbstractTest;
-import dev.voroby.springframework.telegram.client.Client;
+import dev.voroby.springframework.telegram.client.QueryResultHandler;
 import dev.voroby.springframework.telegram.client.TdApi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -107,7 +107,7 @@ class UpdateAuthorizationNotificationTest extends AbstractTest {
 
     private void handleAuthorizationStateWaitTdlibParameters() {
         ArgumentCaptor<TdApi.SetTdlibParameters> paramsCaptor = ArgumentCaptor.forClass(TdApi.SetTdlibParameters.class);
-        verify(telegramClient).sendWithCallback(paramsCaptor.capture(), any(Client.ResultHandler.class));
+        verify(telegramClient).sendWithCallback(paramsCaptor.capture(), any(QueryResultHandler.class));
         verify(telegramClient).sendSync(any(TdApi.AddProxy.class));
         TdApi.SetTdlibParameters tdlibParameters = paramsCaptor.getValue();
         assertEquals(123, tdlibParameters.apiId);
@@ -115,7 +115,7 @@ class UpdateAuthorizationNotificationTest extends AbstractTest {
 
     private void handleAuthorizationStateWaitPhoneNumber() {
         ArgumentCaptor<TdApi.SetAuthenticationPhoneNumber> captor = ArgumentCaptor.forClass(TdApi.SetAuthenticationPhoneNumber.class);
-        verify(telegramClient).sendWithCallback(captor.capture(), any(Client.ResultHandler.class));
+        verify(telegramClient).sendWithCallback(captor.capture(), any(QueryResultHandler.class));
         assertEquals("123456789", captor.getValue().phoneNumber);
     }
 
@@ -124,7 +124,7 @@ class UpdateAuthorizationNotificationTest extends AbstractTest {
     }
 
     private void verifyTelegramClientNotInvoked() {
-        verify(telegramClient, never()).sendWithCallback(any(TdApi.Function.class), any(Client.ResultHandler.class));
+        verify(telegramClient, never()).sendWithCallback(any(TdApi.Function.class), any(QueryResultHandler.class));
         verify(telegramClient, never()).sendSync(any(TdApi.Function.class));
         verify(telegramClient, never()).sendSync(any(TdApi.Function.class));
         verify(telegramClient, never()).sendAsync(any(TdApi.Function.class));
@@ -133,28 +133,28 @@ class UpdateAuthorizationNotificationTest extends AbstractTest {
 
     private void handleAuthorizationStateWaitCode() {
         ArgumentCaptor<TdApi.CheckAuthenticationCode> authCodeCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationCode.class);
-        verify(telegramClient).sendWithCallback(authCodeCaptor.capture(), any(Client.ResultHandler.class));
+        verify(telegramClient).sendWithCallback(authCodeCaptor.capture(), any(QueryResultHandler.class));
         assertEquals(authCode, authCodeCaptor.getValue().code);
         verify(clientAuthorizationState).clearCode();
     }
 
     private void handleAuthorizationStateWaitPassword() {
         ArgumentCaptor<TdApi.CheckAuthenticationPassword> authCodeCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationPassword.class);
-        verify(telegramClient).sendWithCallback(authCodeCaptor.capture(), any(Client.ResultHandler.class));
+        verify(telegramClient).sendWithCallback(authCodeCaptor.capture(), any(QueryResultHandler.class));
         assertEquals(twoStepPassword, authCodeCaptor.getValue().password);
         verify(clientAuthorizationState).clearPassword();
     }
 
     private void handleAuthorizationStateWaitEmailAddress() {
         ArgumentCaptor<TdApi.SetAuthenticationEmailAddress> emailAddressCaptor = ArgumentCaptor.forClass(TdApi.SetAuthenticationEmailAddress.class);
-        verify(telegramClient).sendWithCallback(emailAddressCaptor.capture(), any(Client.ResultHandler.class));
+        verify(telegramClient).sendWithCallback(emailAddressCaptor.capture(), any(QueryResultHandler.class));
         assertEquals(email, emailAddressCaptor.getValue().emailAddress);
         verify(clientAuthorizationState).clearEmailAddress();
     }
 
     private void handleAuthorizationStateWaitEmailCode() {
         ArgumentCaptor<TdApi.CheckAuthenticationEmailCode> emailCheckCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationEmailCode.class);
-        verify(telegramClient).sendWithCallback(emailCheckCaptor.capture(), any(Client.ResultHandler.class));
+        verify(telegramClient).sendWithCallback(emailCheckCaptor.capture(), any(QueryResultHandler.class));
         TdApi.EmailAddressAuthenticationCode emailCode = (TdApi.EmailAddressAuthenticationCode) emailCheckCaptor.getValue().code;
         assertEquals(authCode, emailCode.code);
         verify(clientAuthorizationState).clearCode();

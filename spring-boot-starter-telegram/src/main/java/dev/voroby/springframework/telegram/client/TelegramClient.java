@@ -131,7 +131,7 @@ public class TelegramClient {
         };
         Client.setLogMessageHandler(properties.logVerbosityLevel(), logMessageHandler);
 
-        return Client.create(new CoreHandler(notificationHandlers, defaultHandler), null, null);
+        return Client.create(new CoreUpdateHandler(notificationHandlers, defaultHandler), null, null);
     }
 
     /**
@@ -149,30 +149,6 @@ public class TelegramClient {
             log.warn("Closed, but TDLib client isn't in its final state");
         }
         log.info("Goodbye!");
-    }
-
-    /**
-     * Sends a request to the TDLib.
-     *
-     * @param query object representing a query to the TDLib.
-     * @param type response type
-     * @param <T> parametrized response
-     * @throws TelegramClientTdApiException for request timeout or error response from TDLib.
-     * @throws NullPointerException if query is null.
-     * @return parametrized response from TDLib.
-     * @deprecated unnecessary type casting for query result. Use
-     * <pre>{@code
-     *  sendSync(TdApi.Function<T> query)
-     * }</pre>
-     */
-    @Deprecated(since = "1.6.0", forRemoval = true)
-    public <T extends TdApi.Object> T sendSync(TdApi.Function<? extends TdApi.Object> query,
-                                               Class<T> type) {
-        TdApi.Object obj = sendSync(query);
-        if (obj instanceof TdApi.Error err) {
-            throw new TelegramClientTdApiException("Received error from TDLib. ", err);
-        }
-        return type.cast(obj);
     }
 
     /**
@@ -204,7 +180,7 @@ public class TelegramClient {
             throw new TelegramClientTdApiException("TDLib request timeout.");
         }
         if (obj instanceof TdApi.Error err) {
-            throw new TelegramClientTdApiException("Received error from TDLib. ", err, query);
+            throw new TelegramClientTdApiException("Received error from TDLib.", err, query);
         }
 
         return (T) obj;
@@ -221,28 +197,15 @@ public class TelegramClient {
      */
     public <T extends TdApi.Object> CompletableFuture<T> sendAsync(TdApi.Function<T> query) {
         Objects.requireNonNull(query);
-        return CompletableFuture.supplyAsync(() -> sendSync(query));
-    }
-
-    /**
-     * Sends a request to the TDLib asynchronously.
-     * If this stage completes exceptionally you can handle {@link TelegramClientTdApiException}
-     *
-     * @param query object representing a query to the TDLib.
-     * @param type response type
-     * @param <T> parametrized response
-     * @throws NullPointerException if query is null.
-     * @return {@link CompletableFuture<T>} parametrized response from TDLib.
-     * @deprecated unnecessary type casting for query result. Use
-     * <pre>{@code
-     *  sendAsync(TdApi.Function<T> query)
-     * }</pre>
-     */
-    @Deprecated(since = "1.6.0", forRemoval = true)
-    public <T extends TdApi.Object> CompletableFuture<T> sendAsync(TdApi.Function<? extends TdApi.Object> query,
-                                                                   Class<T> type) {
-        Objects.requireNonNull(query);
-        return CompletableFuture.supplyAsync(() -> sendSync(query, type));
+        var future = new CompletableFuture<T>();
+        sendWithCallback(query, ((obj, error) -> {
+            if (error != null) {
+                future.completeExceptionally(new TelegramClientTdApiException("Received error from TDLib.", error, query));
+            } else {
+                future.complete(obj);
+            }
+        }));
+        return future;
     }
 
     /**
@@ -253,10 +216,30 @@ public class TelegramClient {
      *                      of the query or with TdApi.Error as parameter.
      * @throws NullPointerException if query is null.
      */
+    @Deprecated(since = "1.7.0", forRemoval = true)
     public void sendWithCallback(TdApi.Function<? extends TdApi.Object> query,
                                  Client.ResultHandler resultHandler) {
         Objects.requireNonNull(query);
         client.send(query, resultHandler);
+    }
+
+    /**
+     * Sends a request to the TDLib with callback.
+     *
+     * @param query object representing a query to the TDLib
+     * @param resultHandler Result handler for results of queries with callback to TDLib
+     * @param <T> The object type that is returned by the function
+     */
+    public <T extends TdApi.Object> void sendWithCallback(TdApi.Function<T> query,
+                                                          QueryResultHandler<T> resultHandler) {
+        Objects.requireNonNull(query);
+        client.send(query, object -> {
+            if (object instanceof TdApi.Error err) {
+                resultHandler.onResult(null, err);
+            } else {
+                resultHandler.onResult((T) object, null);
+            }
+        });
     }
 
 }

@@ -227,11 +227,14 @@ TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(chatId));
 
 - An example of asynchronous call with callback. Let's get info about ourselves:
 ```java
-telegramClient.sendWithCallback(new TdApi.GetMe(), obj -> {
-            TdApi.User user = (TdApi.User) obj;
-            Optional.ofNullable(user.usernames)
-                    .ifPresent(usernames -> log.info("Active username: {}", usernames.activeUsernames[0]));
-        });
+telegramClient.sendWithCallback(new TdApi.GetMe(), (user, error) -> {
+    if (error != null) {
+        log.error("Error: [code: {}, message: {}]", error.code, error.message);
+    } else {
+        Optional.ofNullable(user.usernames)
+            .ifPresent(usernames -> log.info("Active username: {}", usernames.activeUsernames[0]));
+    }
+});
 ```
 
 - An example of asynchronous call with `CompletableFuture`. Let's send hello message to ourselves:
