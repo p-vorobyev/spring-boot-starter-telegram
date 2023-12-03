@@ -9,6 +9,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 - [Installation](#installation)
 - [Configuration properties](#configuration)
 - [Example](#example)
+- [Templates](#templates)
 - [Javadoc](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram)
 - [Notice](#notice)
 - [License](#license)
@@ -18,7 +19,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 | Technology  | Version                                                                               |
 |-------------|---------------------------------------------------------------------------------------|
 | jdk         | 17                                                                                    |
-| TDLib       | [1.8.21](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
+| TDLib       | [1.8.22](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
 | Spring Boot | 3                                                                                     |
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
@@ -76,10 +77,10 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
 </dependency>
 ```
-Or just download artifact by path `Releases -> 1.6.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.6.0.jar` 
+Or just download artifact by path `Releases -> 1.7.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.7.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
@@ -281,6 +282,12 @@ public class UpdateNewMessageHandler implements UpdateNotificationListener<TdApi
 ```
 
 You can find usage example in [simple-client](https://github.com/p-vorobyev/spring-boot-starter-telegram/tree/master/simple-client) app.
+
+<a name="templates"></a>
+## Templates
+Templates simplify the use of `TelegramClient` for related objects. Just autowire them and use:
+
+- [UserTemplate]()
 
 <a name="notice"></a>
 ## Notice
