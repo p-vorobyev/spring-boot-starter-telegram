@@ -11,8 +11,8 @@ public interface QueryResultHandler<T extends TdApi.Object> {
     /**
      * Callback called on result of query to TDLib.
      *
-     * @param obj Response object from {@link TdApi.Function} query
-     * @param error Error result of query to TDLib
+     * @param obj Response object from {@link TdApi.Function} query or null if {@link TdApi.Error} received
+     * @param error Error result of query to TDLib or null
      */
     void onResult(T obj, TdApi.Error error);
 

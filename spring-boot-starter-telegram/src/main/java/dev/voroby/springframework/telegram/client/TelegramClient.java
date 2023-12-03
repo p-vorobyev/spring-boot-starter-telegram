@@ -180,7 +180,8 @@ public class TelegramClient {
             throw new TelegramClientTdApiException("TDLib request timeout.");
         }
         if (obj instanceof TdApi.Error err) {
-            throw new TelegramClientTdApiException("Received error from TDLib.", err, query);
+            logError(query, err);
+            throw new TelegramClientTdApiException("Received an error from TDLib.", err, query);
         }
 
         return (T) obj;
@@ -200,12 +201,25 @@ public class TelegramClient {
         var future = new CompletableFuture<T>();
         sendWithCallback(query, ((obj, error) -> {
             if (error != null) {
-                future.completeExceptionally(new TelegramClientTdApiException("Received error from TDLib.", error, query));
+                logError(query, error);
+                future.completeExceptionally(new TelegramClientTdApiException("Received an error from TDLib.", error, query));
             } else {
                 future.complete(obj);
             }
         }));
         return future;
+    }
+
+    private void logError(TdApi.Function<?> query, TdApi.Error error) {
+        String errorLogString = String.format("""
+                TDLib error:
+                [
+                    code: %d,
+                    message: %s
+                    queryIdentifier: %d
+                ]
+                """, error.code, error.message, query.getConstructor());
+        log.error(errorLogString);
     }
 
     /**
