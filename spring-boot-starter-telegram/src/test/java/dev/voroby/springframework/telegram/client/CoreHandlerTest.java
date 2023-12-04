@@ -25,7 +25,7 @@ class CoreHandlerTest {
             }
         };
 
-        var coreHandler = new CoreHandler(List.of(updateNewChatNotification), obj -> {});
+        var coreHandler = new CoreUpdateHandler(List.of(updateNewChatNotification), obj -> {});
         var updateNewChat = new TdApi.UpdateNewChat();
         coreHandler.onResult(updateNewChat);
 
