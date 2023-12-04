@@ -287,7 +287,7 @@ You can find usage example in [simple-client](https://github.com/p-vorobyev/spri
 ## Templates
 Templates simplify the use of `TelegramClient` for related objects. Just autowire them and use:
 
-- [UserTemplate]()
+- [UserTemplate](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram/dev/voroby/springframework/telegram/client/templates/UserTemplate.html)
 
 <a name="notice"></a>
 ## Notice
