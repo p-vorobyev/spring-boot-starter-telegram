@@ -40,6 +40,8 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 
  - 1.2 Download artifact from GitHub Packages:
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Maven**:
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify `github` server with your credentials in `settings.xml` for Apache Maven. See GitHub [docs](https://docs.github.com/ru/enterprise-cloud@latest/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) how to generate personal token.
 
 ```xml
@@ -70,17 +72,44 @@ git clone https://github.com/p-vorobyev/spring-boot-starter-telegram.git
 </repositories>
 ```
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Gradle**:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify repository in `build.gradle.kts` with your GitHub login and personal token. 
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/p-vorobyev/*")
+        credentials {
+            username = "GITHUB_LOGIN"
+            password = "GIT_HUB_TOKEN"
+        }
+    }
+}
+```
+
 2) Create your Spring Boot module.
 
 3) Add dependency to your project:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Maven**:
+
 ```xml
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.7.0</version>
+    <version>1.8.0</version>
 </dependency>
 ```
-Or just download artifact by path `Releases -> 1.7.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.7.0.jar` 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Gradle**:
+
+```kotlin
+implementation("dev.voroby:spring-boot-starter-telegram:1.8.0")
+```
+
+Or just download artifact by path `Releases -> 1.8.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.8.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
