@@ -120,7 +120,13 @@ public class TelegramClient {
     }
 
     private Client initializeNativeClient(TelegramProperties properties, Collection<UpdateNotificationListener<?>> notificationHandlers) {
-        Client.execute(new TdApi.SetLogVerbosityLevel(properties.logVerbosityLevel()));
+        var logVerbosityLevel = new TdApi.SetLogVerbosityLevel(properties.logVerbosityLevel());
+        try {
+            Client.execute(logVerbosityLevel);
+        } catch (Client.ExecutionException e) {
+            logError(logVerbosityLevel, e.error);
+            throw new RuntimeException(e);
+        }
         Client.LogMessageHandler logMessageHandler = (level, message) -> {
             switch (level) {
                 case 0, 1 -> log.error(message);
