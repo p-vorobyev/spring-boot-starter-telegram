@@ -83,7 +83,7 @@ repositories {
         url = uri("https://maven.pkg.github.com/p-vorobyev/*")
         credentials {
             username = "GITHUB_LOGIN"
-            password = "GIT_HUB_TOKEN"
+            password = "GITHUB_TOKEN"
         }
     }
 }
