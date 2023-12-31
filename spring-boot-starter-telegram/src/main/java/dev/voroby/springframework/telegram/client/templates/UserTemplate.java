@@ -4,6 +4,8 @@ import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 
+import java.util.Objects;
+
 /**
  * This class simplifies the use of {@link TelegramClient} for {@link TdApi.User} related objects.
  *
@@ -104,12 +106,29 @@ public class UserTemplate {
      * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
      */
     public TdApi.User searchUserByPhoneNumber(String phoneNumber) {
+        Objects.requireNonNull(phoneNumber);
         try {
             return telegramClient.sendSync(new TdApi.SearchUserByPhoneNumber(phoneNumber));
         } catch (TelegramClientTdApiException e) {
             if (e.getError().code == 404) return null;
             throw e;
         }
+    }
+
+    /**
+     * Searches a user by username. Returns null if user can't be found.
+     *
+     * @param username Username to search for.
+     * @return {@link TdApi.User} or null.
+     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     */
+    public TdApi.User searchUserByUsername(String username) {
+        Objects.requireNonNull(username);
+        TdApi.Chat chat = telegramClient.sendSync(new TdApi.SearchPublicChat(username));
+        if (chat.type instanceof TdApi.ChatTypePrivate typePrivate) {
+            return telegramClient.sendSync(new TdApi.GetUser(typePrivate.userId));
+        }
+        return null;
     }
 
 }

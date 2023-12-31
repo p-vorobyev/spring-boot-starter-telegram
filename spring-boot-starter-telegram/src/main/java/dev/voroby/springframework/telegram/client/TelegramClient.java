@@ -120,7 +120,13 @@ public class TelegramClient {
     }
 
     private Client initializeNativeClient(TelegramProperties properties, Collection<UpdateNotificationListener<?>> notificationHandlers) {
-        Client.execute(new TdApi.SetLogVerbosityLevel(properties.logVerbosityLevel()));
+        var logVerbosityLevel = new TdApi.SetLogVerbosityLevel(properties.logVerbosityLevel());
+        try {
+            Client.execute(logVerbosityLevel);
+        } catch (Client.ExecutionException e) {
+            logError(logVerbosityLevel, e.error);
+            throw new RuntimeException(e);
+        }
         Client.LogMessageHandler logMessageHandler = (level, message) -> {
             switch (level) {
                 case 0, 1 -> log.error(message);
@@ -222,20 +228,6 @@ public class TelegramClient {
         log.error(errorLogString);
     }
 
-    /**
-     * Sends a request to the TDLib with callback.
-     *
-     * @param query object representing a query to the TDLib.
-     * @param resultHandler Result handler with onResult method which will be called with result
-     *                      of the query or with TdApi.Error as parameter.
-     * @throws NullPointerException if query is null.
-     */
-    @Deprecated(since = "1.7.0", forRemoval = true)
-    public void sendWithCallback(TdApi.Function<? extends TdApi.Object> query,
-                                 Client.ResultHandler resultHandler) {
-        Objects.requireNonNull(query);
-        client.send(query, resultHandler);
-    }
 
     /**
      * Sends a request to the TDLib with callback.
