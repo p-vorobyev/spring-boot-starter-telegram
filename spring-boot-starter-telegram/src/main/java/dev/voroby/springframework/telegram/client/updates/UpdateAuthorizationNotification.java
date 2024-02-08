@@ -217,7 +217,12 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
             throw new TelegramClientConfigurationException("ProxyType not filled. Available types - http, socks5, mtProto");
         }
         var addProxy = new TdApi.AddProxy(proxy.server(), proxy.port(), true, proxyType);
-        telegramClient.sendSync(addProxy);
+        telegramClient.sendWithCallback(addProxy, ((obj, error) -> {
+            if (error == null) {
+                log.info("Proxy server: [server: {}, port: {}, type: {}]",
+                        addProxy.server, addProxy.port, proxyType.getClass().getSimpleName());
+            }
+        }));
     }
 
     private String checkStringOrEmpty(String s) {

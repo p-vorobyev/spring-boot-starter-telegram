@@ -108,7 +108,7 @@ class UpdateAuthorizationNotificationTest extends AbstractTest {
     private void handleAuthorizationStateWaitTdlibParameters() {
         ArgumentCaptor<TdApi.SetTdlibParameters> paramsCaptor = ArgumentCaptor.forClass(TdApi.SetTdlibParameters.class);
         verify(telegramClient).sendWithCallback(paramsCaptor.capture(), any(QueryResultHandler.class));
-        verify(telegramClient).sendSync(any(TdApi.AddProxy.class));
+        verify(telegramClient).sendWithCallback(any(TdApi.AddProxy.class), any(QueryResultHandler.class));
         TdApi.SetTdlibParameters tdlibParameters = paramsCaptor.getValue();
         assertEquals(123, tdlibParameters.apiId);
     }
