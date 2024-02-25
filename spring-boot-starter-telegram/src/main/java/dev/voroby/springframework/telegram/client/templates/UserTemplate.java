@@ -2,63 +2,68 @@ package dev.voroby.springframework.telegram.client.templates;
 
 import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
+import dev.voroby.springframework.telegram.client.templates.response.Response;
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class simplifies the use of {@link TelegramClient} for {@link TdApi.User} related objects.
  *
  * @author Pavel Vorobyev
  */
-public class UserTemplate {
-
-    private final TelegramClient telegramClient;
+public class UserTemplate extends AbstractTemplate {
 
     public UserTemplate(TelegramClient telegramClient) {
-        this.telegramClient = telegramClient;
+        super(telegramClient);
     }
 
     /**
      * Returns information about a user by their identifier. This is an offline request.
      *
      * @param userId User identifier.
-     * @return {@link TdApi.User}.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<Response<TdApi.User>>}.
      */
-    public TdApi.User getUser(long userId) {
-        return telegramClient.sendSync(new TdApi.GetUser(userId));
+    public CompletableFuture<Response<TdApi.User>> getUser(long userId) {
+        var errorReference = new AtomicReference<TdApi.Error>();
+        return telegramClient.sendAsync(new TdApi.GetUser(userId))
+                .exceptionally(throwable -> onException(throwable, errorReference))
+                .thenApply(user -> createResponse(user, errorReference));
     }
 
     /**
      * Returns full information about a user by their identifier.
      *
      * @param userId User identifier.
-     * @return {@link TdApi.UserFullInfo}.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<Response<TdApi.UserFullInfo>>}.
      */
-    public TdApi.UserFullInfo getUserFullInfo(long userId) {
-        return telegramClient.sendSync(new TdApi.GetUserFullInfo(userId));
+    public CompletableFuture<Response<TdApi.UserFullInfo>> getUserFullInfo(long userId) {
+        var errorReference = new AtomicReference<TdApi.Error>();
+        return telegramClient.sendAsync(new TdApi.GetUserFullInfo(userId))
+                .exceptionally(throwable -> onException(throwable, errorReference))
+                .thenApply(userFullInfo -> createResponse(userFullInfo, errorReference));
     }
 
     /**
      * Returns an HTTPS link, which can be used to get information about the current user.
      *
-     * @return {@link TdApi.UserLink}.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<TdApi.UserLink>}.
+     * @throws TelegramClientTdApiException in case of exceptional completion.
      */
-    public TdApi.UserLink getUserLink() {
-        return telegramClient.sendSync(new TdApi.GetUserLink());
+    public CompletableFuture<TdApi.UserLink> getUserLink() {
+        return telegramClient.sendAsync(new TdApi.GetUserLink());
     }
 
     /**
      * Returns the current user.
      *
-     * @return {@link TdApi.User}.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<TdApi.User>}.
+     * @throws TelegramClientTdApiException in case of exceptional completion.
      */
-    public TdApi.User getMe() {
-        return telegramClient.sendSync(new TdApi.GetMe());
+    public CompletableFuture<TdApi.User> getMe() {
+        return telegramClient.sendAsync(new TdApi.GetMe());
     }
 
 
@@ -66,11 +71,15 @@ public class UserTemplate {
      * Returns profile photo of the user. May be null.
      *
      * @param userId User identifier.
-     * @return {@link TdApi.ProfilePhoto} or null.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<Response<TdApi.ProfilePhoto>>}. TdApi.ProfilePhoto may be null.
      */
-    public TdApi.ProfilePhoto getProfilePhoto(long userId) {
-        return getUser(userId).profilePhoto;
+    public CompletableFuture<Response<TdApi.ProfilePhoto>> getProfilePhoto(long userId) {
+        return getUser(userId).thenApply(userResponse -> {
+            if (userResponse.error() != null) {
+                return new Response<>(null, userResponse.error());
+            }
+            return new Response<>(userResponse.object().profilePhoto, null);
+        });
     }
 
 
@@ -78,11 +87,11 @@ public class UserTemplate {
      * Returns user profile photo visible if the main photo is hidden by privacy settings. May be null.
      *
      * @param userId User identifier.
-     * @return {@link TdApi.ChatPhoto} or null.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<Response<TdApi.ChatPhoto>>}. TdApi.ChatPhoto may be null.
      */
-    public TdApi.ChatPhoto getPublicPhoto(long userId) {
-        return getUserFullInfo(userId).publicPhoto;
+    public CompletableFuture<Response<TdApi.ChatPhoto>> getPublicPhoto(long userId) {
+        return getUserFullInfo(userId)
+                .thenApply(userFullInfoResponse -> createResponse(userFullInfoResponse.object().publicPhoto, userFullInfoResponse.error()));
     }
 
     /**
@@ -91,44 +100,49 @@ public class UserTemplate {
      * @param userId User identifier.
      * @param offset The number of photos to skip; must be non-negative.
      * @param limit The maximum number of photos to be returned; up to 100.
-     * @return {@link TdApi.ChatPhotos}.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<Response<TdApi.ChatPhotos>>}.
      */
-    public TdApi.ChatPhotos getUserProfilePhotos(long userId, int offset, int limit) {
-        return telegramClient.sendSync(new TdApi.GetUserProfilePhotos(userId, offset, limit));
+    public CompletableFuture<Response<TdApi.ChatPhotos>> getUserProfilePhotos(long userId, int offset, int limit) {
+        var errorReference = new AtomicReference<TdApi.Error>();
+        return telegramClient.sendAsync(new TdApi.GetUserProfilePhotos(userId, offset, limit))
+                .exceptionally(throwable -> onException(throwable, errorReference))
+                .thenApply(chatPhotos -> createResponse(chatPhotos, errorReference));
     }
 
     /**
      * Searches a user by their phone number. Returns null if user can't be found.
      *
      * @param phoneNumber Phone number in international format to search for.
-     * @return {@link TdApi.User} or null.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<Response<TdApi.User>>}. TdApi.User may be null.
      */
-    public TdApi.User searchUserByPhoneNumber(String phoneNumber) {
+    public CompletableFuture<Response<TdApi.User>> searchUserByPhoneNumber(String phoneNumber) {
         Objects.requireNonNull(phoneNumber);
-        try {
-            return telegramClient.sendSync(new TdApi.SearchUserByPhoneNumber(phoneNumber));
-        } catch (TelegramClientTdApiException e) {
-            if (e.getError().code == 404) return null;
-            throw e;
-        }
+        var errorReference = new AtomicReference<TdApi.Error>();
+        return telegramClient.sendAsync(new TdApi.SearchUserByPhoneNumber(phoneNumber))
+                .exceptionally(throwable -> onException(throwable, errorReference))
+                .thenApply(user -> createResponse(user, errorReference));
     }
 
     /**
      * Searches a user by username. Returns null if user can't be found.
      *
      * @param username Username to search for.
-     * @return {@link TdApi.User} or null.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
+     * @return {@link CompletableFuture<TdApi.User>}. TdApi.User may be null.
      */
-    public TdApi.User searchUserByUsername(String username) {
+    public CompletableFuture<Response<TdApi.User>> searchUserByUsername(String username) {
         Objects.requireNonNull(username);
-        TdApi.Chat chat = telegramClient.sendSync(new TdApi.SearchPublicChat(username));
-        if (chat.type instanceof TdApi.ChatTypePrivate typePrivate) {
-            return telegramClient.sendSync(new TdApi.GetUser(typePrivate.userId));
-        }
-        return null;
+        var errorReference = new AtomicReference<TdApi.Error>();
+        return telegramClient.sendAsync(new TdApi.SearchPublicChat(username))
+                .exceptionally(throwable -> onException(throwable, errorReference))
+                .thenCompose(chat -> {
+                    if (errorReference.get() != null) {
+                        return CompletableFuture.completedFuture(new Response<>(null, errorReference.get()));
+                    }
+                    if (chat.type instanceof TdApi.ChatTypePrivate typePrivate) {
+                        return getUser(typePrivate.userId);
+                    }
+                    return CompletableFuture.completedFuture(new Response<>(null, null));
+                });
     }
 
 }
