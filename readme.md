@@ -19,7 +19,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 | Technology  | Version                                                                               |
 |-------------|---------------------------------------------------------------------------------------|
 | jdk         | 17                                                                                    |
-| TDLib       | [1.8.23](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
+| TDLib       | [1.8.25](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
 | Spring Boot | 3                                                                                     |
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
@@ -99,17 +99,17 @@ repositories {
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.8.1</version>
+    <version>1.9.0</version>
 </dependency>
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Gradle**:
 
 ```kotlin
-implementation("dev.voroby:spring-boot-starter-telegram:1.8.1")
+implementation("dev.voroby:spring-boot-starter-telegram:1.9.0")
 ```
 
-Or just download artifact by path `Releases -> 1.8.1 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.8.1.jar` 
+Or just download artifact by path `Releases -> 1.9.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.9.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
@@ -145,8 +145,6 @@ Additional properties:
 | `spring.telegram.client.use-secret-chats`                   | boolean | Pass true to enable support for secret chats.                                                                                                              |
 | `spring.telegram.client.log-verbosity-level`                   | int     | The maximum verbosity level of messages for which the callback will be called.                                                                             |
 | `spring.telegram.client.system-version`                   | String  | Version of the operating system the application is being run on. If empty, the version is automatically detected by TDLib.                                 |
-| `spring.telegram.client.enable-storage-optimizer`                   | boolean | Pass true to automatically delete old files in background.                                                                                                 |
-| `spring.telegram.client.ignore-file-names`                   | boolean | Pass true to ignore original file names for downloaded files. Otherwise, downloaded files are saved under names as close as possible to the original name. |
 | `spring.telegram.client.use-test-dc`                   | boolean | Pass true to use Telegram test environment instead of the production environment. |
 
 Using proxy(Http/Socks5/MtProto):
@@ -317,6 +315,7 @@ You can find usage example in [simple-client](https://github.com/p-vorobyev/spri
 Templates simplify the use of `TelegramClient` for related objects. Just autowire them and use:
 
 - [UserTemplate](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram/dev/voroby/springframework/telegram/client/templates/UserTemplate.html)
+- [ChatTemplate]()
 
 <a name="notice"></a>
 ## Notice

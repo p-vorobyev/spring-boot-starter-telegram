@@ -3,6 +3,7 @@ package dev.voroby.springframework.telegram;
 import dev.voroby.springframework.telegram.client.Client;
 import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
+import dev.voroby.springframework.telegram.client.templates.ChatTemplate;
 import dev.voroby.springframework.telegram.client.templates.UserTemplate;
 import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
 import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationStateImpl;
@@ -92,6 +93,17 @@ public class TelegramClientAutoConfiguration {
     @Bean
     public UserTemplate userTemplate(@Lazy TelegramClient telegramClient) {
         return new UserTemplate(telegramClient);
+    }
+
+    /**
+     * Template for {@link TdApi.Chat} related objects.
+     *
+     * @param telegramClient Telegram client.
+     * @return {@link ChatTemplate}.
+     */
+    @Bean
+    public ChatTemplate chatTemplate(@Lazy TelegramClient telegramClient) {
+        return new ChatTemplate(telegramClient);
     }
 
     /**

@@ -3,6 +3,7 @@ package dev.voroby.springframework.telegram.controller;
 import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.client.templates.UserTemplate;
+import dev.voroby.springframework.telegram.client.templates.response.Response;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,11 +33,16 @@ public class InfoController {
         return telegramClient.sendSync(new TdApi.GetMe());
     }
 
-    record PhoneQuery(String phone){}
+    record Query(String value){}
 
     @PostMapping(value = "/searchByPhone", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TdApi.User searchUserByPhone(@RequestBody PhoneQuery query) {
-        return userTemplate.searchUserByPhoneNumber(query.phone);
+    public Response<TdApi.User> searchUserByPhone(@RequestBody Query query) {
+        return userTemplate.searchUserByPhoneNumber(query.value).join();
+    }
+
+    @PostMapping(value = "/searchByUsername", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Response<TdApi.User> searchUserByUsername(@RequestBody Query query) {
+        return userTemplate.searchUserByUsername(query.value()).join();
     }
 
     @GetMapping("/chatTitles")
