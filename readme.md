@@ -145,8 +145,6 @@ Additional properties:
 | `spring.telegram.client.use-secret-chats`                   | boolean | Pass true to enable support for secret chats.                                                                                                              |
 | `spring.telegram.client.log-verbosity-level`                   | int     | The maximum verbosity level of messages for which the callback will be called.                                                                             |
 | `spring.telegram.client.system-version`                   | String  | Version of the operating system the application is being run on. If empty, the version is automatically detected by TDLib.                                 |
-| `spring.telegram.client.enable-storage-optimizer`                   | boolean | Pass true to automatically delete old files in background.                                                                                                 |
-| `spring.telegram.client.ignore-file-names`                   | boolean | Pass true to ignore original file names for downloaded files. Otherwise, downloaded files are saved under names as close as possible to the original name. |
 | `spring.telegram.client.use-test-dc`                   | boolean | Pass true to use Telegram test environment instead of the production environment. |
 
 Using proxy(Http/Socks5/MtProto):

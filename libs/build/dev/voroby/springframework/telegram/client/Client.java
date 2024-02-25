@@ -112,12 +112,12 @@ public final class Client {
      * @return request result.
      * @throws ExecutionException if query execution fails.
      */
+    @SuppressWarnings("unchecked")
     public static <T extends TdApi.Object> T execute(TdApi.Function<T> query) throws ExecutionException {
         TdApi.Object object = nativeClientExecute(query);
         if (object instanceof TdApi.Error) {
             throw new ExecutionException((TdApi.Error) object);
         }
-        //noinspection unchecked
         return (T) object;
     }
 
@@ -150,7 +150,7 @@ public final class Client {
      * @param maxVerbosityLevel The maximum verbosity level of messages for which the callback will be called.
      * @param logMessageHandler Handler for messages that are added to the internal TDLib log. Pass null to remove the handler.
      */
-    public static void setLogMessageHandler(int maxVerbosityLevel, Client.LogMessageHandler logMessageHandler) {
+    public static void setLogMessageHandler(int maxVerbosityLevel, LogMessageHandler logMessageHandler) {
         nativeClientSetLogMessageHandler(maxVerbosityLevel, logMessageHandler);
     }
 

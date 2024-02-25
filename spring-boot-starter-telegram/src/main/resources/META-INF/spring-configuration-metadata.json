@@ -75,24 +75,10 @@
       "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
     },
     {
-      "name": "spring.telegram.client.enable-storage-optimizer",
-      "type": "java.lang.Boolean",
-      "description": "Pass true to automatically delete old files in background.",
-      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
-      "defaultValue": false
-    },
-    {
       "name": "spring.telegram.client.files-directory",
       "type": "java.lang.String",
       "description": "The path to the directory for storing files; if empty, databaseDirectory will be used.",
       "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties"
-    },
-    {
-      "name": "spring.telegram.client.ignore-file-names",
-      "type": "java.lang.Boolean",
-      "description": "Pass true to ignore original file names for downloaded files. Otherwise, downloaded files are saved under names as close as possible to the original name.",
-      "sourceType": "dev.voroby.springframework.telegram.properties.TelegramProperties",
-      "defaultValue": false
     },
     {
       "name": "spring.telegram.client.system-language-code",

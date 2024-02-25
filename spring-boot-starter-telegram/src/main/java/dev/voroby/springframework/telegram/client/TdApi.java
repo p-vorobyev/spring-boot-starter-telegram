@@ -77,9 +77,9 @@ public class TdApi {
          */
         public int[] darkThemeColors;
         /**
-         * The minimum chat boost level required to use the color.
+         * The minimum chat boost level required to use the color in a channel chat.
          */
-        public int minChatBoostLevel;
+        public int minChannelChatBoostLevel;
 
         /**
          * Contains information about supported accent color for user/chat name, background of empty chat photo, replies to messages and link previews.
@@ -94,20 +94,20 @@ public class TdApi {
          * @param builtInAccentColorId Identifier of a built-in color to use in places, where only one color is needed; 0-6.
          * @param lightThemeColors The list of 1-3 colors in RGB format, describing the accent color, as expected to be shown in light themes.
          * @param darkThemeColors The list of 1-3 colors in RGB format, describing the accent color, as expected to be shown in dark themes.
-         * @param minChatBoostLevel The minimum chat boost level required to use the color.
+         * @param minChannelChatBoostLevel The minimum chat boost level required to use the color in a channel chat.
          */
-        public AccentColor(int id, int builtInAccentColorId, int[] lightThemeColors, int[] darkThemeColors, int minChatBoostLevel) {
+        public AccentColor(int id, int builtInAccentColorId, int[] lightThemeColors, int[] darkThemeColors, int minChannelChatBoostLevel) {
             this.id = id;
             this.builtInAccentColorId = builtInAccentColorId;
             this.lightThemeColors = lightThemeColors;
             this.darkThemeColors = darkThemeColors;
-            this.minChatBoostLevel = minChatBoostLevel;
+            this.minChannelChatBoostLevel = minChannelChatBoostLevel;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -2052909992;
+        public static final int CONSTRUCTOR = -496870680;
 
         /**
          * @return this.CONSTRUCTOR
@@ -2175,6 +2175,14 @@ public class TdApi {
          * True, if any custom emoji reaction can be added by Telegram Premium subscribers.
          */
         public boolean allowCustomEmoji;
+        /**
+         * True, if the reactions will be tags and the message can be found by them.
+         */
+        public boolean areTags;
+        /**
+         * The reason why the current user can't add reactions to the message, despite some other users can; may be null if none.
+         */
+        public ReactionUnavailabilityReason unavailabilityReason;
 
         /**
          * Represents a list of reactions that can be added to a message.
@@ -2189,18 +2197,22 @@ public class TdApi {
          * @param recentReactions List of recently used reactions.
          * @param popularReactions List of popular reactions.
          * @param allowCustomEmoji True, if any custom emoji reaction can be added by Telegram Premium subscribers.
+         * @param areTags True, if the reactions will be tags and the message can be found by them.
+         * @param unavailabilityReason The reason why the current user can't add reactions to the message, despite some other users can; may be null if none.
          */
-        public AvailableReactions(AvailableReaction[] topReactions, AvailableReaction[] recentReactions, AvailableReaction[] popularReactions, boolean allowCustomEmoji) {
+        public AvailableReactions(AvailableReaction[] topReactions, AvailableReaction[] recentReactions, AvailableReaction[] popularReactions, boolean allowCustomEmoji, boolean areTags, ReactionUnavailabilityReason unavailabilityReason) {
             this.topReactions = topReactions;
             this.recentReactions = recentReactions;
             this.popularReactions = popularReactions;
             this.allowCustomEmoji = allowCustomEmoji;
+            this.areTags = areTags;
+            this.unavailabilityReason = unavailabilityReason;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1995943616;
+        public static final int CONSTRUCTOR = 912529522;
 
         /**
          * @return this.CONSTRUCTOR
@@ -4703,6 +4715,93 @@ public class TdApi {
 
     /**
      * This class is an abstract base class.
+     * Describes result of canSendMessageToUser.
+     */
+    public abstract static class CanSendMessageToUserResult extends Object {
+        /**
+         * Default class constructor.
+         */
+        public CanSendMessageToUserResult() {
+        }
+    }
+
+    /**
+     * The user can be messaged.
+     */
+    public static class CanSendMessageToUserResultOk extends CanSendMessageToUserResult {
+
+        /**
+         * The user can be messaged.
+         */
+        public CanSendMessageToUserResultOk() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1530583042;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The user can't be messaged, because they are deleted or unknown.
+     */
+    public static class CanSendMessageToUserResultUserIsDeleted extends CanSendMessageToUserResult {
+
+        /**
+         * The user can't be messaged, because they are deleted or unknown.
+         */
+        public CanSendMessageToUserResultUserIsDeleted() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1944639903;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The user can't be messaged, because they restrict new chats with non-contacts.
+     */
+    public static class CanSendMessageToUserResultUserRestrictsNewChats extends CanSendMessageToUserResult {
+
+        /**
+         * The user can't be messaged, because they restrict new chats with non-contacts.
+         */
+        public CanSendMessageToUserResultUserRestrictsNewChats() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1929699797;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * This class is an abstract base class.
      * Represents result of checking whether the current user can send a story in the specific chat.
      */
     public abstract static class CanSendStoryResult extends Object {
@@ -4764,12 +4863,12 @@ public class TdApi {
     }
 
     /**
-     * The channel chat must be boosted first by Telegram Premium subscribers to post more stories. Call getChatBoostStatus to get current boost status of the chat.
+     * The chat must be boosted first by Telegram Premium subscribers to post more stories. Call getChatBoostStatus to get current boost status of the chat.
      */
     public static class CanSendStoryResultBoostNeeded extends CanSendStoryResult {
 
         /**
-         * The channel chat must be boosted first by Telegram Premium subscribers to post more stories. Call getChatBoostStatus to get current boost status of the chat.
+         * The chat must be boosted first by Telegram Premium subscribers to post more stories. Call getChatBoostStatus to get current boost status of the chat.
          */
         public CanSendStoryResultBoostNeeded() {
         }
@@ -5096,7 +5195,7 @@ public class TdApi {
          */
         public boolean isMarkedAsUnread;
         /**
-         * True, if the chat is a forum supergroup that must be shown in the &quot;View as topics&quot; mode.
+         * True, if the chat is a forum supergroup that must be shown in the &quot;View as topics&quot; mode, or Saved Messages chat that must be shown in the &quot;View as chats&quot;.
          */
         public boolean viewAsTopics;
         /**
@@ -5213,7 +5312,7 @@ public class TdApi {
          * @param hasProtectedContent True, if chat content can't be saved locally, forwarded, or copied.
          * @param isTranslatable True, if translation of all messages in the chat must be suggested to the user.
          * @param isMarkedAsUnread True, if the chat is marked as unread.
-         * @param viewAsTopics True, if the chat is a forum supergroup that must be shown in the &quot;View as topics&quot; mode.
+         * @param viewAsTopics True, if the chat is a forum supergroup that must be shown in the &quot;View as topics&quot; mode, or Saved Messages chat that must be shown in the &quot;View as chats&quot;.
          * @param hasScheduledMessages True, if the chat has scheduled messages.
          * @param canBeDeletedOnlyForSelf True, if the chat messages can be deleted only for the current user while other users will continue to see the messages.
          * @param canBeDeletedForAllUsers True, if the chat messages can be deleted for all users.
@@ -6119,7 +6218,7 @@ public class TdApi {
      */
     public static class ChatAdministratorRights extends Object {
         /**
-         * True, if the administrator can get chat event log, get chat boosts in channels, get channel members, report supergroup spam messages, see anonymous administrators in supergroups and ignore slow mode. Implied by any other privilege; applicable to supergroups and channels only.
+         * True, if the administrator can access the chat event log, get boost list, see hidden supergroup and channel members, report supergroup spam messages and ignore slow mode. Implied by any other privilege; applicable to supergroups and channels only.
          */
         public boolean canManageChat;
         /**
@@ -6151,7 +6250,7 @@ public class TdApi {
          */
         public boolean canPinMessages;
         /**
-         * True, if the administrator can manage topics; applicable to forum supergroups only.
+         * True, if the administrator can create, rename, close, reopen, hide, and unhide forum topics; applicable to forum supergroups only.
          */
         public boolean canManageTopics;
         /**
@@ -6163,15 +6262,15 @@ public class TdApi {
          */
         public boolean canManageVideoChats;
         /**
-         * True, if the administrator can create new channel stories, or edit and delete posted stories; applicable to channels only.
+         * True, if the administrator can create new chat stories, or edit and delete posted stories; applicable to supergroups and channels only.
          */
         public boolean canPostStories;
         /**
-         * True, if the administrator can edit stories posted by other users, pin stories and access story archive; applicable to channels only.
+         * True, if the administrator can edit stories posted by other users, pin stories and access story archive; applicable to supergroups and channels only.
          */
         public boolean canEditStories;
         /**
-         * True, if the administrator can delete stories posted by other users; applicable to channels only.
+         * True, if the administrator can delete stories posted by other users; applicable to supergroups and channels only.
          */
         public boolean canDeleteStories;
         /**
@@ -6188,7 +6287,7 @@ public class TdApi {
         /**
          * Describes rights of the administrator.
          *
-         * @param canManageChat True, if the administrator can get chat event log, get chat boosts in channels, get channel members, report supergroup spam messages, see anonymous administrators in supergroups and ignore slow mode. Implied by any other privilege; applicable to supergroups and channels only.
+         * @param canManageChat True, if the administrator can access the chat event log, get boost list, see hidden supergroup and channel members, report supergroup spam messages and ignore slow mode. Implied by any other privilege; applicable to supergroups and channels only.
          * @param canChangeInfo True, if the administrator can change the chat title, photo, and other settings.
          * @param canPostMessages True, if the administrator can create channel posts or view channel statistics; applicable to channels only.
          * @param canEditMessages True, if the administrator can edit messages of other users and pin messages; applicable to channels only.
@@ -6196,12 +6295,12 @@ public class TdApi {
          * @param canInviteUsers True, if the administrator can invite new users to the chat.
          * @param canRestrictMembers True, if the administrator can restrict, ban, or unban chat members or view supergroup statistics; always true for channels.
          * @param canPinMessages True, if the administrator can pin messages; applicable to basic groups and supergroups only.
-         * @param canManageTopics True, if the administrator can manage topics; applicable to forum supergroups only.
+         * @param canManageTopics True, if the administrator can create, rename, close, reopen, hide, and unhide forum topics; applicable to forum supergroups only.
          * @param canPromoteMembers True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that were directly or indirectly promoted by them.
          * @param canManageVideoChats True, if the administrator can manage video chats.
-         * @param canPostStories True, if the administrator can create new channel stories, or edit and delete posted stories; applicable to channels only.
-         * @param canEditStories True, if the administrator can edit stories posted by other users, pin stories and access story archive; applicable to channels only.
-         * @param canDeleteStories True, if the administrator can delete stories posted by other users; applicable to channels only.
+         * @param canPostStories True, if the administrator can create new chat stories, or edit and delete posted stories; applicable to supergroups and channels only.
+         * @param canEditStories True, if the administrator can edit stories posted by other users, pin stories and access story archive; applicable to supergroups and channels only.
+         * @param canDeleteStories True, if the administrator can delete stories posted by other users; applicable to supergroups and channels only.
          * @param isAnonymous True, if the administrator isn't shown in the chat member list and sends messages anonymously; applicable to supergroups only.
          */
         public ChatAdministratorRights(boolean canManageChat, boolean canChangeInfo, boolean canPostMessages, boolean canEditMessages, boolean canDeleteMessages, boolean canInviteUsers, boolean canRestrictMembers, boolean canPinMessages, boolean canManageTopics, boolean canPromoteMembers, boolean canManageVideoChats, boolean canPostStories, boolean canEditStories, boolean canDeleteStories, boolean isAnonymous) {
@@ -6463,6 +6562,34 @@ public class TdApi {
          * The list of features.
          */
         public ChatBoostLevelFeatures[] features;
+        /**
+         * The minimum boost level required to set custom emoji for profile background.
+         */
+        public int minProfileBackgroundCustomEmojiBoostLevel;
+        /**
+         * The minimum boost level required to set custom emoji for reply header and link preview background; for channel chats only.
+         */
+        public int minBackgroundCustomEmojiBoostLevel;
+        /**
+         * The minimum boost level required to set emoji status.
+         */
+        public int minEmojiStatusBoostLevel;
+        /**
+         * The minimum boost level required to set a chat theme background as chat background.
+         */
+        public int minChatThemeBackgroundBoostLevel;
+        /**
+         * The minimum boost level required to set custom chat background.
+         */
+        public int minCustomBackgroundBoostLevel;
+        /**
+         * The minimum boost level required to set custom emoji sticker set for the chat; for supergroup chats only.
+         */
+        public int minCustomEmojiStickerSetBoostLevel;
+        /**
+         * The minimum boost level allowing to recognize speech in video note and voice note messages for non-Premium users; for supergroup chats only.
+         */
+        public int minSpeechRecognitionBoostLevel;
 
         /**
          * Contains a list of features available on the first chat boost levels.
@@ -6474,15 +6601,29 @@ public class TdApi {
          * Contains a list of features available on the first chat boost levels.
          *
          * @param features The list of features.
+         * @param minProfileBackgroundCustomEmojiBoostLevel The minimum boost level required to set custom emoji for profile background.
+         * @param minBackgroundCustomEmojiBoostLevel The minimum boost level required to set custom emoji for reply header and link preview background; for channel chats only.
+         * @param minEmojiStatusBoostLevel The minimum boost level required to set emoji status.
+         * @param minChatThemeBackgroundBoostLevel The minimum boost level required to set a chat theme background as chat background.
+         * @param minCustomBackgroundBoostLevel The minimum boost level required to set custom chat background.
+         * @param minCustomEmojiStickerSetBoostLevel The minimum boost level required to set custom emoji sticker set for the chat; for supergroup chats only.
+         * @param minSpeechRecognitionBoostLevel The minimum boost level allowing to recognize speech in video note and voice note messages for non-Premium users; for supergroup chats only.
          */
-        public ChatBoostFeatures(ChatBoostLevelFeatures[] features) {
+        public ChatBoostFeatures(ChatBoostLevelFeatures[] features, int minProfileBackgroundCustomEmojiBoostLevel, int minBackgroundCustomEmojiBoostLevel, int minEmojiStatusBoostLevel, int minChatThemeBackgroundBoostLevel, int minCustomBackgroundBoostLevel, int minCustomEmojiStickerSetBoostLevel, int minSpeechRecognitionBoostLevel) {
             this.features = features;
+            this.minProfileBackgroundCustomEmojiBoostLevel = minProfileBackgroundCustomEmojiBoostLevel;
+            this.minBackgroundCustomEmojiBoostLevel = minBackgroundCustomEmojiBoostLevel;
+            this.minEmojiStatusBoostLevel = minEmojiStatusBoostLevel;
+            this.minChatThemeBackgroundBoostLevel = minChatThemeBackgroundBoostLevel;
+            this.minCustomBackgroundBoostLevel = minCustomBackgroundBoostLevel;
+            this.minCustomEmojiStickerSetBoostLevel = minCustomEmojiStickerSetBoostLevel;
+            this.minSpeechRecognitionBoostLevel = minSpeechRecognitionBoostLevel;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -245268598;
+        public static final int CONSTRUCTOR = -1572868044;
 
         /**
          * @return this.CONSTRUCTOR
@@ -6541,6 +6682,14 @@ public class TdApi {
          * True, if custom background can be set in the chat for all users.
          */
         public boolean canSetCustomBackground;
+        /**
+         * True, if custom emoji sticker set can be set for the chat.
+         */
+        public boolean canSetCustomEmojiStickerSet;
+        /**
+         * True, if speech recognition can be used for video note and voice note messages by all users.
+         */
+        public boolean canRecognizeSpeech;
 
         /**
          * Contains a list of features available on a specific chat boost level.
@@ -6562,8 +6711,10 @@ public class TdApi {
          * @param canSetEmojiStatus True, if emoji status can be set.
          * @param chatThemeBackgroundCount Number of chat theme backgrounds that can be set as chat background.
          * @param canSetCustomBackground True, if custom background can be set in the chat for all users.
+         * @param canSetCustomEmojiStickerSet True, if custom emoji sticker set can be set for the chat.
+         * @param canRecognizeSpeech True, if speech recognition can be used for video note and voice note messages by all users.
          */
-        public ChatBoostLevelFeatures(int level, int storyPerDayCount, int customEmojiReactionCount, int titleColorCount, int profileAccentColorCount, boolean canSetProfileBackgroundCustomEmoji, int accentColorCount, boolean canSetBackgroundCustomEmoji, boolean canSetEmojiStatus, int chatThemeBackgroundCount, boolean canSetCustomBackground) {
+        public ChatBoostLevelFeatures(int level, int storyPerDayCount, int customEmojiReactionCount, int titleColorCount, int profileAccentColorCount, boolean canSetProfileBackgroundCustomEmoji, int accentColorCount, boolean canSetBackgroundCustomEmoji, boolean canSetEmojiStatus, int chatThemeBackgroundCount, boolean canSetCustomBackground, boolean canSetCustomEmojiStickerSet, boolean canRecognizeSpeech) {
             this.level = level;
             this.storyPerDayCount = storyPerDayCount;
             this.customEmojiReactionCount = customEmojiReactionCount;
@@ -6575,12 +6726,14 @@ public class TdApi {
             this.canSetEmojiStatus = canSetEmojiStatus;
             this.chatThemeBackgroundCount = chatThemeBackgroundCount;
             this.canSetCustomBackground = canSetCustomBackground;
+            this.canSetCustomEmojiStickerSet = canSetCustomEmojiStickerSet;
+            this.canRecognizeSpeech = canRecognizeSpeech;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -23123490;
+        public static final int CONSTRUCTOR = -767011729;
 
         /**
          * @return this.CONSTRUCTOR
@@ -8047,6 +8200,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1243130481;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The supergroup sticker set with allowed custom emoji was changed.
+     */
+    public static class ChatEventCustomEmojiStickerSetChanged extends ChatEventAction {
+        /**
+         * Previous identifier of the chat sticker set; 0 if none.
+         */
+        public long oldStickerSetId;
+        /**
+         * New identifier of the chat sticker set; 0 if none.
+         */
+        public long newStickerSetId;
+
+        /**
+         * The supergroup sticker set with allowed custom emoji was changed.
+         */
+        public ChatEventCustomEmojiStickerSetChanged() {
+        }
+
+        /**
+         * The supergroup sticker set with allowed custom emoji was changed.
+         *
+         * @param oldStickerSetId Previous identifier of the chat sticker set; 0 if none.
+         * @param newStickerSetId New identifier of the chat sticker set; 0 if none.
+         */
+        public ChatEventCustomEmojiStickerSetChanged(long oldStickerSetId, long newStickerSetId) {
+            this.oldStickerSetId = oldStickerSetId;
+            this.newStickerSetId = newStickerSetId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 118244123;
 
         /**
          * @return this.CONSTRUCTOR
@@ -11226,9 +11423,9 @@ public class TdApi {
          */
         public boolean canPinMessages;
         /**
-         * True, if the user can manage topics.
+         * True, if the user can create topics.
          */
-        public boolean canManageTopics;
+        public boolean canCreateTopics;
 
         /**
          * Describes actions that a user is allowed to take in a chat.
@@ -11252,9 +11449,9 @@ public class TdApi {
          * @param canChangeInfo True, if the user can change the chat title, photo, and other settings.
          * @param canInviteUsers True, if the user can invite new users to the chat.
          * @param canPinMessages True, if the user can pin messages.
-         * @param canManageTopics True, if the user can manage topics.
+         * @param canCreateTopics True, if the user can create topics.
          */
-        public ChatPermissions(boolean canSendBasicMessages, boolean canSendAudios, boolean canSendDocuments, boolean canSendPhotos, boolean canSendVideos, boolean canSendVideoNotes, boolean canSendVoiceNotes, boolean canSendPolls, boolean canSendOtherMessages, boolean canAddWebPagePreviews, boolean canChangeInfo, boolean canInviteUsers, boolean canPinMessages, boolean canManageTopics) {
+        public ChatPermissions(boolean canSendBasicMessages, boolean canSendAudios, boolean canSendDocuments, boolean canSendPhotos, boolean canSendVideos, boolean canSendVideoNotes, boolean canSendVoiceNotes, boolean canSendPolls, boolean canSendOtherMessages, boolean canAddWebPagePreviews, boolean canChangeInfo, boolean canInviteUsers, boolean canPinMessages, boolean canCreateTopics) {
             this.canSendBasicMessages = canSendBasicMessages;
             this.canSendAudios = canSendAudios;
             this.canSendDocuments = canSendDocuments;
@@ -11268,13 +11465,13 @@ public class TdApi {
             this.canChangeInfo = canChangeInfo;
             this.canInviteUsers = canInviteUsers;
             this.canPinMessages = canPinMessages;
-            this.canManageTopics = canManageTopics;
+            this.canCreateTopics = canCreateTopics;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -1355062837;
+        public static final int CONSTRUCTOR = -1798223946;
 
         /**
          * @return this.CONSTRUCTOR
@@ -14405,7 +14602,7 @@ public class TdApi {
          */
         public int date;
         /**
-         * Content of the message draft; must be of the type inputMessageText.
+         * Content of the message draft; must be of the type inputMessageText, inputMessageVideoNote, or inputMessageVoiceNote.
          */
         public InputMessageContent inputMessageText;
 
@@ -14420,7 +14617,7 @@ public class TdApi {
          *
          * @param replyTo Information about the message to be replied; must be of the type inputMessageReplyToMessage; may be null if none.
          * @param date Point in time (Unix timestamp) when the draft was created.
-         * @param inputMessageText Content of the message draft; must be of the type inputMessageText.
+         * @param inputMessageText Content of the message draft; must be of the type inputMessageText, inputMessageVideoNote, or inputMessageVoiceNote.
          */
         public DraftMessage(InputMessageReplyTo replyTo, int date, InputMessageContent inputMessageText) {
             this.replyTo = replyTo;
@@ -14876,7 +15073,89 @@ public class TdApi {
     }
 
     /**
-     * Contains information about a emoji reaction.
+     * Represents an emoji with its keyword.
+     */
+    public static class EmojiKeyword extends Object {
+        /**
+         * The emoji.
+         */
+        public String emoji;
+        /**
+         * The keyword.
+         */
+        public String keyword;
+
+        /**
+         * Represents an emoji with its keyword.
+         */
+        public EmojiKeyword() {
+        }
+
+        /**
+         * Represents an emoji with its keyword.
+         *
+         * @param emoji The emoji.
+         * @param keyword The keyword.
+         */
+        public EmojiKeyword(String emoji, String keyword) {
+            this.emoji = emoji;
+            this.keyword = keyword;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -2112285985;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Represents a list of emoji with their keywords.
+     */
+    public static class EmojiKeywords extends Object {
+        /**
+         * List of emoji with their keywords.
+         */
+        public EmojiKeyword[] emojiKeywords;
+
+        /**
+         * Represents a list of emoji with their keywords.
+         */
+        public EmojiKeywords() {
+        }
+
+        /**
+         * Represents a list of emoji with their keywords.
+         *
+         * @param emojiKeywords List of emoji with their keywords.
+         */
+        public EmojiKeywords(EmojiKeyword[] emojiKeywords) {
+            this.emojiKeywords = emojiKeywords;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 689723339;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains information about an emoji reaction.
      */
     public static class EmojiReaction extends Object {
         /**
@@ -14921,13 +15200,13 @@ public class TdApi {
         public Sticker centerAnimation;
 
         /**
-         * Contains information about a emoji reaction.
+         * Contains information about an emoji reaction.
          */
         public EmojiReaction() {
         }
 
         /**
-         * Contains information about a emoji reaction.
+         * Contains information about an emoji reaction.
          *
          * @param emoji Text representation of the reaction.
          * @param title Reaction title.
@@ -16353,6 +16632,74 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 732819537;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains information about the last message from which a new message was forwarded last time.
+     */
+    public static class ForwardSource extends Object {
+        /**
+         * Identifier of the chat to which the message that was forwarded belonged; may be 0 if unknown.
+         */
+        public long chatId;
+        /**
+         * Identifier of the message; may be 0 if unknown.
+         */
+        public long messageId;
+        /**
+         * Identifier of the sender of the message; may be null if unknown or the new message was forwarded not to Saved Messages.
+         */
+        public MessageSender senderId;
+        /**
+         * Name of the sender of the message if the sender is hidden by their privacy settings.
+         */
+        public String senderName;
+        /**
+         * Point in time (Unix timestamp) when the message is sent; 0 if unknown.
+         */
+        public int date;
+        /**
+         * True, if the message that was forwarded is outgoing; always false if sender is unknown.
+         */
+        public boolean isOutgoing;
+
+        /**
+         * Contains information about the last message from which a new message was forwarded last time.
+         */
+        public ForwardSource() {
+        }
+
+        /**
+         * Contains information about the last message from which a new message was forwarded last time.
+         *
+         * @param chatId Identifier of the chat to which the message that was forwarded belonged; may be 0 if unknown.
+         * @param messageId Identifier of the message; may be 0 if unknown.
+         * @param senderId Identifier of the sender of the message; may be null if unknown or the new message was forwarded not to Saved Messages.
+         * @param senderName Name of the sender of the message if the sender is hidden by their privacy settings.
+         * @param date Point in time (Unix timestamp) when the message is sent; 0 if unknown.
+         * @param isOutgoing True, if the message that was forwarded is outgoing; always false if sender is unknown.
+         */
+        public ForwardSource(long chatId, long messageId, MessageSender senderId, String senderName, int date, boolean isOutgoing) {
+            this.chatId = chatId;
+            this.messageId = messageId;
+            this.senderId = senderId;
+            this.senderName = senderName;
+            this.date = date;
+            this.isOutgoing = isOutgoing;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1795337929;
 
         /**
          * @return this.CONSTRUCTOR
@@ -20749,7 +21096,7 @@ public class TdApi {
          */
         public FormattedText text;
         /**
-         * Options to be used for generation of a link preview; pass null to use default link preview options.
+         * Options to be used for generation of a link preview; may be null if none; pass null to use default link preview options.
          */
         public LinkPreviewOptions linkPreviewOptions;
         /**
@@ -20767,7 +21114,7 @@ public class TdApi {
          * A text message.
          *
          * @param text Formatted text to be sent; 0-getOption(&quot;message_text_length_max&quot;) characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, BlockQuote, Code, Pre, PreCode, TextUrl and MentionName entities are allowed to be specified manually.
-         * @param linkPreviewOptions Options to be used for generation of a link preview; pass null to use default link preview options.
+         * @param linkPreviewOptions Options to be used for generation of a link preview; may be null if none; pass null to use default link preview options.
          * @param clearDraft True, if a chat message draft must be deleted.
          */
         public InputMessageText(FormattedText text, LinkPreviewOptions linkPreviewOptions, boolean clearDraft) {
@@ -21237,7 +21584,7 @@ public class TdApi {
          */
         public InputFile videoNote;
         /**
-         * Video thumbnail; pass null to skip thumbnail uploading.
+         * Video thumbnail; may be null if empty; pass null to skip thumbnail uploading.
          */
         public InputThumbnail thumbnail;
         /**
@@ -21248,6 +21595,10 @@ public class TdApi {
          * Video width and height; must be positive and not greater than 640.
          */
         public int length;
+        /**
+         * Video note self-destruct type; may be null if none; pass null if none; private chats only.
+         */
+        public MessageSelfDestructType selfDestructType;
 
         /**
          * A video note message.
@@ -21259,21 +21610,23 @@ public class TdApi {
          * A video note message.
          *
          * @param videoNote Video note to be sent.
-         * @param thumbnail Video thumbnail; pass null to skip thumbnail uploading.
+         * @param thumbnail Video thumbnail; may be null if empty; pass null to skip thumbnail uploading.
          * @param duration Duration of the video, in seconds.
          * @param length Video width and height; must be positive and not greater than 640.
+         * @param selfDestructType Video note self-destruct type; may be null if none; pass null if none; private chats only.
          */
-        public InputMessageVideoNote(InputFile videoNote, InputThumbnail thumbnail, int duration, int length) {
+        public InputMessageVideoNote(InputFile videoNote, InputThumbnail thumbnail, int duration, int length, MessageSelfDestructType selfDestructType) {
             this.videoNote = videoNote;
             this.thumbnail = thumbnail;
             this.duration = duration;
             this.length = length;
+            this.selfDestructType = selfDestructType;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 279108859;
+        public static final int CONSTRUCTOR = -714598691;
 
         /**
          * @return this.CONSTRUCTOR
@@ -21301,9 +21654,13 @@ public class TdApi {
          */
         public byte[] waveform;
         /**
-         * Voice note caption; pass null to use an empty caption; 0-getOption(&quot;message_caption_length_max&quot;) characters.
+         * Voice note caption; may be null if empty; pass null to use an empty caption; 0-getOption(&quot;message_caption_length_max&quot;) characters.
          */
         public FormattedText caption;
+        /**
+         * Voice note self-destruct type; may be null if none; pass null if none; private chats only.
+         */
+        public MessageSelfDestructType selfDestructType;
 
         /**
          * A voice note message.
@@ -21317,19 +21674,21 @@ public class TdApi {
          * @param voiceNote Voice note to be sent.
          * @param duration Duration of the voice note, in seconds.
          * @param waveform Waveform representation of the voice note in 5-bit format.
-         * @param caption Voice note caption; pass null to use an empty caption; 0-getOption(&quot;message_caption_length_max&quot;) characters.
+         * @param caption Voice note caption; may be null if empty; pass null to use an empty caption; 0-getOption(&quot;message_caption_length_max&quot;) characters.
+         * @param selfDestructType Voice note self-destruct type; may be null if none; pass null if none; private chats only.
          */
-        public InputMessageVoiceNote(InputFile voiceNote, int duration, byte[] waveform, FormattedText caption) {
+        public InputMessageVoiceNote(InputFile voiceNote, int duration, byte[] waveform, FormattedText caption, MessageSelfDestructType selfDestructType) {
             this.voiceNote = voiceNote;
             this.duration = duration;
             this.waveform = waveform;
             this.caption = caption;
+            this.selfDestructType = selfDestructType;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 2136519657;
+        public static final int CONSTRUCTOR = 1461977004;
 
         /**
          * @return this.CONSTRUCTOR
@@ -21905,7 +22264,7 @@ public class TdApi {
      */
     public static class InputMessageReplyToStory extends InputMessageReplyTo {
         /**
-         * The identifier of the sender of the story. Currently, stories can be replied only in the sender's chat.
+         * The identifier of the sender of the story. Currently, stories can be replied only in the sender's chat and channel stories can't be replied.
          */
         public long storySenderChatId;
         /**
@@ -21922,7 +22281,7 @@ public class TdApi {
         /**
          * Describes a story to be replied.
          *
-         * @param storySenderChatId The identifier of the sender of the story. Currently, stories can be replied only in the sender's chat.
+         * @param storySenderChatId The identifier of the sender of the story. Currently, stories can be replied only in the sender's chat and channel stories can't be replied.
          * @param storyId The identifier of the story.
          */
         public InputMessageReplyToStory(long storySenderChatId, int storyId) {
@@ -23493,12 +23852,12 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to the active sessions section of the application. Use getActiveSessions to handle the link.
+     * The link is a link to the Devices section of the application. Use getActiveSessions to get the list of active sessions and show them to the user.
      */
     public static class InternalLinkTypeActiveSessions extends InternalLinkType {
 
         /**
-         * The link is a link to the active sessions section of the application. Use getActiveSessions to handle the link.
+         * The link is a link to the Devices section of the application. Use getActiveSessions to get the list of active sessions and show them to the user.
          */
         public InternalLinkTypeActiveSessions() {
         }
@@ -23606,7 +23965,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a background. Call searchBackground with the given background name to process the link.
+     * The link is a link to a background. Call searchBackground with the given background name to process the link If background is found and the user wants to apply it, then call setDefaultBackground.
      */
     public static class InternalLinkTypeBackground extends InternalLinkType {
         /**
@@ -23615,13 +23974,13 @@ public class TdApi {
         public String backgroundName;
 
         /**
-         * The link is a link to a background. Call searchBackground with the given background name to process the link.
+         * The link is a link to a background. Call searchBackground with the given background name to process the link If background is found and the user wants to apply it, then call setDefaultBackground.
          */
         public InternalLinkTypeBackground() {
         }
 
         /**
-         * The link is a link to a background. Call searchBackground with the given background name to process the link.
+         * The link is a link to a background. Call searchBackground with the given background name to process the link If background is found and the user wants to apply it, then call setDefaultBackground.
          *
          * @param backgroundName Name of the background.
          */
@@ -23851,7 +24210,7 @@ public class TdApi {
     }
 
     /**
-     * The link is an invite link to a chat folder. Call checkChatFolderInviteLink with the given invite link to process the link.
+     * The link is an invite link to a chat folder. Call checkChatFolderInviteLink with the given invite link to process the link. If the link is valid and the user wants to join the chat folder, then call addChatFolderByInviteLink.
      */
     public static class InternalLinkTypeChatFolderInvite extends InternalLinkType {
         /**
@@ -23860,13 +24219,13 @@ public class TdApi {
         public String inviteLink;
 
         /**
-         * The link is an invite link to a chat folder. Call checkChatFolderInviteLink with the given invite link to process the link.
+         * The link is an invite link to a chat folder. Call checkChatFolderInviteLink with the given invite link to process the link. If the link is valid and the user wants to join the chat folder, then call addChatFolderByInviteLink.
          */
         public InternalLinkTypeChatFolderInvite() {
         }
 
         /**
-         * The link is an invite link to a chat folder. Call checkChatFolderInviteLink with the given invite link to process the link.
+         * The link is an invite link to a chat folder. Call checkChatFolderInviteLink with the given invite link to process the link. If the link is valid and the user wants to join the chat folder, then call addChatFolderByInviteLink.
          *
          * @param inviteLink Internal representation of the invite link.
          */
@@ -23914,7 +24273,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a chat invite link. Call checkChatInviteLink with the given invite link to process the link.
+     * The link is a chat invite link. Call checkChatInviteLink with the given invite link to process the link. If the link is valid and the user wants to join the chat, then call joinChatByInviteLink.
      */
     public static class InternalLinkTypeChatInvite extends InternalLinkType {
         /**
@@ -23923,13 +24282,13 @@ public class TdApi {
         public String inviteLink;
 
         /**
-         * The link is a chat invite link. Call checkChatInviteLink with the given invite link to process the link.
+         * The link is a chat invite link. Call checkChatInviteLink with the given invite link to process the link. If the link is valid and the user wants to join the chat, then call joinChatByInviteLink.
          */
         public InternalLinkTypeChatInvite() {
         }
 
         /**
-         * The link is a chat invite link. Call checkChatInviteLink with the given invite link to process the link.
+         * The link is a chat invite link. Call checkChatInviteLink with the given invite link to process the link. If the link is valid and the user wants to join the chat, then call joinChatByInviteLink.
          *
          * @param inviteLink Internal representation of the invite link.
          */
@@ -24046,7 +24405,7 @@ public class TdApi {
     }
 
     /**
-     * The link must be opened in an Instant View. Call getWebPageInstantView with the given URL to process the link.
+     * The link must be opened in an Instant View. Call getWebPageInstantView with the given URL to process the link. If Instant View is found, then show it, otherwise, open the fallback URL in an external browser.
      */
     public static class InternalLinkTypeInstantView extends InternalLinkType {
         /**
@@ -24059,13 +24418,13 @@ public class TdApi {
         public String fallbackUrl;
 
         /**
-         * The link must be opened in an Instant View. Call getWebPageInstantView with the given URL to process the link.
+         * The link must be opened in an Instant View. Call getWebPageInstantView with the given URL to process the link. If Instant View is found, then show it, otherwise, open the fallback URL in an external browser.
          */
         public InternalLinkTypeInstantView() {
         }
 
         /**
-         * The link must be opened in an Instant View. Call getWebPageInstantView with the given URL to process the link.
+         * The link must be opened in an Instant View. Call getWebPageInstantView with the given URL to process the link. If Instant View is found, then show it, otherwise, open the fallback URL in an external browser.
          *
          * @param url URL to be passed to getWebPageInstantView.
          * @param fallbackUrl An URL to open if getWebPageInstantView fails.
@@ -24128,7 +24487,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a language pack. Call getLanguagePackInfo with the given language pack identifier to process the link.
+     * The link is a link to a language pack. Call getLanguagePackInfo with the given language pack identifier to process the link. If the language pack is found and the user wants to apply it, then call setOption for the option &quot;language_pack_id&quot;.
      */
     public static class InternalLinkTypeLanguagePack extends InternalLinkType {
         /**
@@ -24137,13 +24496,13 @@ public class TdApi {
         public String languagePackId;
 
         /**
-         * The link is a link to a language pack. Call getLanguagePackInfo with the given language pack identifier to process the link.
+         * The link is a link to a language pack. Call getLanguagePackInfo with the given language pack identifier to process the link. If the language pack is found and the user wants to apply it, then call setOption for the option &quot;language_pack_id&quot;.
          */
         public InternalLinkTypeLanguagePack() {
         }
 
         /**
-         * The link is a link to a language pack. Call getLanguagePackInfo with the given language pack identifier to process the link.
+         * The link is a link to a language pack. Call getLanguagePackInfo with the given language pack identifier to process the link. If the language pack is found and the user wants to apply it, then call setOption for the option &quot;language_pack_id&quot;.
          *
          * @param languagePackId Language pack identifier.
          */
@@ -24191,7 +24550,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a Telegram message or a forum topic. Call getMessageLinkInfo with the given URL to process the link.
+     * The link is a link to a Telegram message or a forum topic. Call getMessageLinkInfo with the given URL to process the link, and then open received forum topic or chat and show the message there.
      */
     public static class InternalLinkTypeMessage extends InternalLinkType {
         /**
@@ -24200,13 +24559,13 @@ public class TdApi {
         public String url;
 
         /**
-         * The link is a link to a Telegram message or a forum topic. Call getMessageLinkInfo with the given URL to process the link.
+         * The link is a link to a Telegram message or a forum topic. Call getMessageLinkInfo with the given URL to process the link, and then open received forum topic or chat and show the message there.
          */
         public InternalLinkTypeMessage() {
         }
 
         /**
-         * The link is a link to a Telegram message or a forum topic. Call getMessageLinkInfo with the given URL to process the link.
+         * The link is a link to a Telegram message or a forum topic. Call getMessageLinkInfo with the given URL to process the link, and then open received forum topic or chat and show the message there.
          *
          * @param url URL to be passed to getMessageLinkInfo.
          */
@@ -24335,7 +24694,7 @@ public class TdApi {
     }
 
     /**
-     * The link can be used to confirm ownership of a phone number to prevent account deletion. Call sendPhoneNumberConfirmationCode with the given hash and phone number to process the link.
+     * The link can be used to confirm ownership of a phone number to prevent account deletion. Call sendPhoneNumberConfirmationCode with the given hash and phone number to process the link. If succeeded, call checkPhoneNumberConfirmationCode to check entered by the user code, or resendPhoneNumberConfirmationCode to resend it.
      */
     public static class InternalLinkTypePhoneNumberConfirmation extends InternalLinkType {
         /**
@@ -24348,13 +24707,13 @@ public class TdApi {
         public String phoneNumber;
 
         /**
-         * The link can be used to confirm ownership of a phone number to prevent account deletion. Call sendPhoneNumberConfirmationCode with the given hash and phone number to process the link.
+         * The link can be used to confirm ownership of a phone number to prevent account deletion. Call sendPhoneNumberConfirmationCode with the given hash and phone number to process the link. If succeeded, call checkPhoneNumberConfirmationCode to check entered by the user code, or resendPhoneNumberConfirmationCode to resend it.
          */
         public InternalLinkTypePhoneNumberConfirmation() {
         }
 
         /**
-         * The link can be used to confirm ownership of a phone number to prevent account deletion. Call sendPhoneNumberConfirmationCode with the given hash and phone number to process the link.
+         * The link can be used to confirm ownership of a phone number to prevent account deletion. Call sendPhoneNumberConfirmationCode with the given hash and phone number to process the link. If succeeded, call checkPhoneNumberConfirmationCode to check entered by the user code, or resendPhoneNumberConfirmationCode to resend it.
          *
          * @param hash Hash value from the link.
          * @param phoneNumber Phone number value from the link.
@@ -24417,7 +24776,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to the screen for gifting Telegram Premium subscriptions to friends.
+     * The link is a link to the screen for gifting Telegram Premium subscriptions to friends via inputInvoiceTelegram payments or in-store purchases.
      */
     public static class InternalLinkTypePremiumGift extends InternalLinkType {
         /**
@@ -24426,13 +24785,13 @@ public class TdApi {
         public String referrer;
 
         /**
-         * The link is a link to the screen for gifting Telegram Premium subscriptions to friends.
+         * The link is a link to the screen for gifting Telegram Premium subscriptions to friends via inputInvoiceTelegram payments or in-store purchases.
          */
         public InternalLinkTypePremiumGift() {
         }
 
         /**
-         * The link is a link to the screen for gifting Telegram Premium subscriptions to friends.
+         * The link is a link to the screen for gifting Telegram Premium subscriptions to friends via inputInvoiceTelegram payments or in-store purchases.
          *
          * @param referrer Referrer specified in the link.
          */
@@ -24568,7 +24927,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a chat by its username. Call searchPublicChat with the given chat username to process the link.
+     * The link is a link to a chat by its username. Call searchPublicChat with the given chat username to process the link If the chat is found, open its profile information screen or the chat itself.
      */
     public static class InternalLinkTypePublicChat extends InternalLinkType {
         /**
@@ -24577,13 +24936,13 @@ public class TdApi {
         public String chatUsername;
 
         /**
-         * The link is a link to a chat by its username. Call searchPublicChat with the given chat username to process the link.
+         * The link is a link to a chat by its username. Call searchPublicChat with the given chat username to process the link If the chat is found, open its profile information screen or the chat itself.
          */
         public InternalLinkTypePublicChat() {
         }
 
         /**
-         * The link is a link to a chat by its username. Call searchPublicChat with the given chat username to process the link.
+         * The link is a link to a chat by its username. Call searchPublicChat with the given chat username to process the link If the chat is found, open its profile information screen or the chat itself.
          *
          * @param chatUsername Username of the chat.
          */
@@ -24681,7 +25040,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a bot, which can be installed to the side menu. Call searchPublicChat with the given bot username, check that the user is a bot and can be added to attachment menu. Then, use getAttachmentMenuBot to receive information about the bot. If the bot isn't added to side menu, then show a disclaimer about Mini Apps being a third-party apps, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. If the bot is added to side menu, then use getWebAppUrl with the given URL.
+     * The link is a link to a bot, which can be installed to the side menu. Call searchPublicChat with the given bot username, check that the user is a bot and can be added to attachment menu. Then, use getAttachmentMenuBot to receive information about the bot. If the bot isn't added to side menu, then show a disclaimer about Mini Apps being a third-party apps, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. If the bot is added to side menu, then use getWebAppUrl with the given URL and open the returned URL as a Web App.
      */
     public static class InternalLinkTypeSideMenuBot extends InternalLinkType {
         /**
@@ -24694,13 +25053,13 @@ public class TdApi {
         public String url;
 
         /**
-         * The link is a link to a bot, which can be installed to the side menu. Call searchPublicChat with the given bot username, check that the user is a bot and can be added to attachment menu. Then, use getAttachmentMenuBot to receive information about the bot. If the bot isn't added to side menu, then show a disclaimer about Mini Apps being a third-party apps, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. If the bot is added to side menu, then use getWebAppUrl with the given URL.
+         * The link is a link to a bot, which can be installed to the side menu. Call searchPublicChat with the given bot username, check that the user is a bot and can be added to attachment menu. Then, use getAttachmentMenuBot to receive information about the bot. If the bot isn't added to side menu, then show a disclaimer about Mini Apps being a third-party apps, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. If the bot is added to side menu, then use getWebAppUrl with the given URL and open the returned URL as a Web App.
          */
         public InternalLinkTypeSideMenuBot() {
         }
 
         /**
-         * The link is a link to a bot, which can be installed to the side menu. Call searchPublicChat with the given bot username, check that the user is a bot and can be added to attachment menu. Then, use getAttachmentMenuBot to receive information about the bot. If the bot isn't added to side menu, then show a disclaimer about Mini Apps being a third-party apps, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. If the bot is added to side menu, then use getWebAppUrl with the given URL.
+         * The link is a link to a bot, which can be installed to the side menu. Call searchPublicChat with the given bot username, check that the user is a bot and can be added to attachment menu. Then, use getAttachmentMenuBot to receive information about the bot. If the bot isn't added to side menu, then show a disclaimer about Mini Apps being a third-party apps, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. If the bot is added to side menu, then use getWebAppUrl with the given URL and open the returned URL as a Web App.
          *
          * @param botUsername Username of the bot.
          * @param url URL to be passed to getWebAppUrl.
@@ -24725,7 +25084,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a sticker set. Call searchStickerSet with the given sticker set name to process the link and show the sticker set.
+     * The link is a link to a sticker set. Call searchStickerSet with the given sticker set name to process the link and show the sticker set. If the sticker set is found and the user wants to add it, then call changeStickerSet.
      */
     public static class InternalLinkTypeStickerSet extends InternalLinkType {
         /**
@@ -24738,13 +25097,13 @@ public class TdApi {
         public boolean expectCustomEmoji;
 
         /**
-         * The link is a link to a sticker set. Call searchStickerSet with the given sticker set name to process the link and show the sticker set.
+         * The link is a link to a sticker set. Call searchStickerSet with the given sticker set name to process the link and show the sticker set. If the sticker set is found and the user wants to add it, then call changeStickerSet.
          */
         public InternalLinkTypeStickerSet() {
         }
 
         /**
-         * The link is a link to a sticker set. Call searchStickerSet with the given sticker set name to process the link and show the sticker set.
+         * The link is a link to a sticker set. Call searchStickerSet with the given sticker set name to process the link and show the sticker set. If the sticker set is found and the user wants to add it, then call changeStickerSet.
          *
          * @param stickerSetName Name of the sticker set.
          * @param expectCustomEmoji True, if the sticker set is expected to contain custom emoji.
@@ -24769,7 +25128,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a story. Call searchPublicChat with the given sender username, then call getStory with the received chat identifier and the given story identifier.
+     * The link is a link to a story. Call searchPublicChat with the given sender username, then call getStory with the received chat identifier and the given story identifier, then show the story if received.
      */
     public static class InternalLinkTypeStory extends InternalLinkType {
         /**
@@ -24782,13 +25141,13 @@ public class TdApi {
         public int storyId;
 
         /**
-         * The link is a link to a story. Call searchPublicChat with the given sender username, then call getStory with the received chat identifier and the given story identifier.
+         * The link is a link to a story. Call searchPublicChat with the given sender username, then call getStory with the received chat identifier and the given story identifier, then show the story if received.
          */
         public InternalLinkTypeStory() {
         }
 
         /**
-         * The link is a link to a story. Call searchPublicChat with the given sender username, then call getStory with the received chat identifier and the given story identifier.
+         * The link is a link to a story. Call searchPublicChat with the given sender username, then call getStory with the received chat identifier and the given story identifier, then show the story if received.
          *
          * @param storySenderUsername Username of the sender of the story.
          * @param storyId Story identifier.
@@ -24939,7 +25298,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a user by its phone number. Call searchUserByPhoneNumber with the given phone number to process the link.
+     * The link is a link to a user by its phone number. Call searchUserByPhoneNumber with the given phone number to process the link. If the user is found, then call createPrivateChat and open the chat.
      */
     public static class InternalLinkTypeUserPhoneNumber extends InternalLinkType {
         /**
@@ -24948,13 +25307,13 @@ public class TdApi {
         public String phoneNumber;
 
         /**
-         * The link is a link to a user by its phone number. Call searchUserByPhoneNumber with the given phone number to process the link.
+         * The link is a link to a user by its phone number. Call searchUserByPhoneNumber with the given phone number to process the link. If the user is found, then call createPrivateChat and open the chat.
          */
         public InternalLinkTypeUserPhoneNumber() {
         }
 
         /**
-         * The link is a link to a user by its phone number. Call searchUserByPhoneNumber with the given phone number to process the link.
+         * The link is a link to a user by its phone number. Call searchUserByPhoneNumber with the given phone number to process the link. If the user is found, then call createPrivateChat and open the chat.
          *
          * @param phoneNumber Phone number of the user.
          */
@@ -24977,7 +25336,7 @@ public class TdApi {
     }
 
     /**
-     * The link is a link to a user by a temporary token. Call searchUserByToken with the given token to process the link.
+     * The link is a link to a user by a temporary token. Call searchUserByToken with the given token to process the link. If the user is found, then call createPrivateChat and open the chat.
      */
     public static class InternalLinkTypeUserToken extends InternalLinkType {
         /**
@@ -24986,13 +25345,13 @@ public class TdApi {
         public String token;
 
         /**
-         * The link is a link to a user by a temporary token. Call searchUserByToken with the given token to process the link.
+         * The link is a link to a user by a temporary token. Call searchUserByToken with the given token to process the link. If the user is found, then call createPrivateChat and open the chat.
          */
         public InternalLinkTypeUserToken() {
         }
 
         /**
-         * The link is a link to a user by a temporary token. Call searchUserByToken with the given token to process the link.
+         * The link is a link to a user by a temporary token. Call searchUserByToken with the given token to process the link. If the user is found, then call createPrivateChat and open the chat.
          *
          * @param token The token.
          */
@@ -27107,6 +27466,10 @@ public class TdApi {
          */
         public boolean canGetMessageThread;
         /**
+         * True, if read date of the message can be received through getMessageReadDate.
+         */
+        public boolean canGetReadDate;
+        /**
          * True, if chat members already viewed the message can be received through getMessageViewers.
          */
         public boolean canGetViewers;
@@ -27167,6 +27530,10 @@ public class TdApi {
          */
         public long messageThreadId;
         /**
+         * Identifier of the Saved Messages topic for the message; 0 for messages not from Saved Messages.
+         */
+        public long savedMessagesTopicId;
+        /**
          * The message's self-destruct type; may be null if none.
          */
         public MessageSelfDestructType selfDestructType;
@@ -27182,6 +27549,10 @@ public class TdApi {
          * If non-zero, the user identifier of the bot through which this message was sent.
          */
         public long viaBotUserId;
+        /**
+         * Number of times the sender of the message boosted the supergroup at the time the message was sent; 0 if none or unknown. For messages sent by the current user, supergroupFullInfo.myBoostCount must be used instead.
+         */
+        public int senderBoostCount;
         /**
          * For channel posts and anonymous group messages, optional author signature.
          */
@@ -27228,6 +27599,7 @@ public class TdApi {
          * @param canGetAddedReactions True, if the list of added reactions is available through getMessageAddedReactions.
          * @param canGetStatistics True, if the message statistics are available through getMessageStatistics.
          * @param canGetMessageThread True, if information about the message thread is available through getMessageThread and getMessageThreadHistory.
+         * @param canGetReadDate True, if read date of the message can be received through getMessageReadDate.
          * @param canGetViewers True, if chat members already viewed the message can be received through getMessageViewers.
          * @param canGetMediaTimestampLinks True, if media timestamp links can be generated for media timestamp entities in the message text, caption or web page description through getMessageLink.
          * @param canReportReactions True, if reactions on the message can be reported through reportMessageReactions.
@@ -27243,17 +27615,19 @@ public class TdApi {
          * @param unreadReactions Information about unread reactions added to the message.
          * @param replyTo Information about the message or the story this message is replying to; may be null if none.
          * @param messageThreadId If non-zero, the identifier of the message thread the message belongs to; unique within the chat to which the message belongs.
+         * @param savedMessagesTopicId Identifier of the Saved Messages topic for the message; 0 for messages not from Saved Messages.
          * @param selfDestructType The message's self-destruct type; may be null if none.
          * @param selfDestructIn Time left before the message self-destruct timer expires, in seconds; 0 if self-destruction isn't scheduled yet.
          * @param autoDeleteIn Time left before the message will be automatically deleted by messageAutoDeleteTime setting of the chat, in seconds; 0 if never.
          * @param viaBotUserId If non-zero, the user identifier of the bot through which this message was sent.
+         * @param senderBoostCount Number of times the sender of the message boosted the supergroup at the time the message was sent; 0 if none or unknown. For messages sent by the current user, supergroupFullInfo.myBoostCount must be used instead.
          * @param authorSignature For channel posts and anonymous group messages, optional author signature.
          * @param mediaAlbumId Unique identifier of an album this message belongs to. Only audios, documents, photos and videos can be grouped together in albums.
          * @param restrictionReason If non-empty, contains a human-readable description of the reason why access to this message must be restricted.
          * @param content Content of the message.
          * @param replyMarkup Reply markup for the message; may be null if none.
          */
-        public Message(long id, MessageSender senderId, long chatId, MessageSendingState sendingState, MessageSchedulingState schedulingState, boolean isOutgoing, boolean isPinned, boolean canBeEdited, boolean canBeForwarded, boolean canBeRepliedInAnotherChat, boolean canBeSaved, boolean canBeDeletedOnlyForSelf, boolean canBeDeletedForAllUsers, boolean canGetAddedReactions, boolean canGetStatistics, boolean canGetMessageThread, boolean canGetViewers, boolean canGetMediaTimestampLinks, boolean canReportReactions, boolean hasTimestampedMedia, boolean isChannelPost, boolean isTopicMessage, boolean containsUnreadMention, int date, int editDate, MessageForwardInfo forwardInfo, MessageImportInfo importInfo, MessageInteractionInfo interactionInfo, UnreadReaction[] unreadReactions, MessageReplyTo replyTo, long messageThreadId, MessageSelfDestructType selfDestructType, double selfDestructIn, double autoDeleteIn, long viaBotUserId, String authorSignature, long mediaAlbumId, String restrictionReason, MessageContent content, ReplyMarkup replyMarkup) {
+        public Message(long id, MessageSender senderId, long chatId, MessageSendingState sendingState, MessageSchedulingState schedulingState, boolean isOutgoing, boolean isPinned, boolean canBeEdited, boolean canBeForwarded, boolean canBeRepliedInAnotherChat, boolean canBeSaved, boolean canBeDeletedOnlyForSelf, boolean canBeDeletedForAllUsers, boolean canGetAddedReactions, boolean canGetStatistics, boolean canGetMessageThread, boolean canGetReadDate, boolean canGetViewers, boolean canGetMediaTimestampLinks, boolean canReportReactions, boolean hasTimestampedMedia, boolean isChannelPost, boolean isTopicMessage, boolean containsUnreadMention, int date, int editDate, MessageForwardInfo forwardInfo, MessageImportInfo importInfo, MessageInteractionInfo interactionInfo, UnreadReaction[] unreadReactions, MessageReplyTo replyTo, long messageThreadId, long savedMessagesTopicId, MessageSelfDestructType selfDestructType, double selfDestructIn, double autoDeleteIn, long viaBotUserId, int senderBoostCount, String authorSignature, long mediaAlbumId, String restrictionReason, MessageContent content, ReplyMarkup replyMarkup) {
             this.id = id;
             this.senderId = senderId;
             this.chatId = chatId;
@@ -27270,6 +27644,7 @@ public class TdApi {
             this.canGetAddedReactions = canGetAddedReactions;
             this.canGetStatistics = canGetStatistics;
             this.canGetMessageThread = canGetMessageThread;
+            this.canGetReadDate = canGetReadDate;
             this.canGetViewers = canGetViewers;
             this.canGetMediaTimestampLinks = canGetMediaTimestampLinks;
             this.canReportReactions = canReportReactions;
@@ -27285,10 +27660,12 @@ public class TdApi {
             this.unreadReactions = unreadReactions;
             this.replyTo = replyTo;
             this.messageThreadId = messageThreadId;
+            this.savedMessagesTopicId = savedMessagesTopicId;
             this.selfDestructType = selfDestructType;
             this.selfDestructIn = selfDestructIn;
             this.autoDeleteIn = autoDeleteIn;
             this.viaBotUserId = viaBotUserId;
+            this.senderBoostCount = senderBoostCount;
             this.authorSignature = authorSignature;
             this.mediaAlbumId = mediaAlbumId;
             this.restrictionReason = restrictionReason;
@@ -27299,7 +27676,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -1237373187;
+        public static final int CONSTRUCTOR = 1194605269;
 
         /**
          * @return this.CONSTRUCTOR
@@ -27699,31 +28076,6 @@ public class TdApi {
     }
 
     /**
-     * A self-destructed photo message.
-     */
-    public static class MessageExpiredPhoto extends MessageContent {
-
-        /**
-         * A self-destructed photo message.
-         */
-        public MessageExpiredPhoto() {
-        }
-
-        /**
-         * Identifier uniquely determining type of the object.
-         */
-        public static final int CONSTRUCTOR = -1404641801;
-
-        /**
-         * @return this.CONSTRUCTOR
-         */
-        @Override
-        public int getConstructor() {
-            return CONSTRUCTOR;
-        }
-    }
-
-    /**
      * A sticker message.
      */
     public static class MessageSticker extends MessageContent {
@@ -27824,31 +28176,6 @@ public class TdApi {
     }
 
     /**
-     * A self-destructed video message.
-     */
-    public static class MessageExpiredVideo extends MessageContent {
-
-        /**
-         * A self-destructed video message.
-         */
-        public MessageExpiredVideo() {
-        }
-
-        /**
-         * Identifier uniquely determining type of the object.
-         */
-        public static final int CONSTRUCTOR = -1212209981;
-
-        /**
-         * @return this.CONSTRUCTOR
-         */
-        @Override
-        public int getConstructor() {
-            return CONSTRUCTOR;
-        }
-    }
-
-    /**
      * A video note message.
      */
     public static class MessageVideoNote extends MessageContent {
@@ -27938,6 +28265,106 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 527777781;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A self-destructed photo message.
+     */
+    public static class MessageExpiredPhoto extends MessageContent {
+
+        /**
+         * A self-destructed photo message.
+         */
+        public MessageExpiredPhoto() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1404641801;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A self-destructed video message.
+     */
+    public static class MessageExpiredVideo extends MessageContent {
+
+        /**
+         * A self-destructed video message.
+         */
+        public MessageExpiredVideo() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1212209981;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A self-destructed video note message.
+     */
+    public static class MessageExpiredVideoNote extends MessageContent {
+
+        /**
+         * A self-destructed video note message.
+         */
+        public MessageExpiredVideoNote() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 599540711;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * A self-destructed voice note message.
+     */
+    public static class MessageExpiredVoiceNote extends MessageContent {
+
+        /**
+         * A self-destructed voice note message.
+         */
+        public MessageExpiredVoiceNote() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 143684989;
 
         /**
          * @return this.CONSTRUCTOR
@@ -29200,6 +29627,44 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 1637745966;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The chat was boosted by the sender of the message.
+     */
+    public static class MessageChatBoost extends MessageContent {
+        /**
+         * Number of times the chat was boosted.
+         */
+        public int boostCount;
+
+        /**
+         * The chat was boosted by the sender of the message.
+         */
+        public MessageChatBoost() {
+        }
+
+        /**
+         * The chat was boosted by the sender of the message.
+         *
+         * @param boostCount Number of times the chat was boosted.
+         */
+        public MessageChatBoost(int boostCount) {
+            this.boostCount = boostCount;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1583310219;
 
         /**
          * @return this.CONSTRUCTOR
@@ -30827,17 +31292,13 @@ public class TdApi {
          */
         public int date;
         /**
+         * For messages forwarded to the chat with the current user (Saved Messages), to the Replies bot chat, or to the channel's discussion group, information about the source message from which the message was forwarded last time; may be null for other forwards or if unknown.
+         */
+        public ForwardSource source;
+        /**
          * The type of a public service announcement for the forwarded message.
          */
         public String publicServiceAnnouncementType;
-        /**
-         * For messages forwarded to the chat with the current user (Saved Messages), to the Replies bot chat, or to the channel's discussion group, the identifier of the chat from which the message was forwarded last time; 0 if unknown.
-         */
-        public long fromChatId;
-        /**
-         * For messages forwarded to the chat with the current user (Saved Messages), to the Replies bot chat, or to the channel's discussion group, the identifier of the original message from which the new message was forwarded last time; 0 if unknown.
-         */
-        public long fromMessageId;
 
         /**
          * Contains information about a forwarded message.
@@ -30850,22 +31311,20 @@ public class TdApi {
          *
          * @param origin Origin of the forwarded message.
          * @param date Point in time (Unix timestamp) when the message was originally sent.
+         * @param source For messages forwarded to the chat with the current user (Saved Messages), to the Replies bot chat, or to the channel's discussion group, information about the source message from which the message was forwarded last time; may be null for other forwards or if unknown.
          * @param publicServiceAnnouncementType The type of a public service announcement for the forwarded message.
-         * @param fromChatId For messages forwarded to the chat with the current user (Saved Messages), to the Replies bot chat, or to the channel's discussion group, the identifier of the chat from which the message was forwarded last time; 0 if unknown.
-         * @param fromMessageId For messages forwarded to the chat with the current user (Saved Messages), to the Replies bot chat, or to the channel's discussion group, the identifier of the original message from which the new message was forwarded last time; 0 if unknown.
          */
-        public MessageForwardInfo(MessageOrigin origin, int date, String publicServiceAnnouncementType, long fromChatId, long fromMessageId) {
+        public MessageForwardInfo(MessageOrigin origin, int date, ForwardSource source, String publicServiceAnnouncementType) {
             this.origin = origin;
             this.date = date;
+            this.source = source;
             this.publicServiceAnnouncementType = publicServiceAnnouncementType;
-            this.fromChatId = fromChatId;
-            this.fromMessageId = fromMessageId;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -232006352;
+        public static final int CONSTRUCTOR = -880313475;
 
         /**
          * @return this.CONSTRUCTOR
@@ -30937,9 +31396,9 @@ public class TdApi {
          */
         public MessageReplyInfo replyInfo;
         /**
-         * The list of reactions added to the message.
+         * The list of reactions or tags added to the message; may be null.
          */
-        public MessageReaction[] reactions;
+        public MessageReactions reactions;
 
         /**
          * Contains information about interactions with a message.
@@ -30953,9 +31412,9 @@ public class TdApi {
          * @param viewCount Number of times the message was viewed.
          * @param forwardCount Number of times the message was forwarded.
          * @param replyInfo Information about direct or indirect replies to the message; may be null. Currently, available only in channels with a discussion supergroup and discussion supergroups for messages, which are not replies itself.
-         * @param reactions The list of reactions added to the message.
+         * @param reactions The list of reactions or tags added to the message; may be null.
          */
-        public MessageInteractionInfo(int viewCount, int forwardCount, MessageReplyInfo replyInfo, MessageReaction[] reactions) {
+        public MessageInteractionInfo(int viewCount, int forwardCount, MessageReplyInfo replyInfo, MessageReactions reactions) {
             this.viewCount = viewCount;
             this.forwardCount = forwardCount;
             this.replyInfo = replyInfo;
@@ -30965,7 +31424,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -574858485;
+        public static final int CONSTRUCTOR = 733797893;
 
         /**
          * @return this.CONSTRUCTOR
@@ -31416,6 +31875,200 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1093994369;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains a list of reactions added to a message.
+     */
+    public static class MessageReactions extends Object {
+        /**
+         * List of added reactions.
+         */
+        public MessageReaction[] reactions;
+        /**
+         * True, if the reactions are tags and Telegram Premium users can filter messages by them.
+         */
+        public boolean areTags;
+
+        /**
+         * Contains a list of reactions added to a message.
+         */
+        public MessageReactions() {
+        }
+
+        /**
+         * Contains a list of reactions added to a message.
+         *
+         * @param reactions List of added reactions.
+         * @param areTags True, if the reactions are tags and Telegram Premium users can filter messages by them.
+         */
+        public MessageReactions(MessageReaction[] reactions, boolean areTags) {
+            this.reactions = reactions;
+            this.areTags = areTags;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1384310218;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * This class is an abstract base class.
+     * Describes read date of a recent outgoing message in a private chat.
+     */
+    public abstract static class MessageReadDate extends Object {
+        /**
+         * Default class constructor.
+         */
+        public MessageReadDate() {
+        }
+    }
+
+    /**
+     * Contains read date of the message.
+     */
+    public static class MessageReadDateRead extends MessageReadDate {
+        /**
+         * Point in time (Unix timestamp) when the message was read by the other user.
+         */
+        public int readDate;
+
+        /**
+         * Contains read date of the message.
+         */
+        public MessageReadDateRead() {
+        }
+
+        /**
+         * Contains read date of the message.
+         *
+         * @param readDate Point in time (Unix timestamp) when the message was read by the other user.
+         */
+        public MessageReadDateRead(int readDate) {
+            this.readDate = readDate;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1972186672;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The message is unread yet.
+     */
+    public static class MessageReadDateUnread extends MessageReadDate {
+
+        /**
+         * The message is unread yet.
+         */
+        public MessageReadDateUnread() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 397549868;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The message is too old to get read date.
+     */
+    public static class MessageReadDateTooOld extends MessageReadDate {
+
+        /**
+         * The message is too old to get read date.
+         */
+        public MessageReadDateTooOld() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1233773024;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The read date is unknown due to privacy settings of the other user.
+     */
+    public static class MessageReadDateUserPrivacyRestricted extends MessageReadDate {
+
+        /**
+         * The read date is unknown due to privacy settings of the other user.
+         */
+        public MessageReadDateUserPrivacyRestricted() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1282567130;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The read date is unknown due to privacy settings of the current user, but will be known if the user subscribes to Telegram Premium.
+     */
+    public static class MessageReadDateMyPrivacyRestricted extends MessageReadDate {
+
+        /**
+         * The read date is unknown due to privacy settings of the current user, but will be known if the user subscribes to Telegram Premium.
+         */
+        public MessageReadDateMyPrivacyRestricted() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -693971852;
 
         /**
          * @return this.CONSTRUCTOR
@@ -33213,6 +33866,44 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 1942128539;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains privacy settings for new chats with non-contacts.
+     */
+    public static class NewChatPrivacySettings extends Object {
+        /**
+         * True, if non-contacts users are able to write first to the current user. Telegram Premium subscribers are able to write first regardless of this setting.
+         */
+        public boolean allowNewChatsFromUnknownUsers;
+
+        /**
+         * Contains privacy settings for new chats with non-contacts.
+         */
+        public NewChatPrivacySettings() {
+        }
+
+        /**
+         * Contains privacy settings for new chats with non-contacts.
+         *
+         * @param allowNewChatsFromUnknownUsers True, if non-contacts users are able to write first to the current user. Telegram Premium subscribers are able to write first regardless of this setting.
+         */
+        public NewChatPrivacySettings(boolean allowNewChatsFromUnknownUsers) {
+            this.allowNewChatsFromUnknownUsers = allowNewChatsFromUnknownUsers;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1528154694;
 
         /**
          * @return this.CONSTRUCTOR
@@ -38865,6 +39556,81 @@ public class TdApi {
     }
 
     /**
+     * The ability to use tags in Saved Messages.
+     */
+    public static class PremiumFeatureSavedMessagesTags extends PremiumFeature {
+
+        /**
+         * The ability to use tags in Saved Messages.
+         */
+        public PremiumFeatureSavedMessagesTags() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1003219334;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The ability to disallow incoming voice and video note messages in private chats using setUserPrivacySettingRules with userPrivacySettingAllowPrivateVoiceAndVideoNoteMessages and to restrict incoming messages from non-contacts using setNewChatPrivacySettings.
+     */
+    public static class PremiumFeatureMessagePrivacy extends PremiumFeature {
+
+        /**
+         * The ability to disallow incoming voice and video note messages in private chats using setUserPrivacySettingRules with userPrivacySettingAllowPrivateVoiceAndVideoNoteMessages and to restrict incoming messages from non-contacts using setNewChatPrivacySettings.
+         */
+        public PremiumFeatureMessagePrivacy() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 802322678;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The ability to view last seen and read times of other users even they can't view last seen or read time for the current user.
+     */
+    public static class PremiumFeatureLastSeenTimes extends PremiumFeature {
+
+        /**
+         * The ability to view last seen and read times of other users even they can't view last seen or read time for the current user.
+         */
+        public PremiumFeatureLastSeenTimes() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -762230129;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Describes a promotion animation for a Premium feature.
      */
     public static class PremiumFeaturePromotionAnimation extends Object {
@@ -39273,11 +40039,11 @@ public class TdApi {
      */
     public static class PremiumGiveawayParameters extends Object {
         /**
-         * Identifier of the channel chat, which will be automatically boosted by the winners of the giveaway for duration of the Premium subscription.
+         * Identifier of the supergroup or channel chat, which will be automatically boosted by the winners of the giveaway for duration of the Premium subscription. If the chat is a channel, then canPostMessages right is required in the channel, otherwise, the user must be an administrator in the supergroup.
          */
         public long boostedChatId;
         /**
-         * Identifiers of other channel chats that must be subscribed by the users to be eligible for the giveaway. There can be up to getOption(&quot;giveaway_additional_chat_count_max&quot;) additional chats.
+         * Identifiers of other supergroup or channel chats that must be subscribed by the users to be eligible for the giveaway. There can be up to getOption(&quot;giveaway_additional_chat_count_max&quot;) additional chats.
          */
         public long[] additionalChatIds;
         /**
@@ -39310,8 +40076,8 @@ public class TdApi {
         /**
          * Describes parameters of a Telegram Premium giveaway.
          *
-         * @param boostedChatId Identifier of the channel chat, which will be automatically boosted by the winners of the giveaway for duration of the Premium subscription.
-         * @param additionalChatIds Identifiers of other channel chats that must be subscribed by the users to be eligible for the giveaway. There can be up to getOption(&quot;giveaway_additional_chat_count_max&quot;) additional chats.
+         * @param boostedChatId Identifier of the supergroup or channel chat, which will be automatically boosted by the winners of the giveaway for duration of the Premium subscription. If the chat is a channel, then canPostMessages right is required in the channel, otherwise, the user must be an administrator in the supergroup.
+         * @param additionalChatIds Identifiers of other supergroup or channel chats that must be subscribed by the users to be eligible for the giveaway. There can be up to getOption(&quot;giveaway_additional_chat_count_max&quot;) additional chats.
          * @param winnersSelectionDate Point in time (Unix timestamp) when the giveaway is expected to be performed; must be 60-getOption(&quot;giveaway_duration_max&quot;) seconds in the future in scheduled giveaways.
          * @param onlyNewMembers True, if only new members of the chats will be eligible for the giveaway.
          * @param hasPublicWinners True, if the list of winners of the giveaway will be available to everyone.
@@ -39770,6 +40536,31 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 1485515276;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The maximum number of pinned Saved Messages topics.
+     */
+    public static class PremiumLimitTypePinnedSavedMessagesTopicCount extends PremiumLimitType {
+
+        /**
+         * The maximum number of pinned Saved Messages topics.
+         */
+        public PremiumLimitTypePinnedSavedMessagesTopicCount() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1544854305;
 
         /**
          * @return this.CONSTRUCTOR
@@ -40406,12 +41197,12 @@ public class TdApi {
     }
 
     /**
-     * User stories are displayed before stories of non-premium contacts and channels.
+     * Stories of the current user are displayed before stories of non-Premium contacts, supergroups, and channels.
      */
     public static class PremiumStoryFeaturePriorityOrder extends PremiumStoryFeature {
 
         /**
-         * User stories are displayed before stories of non-premium contacts and channels.
+         * Stories of the current user are displayed before stories of non-Premium contacts, supergroups, and channels.
          */
         public PremiumStoryFeaturePriorityOrder() {
         }
@@ -40556,6 +41347,31 @@ public class TdApi {
     }
 
     /**
+     * The ability to choose better quality for viewed stories.
+     */
+    public static class PremiumStoryFeatureVideoQuality extends PremiumStoryFeature {
+
+        /**
+         * The ability to choose better quality for viewed stories.
+         */
+        public PremiumStoryFeatureVideoQuality() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1162887511;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Describes a prepaid Telegram Premium giveaway.
      */
     public static class PrepaidPremiumGiveaway extends Object {
@@ -40628,9 +41444,13 @@ public class TdApi {
          */
         public ProfileAccentColors darkThemeColors;
         /**
-         * The minimum chat boost level required to use the color.
+         * The minimum chat boost level required to use the color in a supergroup chat.
          */
-        public int minChatBoostLevel;
+        public int minSupergroupChatBoostLevel;
+        /**
+         * The minimum chat boost level required to use the color in a channel chat.
+         */
+        public int minChannelChatBoostLevel;
 
         /**
          * Contains information about supported accent color for user profile photo background.
@@ -40644,19 +41464,21 @@ public class TdApi {
          * @param id Profile accent color identifier.
          * @param lightThemeColors Accent colors expected to be used in light themes.
          * @param darkThemeColors Accent colors expected to be used in dark themes.
-         * @param minChatBoostLevel The minimum chat boost level required to use the color.
+         * @param minSupergroupChatBoostLevel The minimum chat boost level required to use the color in a supergroup chat.
+         * @param minChannelChatBoostLevel The minimum chat boost level required to use the color in a channel chat.
          */
-        public ProfileAccentColor(int id, ProfileAccentColors lightThemeColors, ProfileAccentColors darkThemeColors, int minChatBoostLevel) {
+        public ProfileAccentColor(int id, ProfileAccentColors lightThemeColors, ProfileAccentColors darkThemeColors, int minSupergroupChatBoostLevel, int minChannelChatBoostLevel) {
             this.id = id;
             this.lightThemeColors = lightThemeColors;
             this.darkThemeColors = darkThemeColors;
-            this.minChatBoostLevel = minChatBoostLevel;
+            this.minSupergroupChatBoostLevel = minSupergroupChatBoostLevel;
+            this.minChannelChatBoostLevel = minChannelChatBoostLevel;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -2015895790;
+        public static final int CONSTRUCTOR = 557679253;
 
         /**
          * @return this.CONSTRUCTOR
@@ -42773,6 +43595,106 @@ public class TdApi {
     }
 
     /**
+     * This class is an abstract base class.
+     * Describes why the current user can't add reactions to the message, despite some other users can.
+     */
+    public abstract static class ReactionUnavailabilityReason extends Object {
+        /**
+         * Default class constructor.
+         */
+        public ReactionUnavailabilityReason() {
+        }
+    }
+
+    /**
+     * The user is an anonymous administrator in the supergroup, but isn't a creator of it, so they can't vote on behalf of the supergroup.
+     */
+    public static class ReactionUnavailabilityReasonAnonymousAdministrator extends ReactionUnavailabilityReason {
+
+        /**
+         * The user is an anonymous administrator in the supergroup, but isn't a creator of it, so they can't vote on behalf of the supergroup.
+         */
+        public ReactionUnavailabilityReasonAnonymousAdministrator() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -499612677;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * The user isn't a member of the supergroup and can't send messages and reactions there without joining.
+     */
+    public static class ReactionUnavailabilityReasonGuest extends ReactionUnavailabilityReason {
+
+        /**
+         * The user isn't a member of the supergroup and can't send messages and reactions there without joining.
+         */
+        public ReactionUnavailabilityReasonGuest() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1357861444;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains privacy settings for message read date in private chats. Read dates are always shown to the users that can see online status of the current user regardless of this setting.
+     */
+    public static class ReadDatePrivacySettings extends Object {
+        /**
+         * True, if message read date is shown to other users in private chats. If false and the current user isn't a Telegram Premium user, then they will not be able to see other's message read date.
+         */
+        public boolean showReadDate;
+
+        /**
+         * Contains privacy settings for message read date in private chats. Read dates are always shown to the users that can see online status of the current user regardless of this setting.
+         */
+        public ReadDatePrivacySettings() {
+        }
+
+        /**
+         * Contains privacy settings for message read date in private chats. Read dates are always shown to the users that can see online status of the current user regardless of this setting.
+         *
+         * @param showReadDate True, if message read date is shown to other users in private chats. If false and the current user isn't a Telegram Premium user, then they will not be able to see other's message read date.
+         */
+        public ReadDatePrivacySettings(boolean showReadDate) {
+            this.showReadDate = showReadDate;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1654842920;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Describes a recommended chat folder.
      */
     public static class RecommendedChatFolder extends Object {
@@ -44325,6 +45247,262 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -370273060;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Represents a tag used in Saved Messages or a Saved Messages topic.
+     */
+    public static class SavedMessagesTag extends Object {
+        /**
+         * The tag.
+         */
+        public ReactionType tag;
+        /**
+         * Label of the tag; 0-12 characters. Always empty if the tag is returned for a Saved Messages topic.
+         */
+        public String label;
+        /**
+         * Number of times the tag was used; may be 0 if the tag has non-empty label.
+         */
+        public int count;
+
+        /**
+         * Represents a tag used in Saved Messages or a Saved Messages topic.
+         */
+        public SavedMessagesTag() {
+        }
+
+        /**
+         * Represents a tag used in Saved Messages or a Saved Messages topic.
+         *
+         * @param tag The tag.
+         * @param label Label of the tag; 0-12 characters. Always empty if the tag is returned for a Saved Messages topic.
+         * @param count Number of times the tag was used; may be 0 if the tag has non-empty label.
+         */
+        public SavedMessagesTag(ReactionType tag, String label, int count) {
+            this.tag = tag;
+            this.label = label;
+            this.count = count;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1785183329;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains a list of tags used in Saved Messages.
+     */
+    public static class SavedMessagesTags extends Object {
+        /**
+         * List of tags.
+         */
+        public SavedMessagesTag[] tags;
+
+        /**
+         * Contains a list of tags used in Saved Messages.
+         */
+        public SavedMessagesTags() {
+        }
+
+        /**
+         * Contains a list of tags used in Saved Messages.
+         *
+         * @param tags List of tags.
+         */
+        public SavedMessagesTags(SavedMessagesTag[] tags) {
+            this.tags = tags;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1749291430;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Contains information about a Saved Messages topic.
+     */
+    public static class SavedMessagesTopic extends Object {
+        /**
+         * Unique topic identifier.
+         */
+        public long id;
+        /**
+         * Type of the topic.
+         */
+        public SavedMessagesTopicType type;
+        /**
+         * True, if the topic is pinned.
+         */
+        public boolean isPinned;
+        /**
+         * A parameter used to determine order of the topic in the topic list. Topics must be sorted by the order in descending order.
+         */
+        public long order;
+        /**
+         * Last message in the topic; may be null if none or unknown.
+         */
+        public Message lastMessage;
+        /**
+         * A draft of a message in the topic; may be null if none.
+         */
+        public DraftMessage draftMessage;
+
+        /**
+         * Contains information about a Saved Messages topic.
+         */
+        public SavedMessagesTopic() {
+        }
+
+        /**
+         * Contains information about a Saved Messages topic.
+         *
+         * @param id Unique topic identifier.
+         * @param type Type of the topic.
+         * @param isPinned True, if the topic is pinned.
+         * @param order A parameter used to determine order of the topic in the topic list. Topics must be sorted by the order in descending order.
+         * @param lastMessage Last message in the topic; may be null if none or unknown.
+         * @param draftMessage A draft of a message in the topic; may be null if none.
+         */
+        public SavedMessagesTopic(long id, SavedMessagesTopicType type, boolean isPinned, long order, Message lastMessage, DraftMessage draftMessage) {
+            this.id = id;
+            this.type = type;
+            this.isPinned = isPinned;
+            this.order = order;
+            this.lastMessage = lastMessage;
+            this.draftMessage = draftMessage;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -760684124;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * This class is an abstract base class.
+     * Describes type of a Saved Messages topic.
+     */
+    public abstract static class SavedMessagesTopicType extends Object {
+        /**
+         * Default class constructor.
+         */
+        public SavedMessagesTopicType() {
+        }
+    }
+
+    /**
+     * Topic containing messages sent by the current user of forwarded from an unknown chat.
+     */
+    public static class SavedMessagesTopicTypeMyNotes extends SavedMessagesTopicType {
+
+        /**
+         * Topic containing messages sent by the current user of forwarded from an unknown chat.
+         */
+        public SavedMessagesTopicTypeMyNotes() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1282784779;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Topic containing messages forwarded from a user with hidden privacy.
+     */
+    public static class SavedMessagesTopicTypeAuthorHidden extends SavedMessagesTopicType {
+
+        /**
+         * Topic containing messages forwarded from a user with hidden privacy.
+         */
+        public SavedMessagesTopicTypeAuthorHidden() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1882997141;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Topic containing messages forwarded from a specific chat.
+     */
+    public static class SavedMessagesTopicTypeSavedFromChat extends SavedMessagesTopicType {
+        /**
+         * Identifier of the chat.
+         */
+        public long chatId;
+
+        /**
+         * Topic containing messages forwarded from a specific chat.
+         */
+        public SavedMessagesTopicTypeSavedFromChat() {
+        }
+
+        /**
+         * Topic containing messages forwarded from a specific chat.
+         *
+         * @param chatId Identifier of the chat.
+         */
+        public SavedMessagesTopicTypeSavedFromChat(long chatId) {
+            this.chatId = chatId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1723880104;
 
         /**
          * @return this.CONSTRUCTOR
@@ -47283,7 +48461,7 @@ public class TdApi {
      */
     public static class StorePaymentPurposePremiumGiftCodes extends StorePaymentPurpose {
         /**
-         * Identifier of the channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none.
+         * Identifier of the supergroup or channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none.
          */
         public long boostedChatId;
         /**
@@ -47308,7 +48486,7 @@ public class TdApi {
         /**
          * The user creating Telegram Premium gift codes for other users.
          *
-         * @param boostedChatId Identifier of the channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none.
+         * @param boostedChatId Identifier of the supergroup or channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none.
          * @param currency ISO 4217 currency code of the payment currency.
          * @param amount Paid amount, in the smallest units of the currency.
          * @param userIds Identifiers of the users which can activate the gift codes.
@@ -47335,7 +48513,7 @@ public class TdApi {
     }
 
     /**
-     * The user creating a Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+     * The user creating a Telegram Premium giveaway.
      */
     public static class StorePaymentPurposePremiumGiveaway extends StorePaymentPurpose {
         /**
@@ -47352,13 +48530,13 @@ public class TdApi {
         public long amount;
 
         /**
-         * The user creating a Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+         * The user creating a Telegram Premium giveaway.
          */
         public StorePaymentPurposePremiumGiveaway() {
         }
 
         /**
-         * The user creating a Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+         * The user creating a Telegram Premium giveaway.
          *
          * @param parameters Giveaway parameters.
          * @param currency ISO 4217 currency code of the payment currency.
@@ -47440,6 +48618,10 @@ public class TdApi {
          * Identifier of the chat that posted the story.
          */
         public long senderChatId;
+        /**
+         * Identifier of the sender of the story; may be null if the story is posted on behalf of the senderChatId.
+         */
+        public MessageSender senderId;
         /**
          * Point in time (Unix timestamp) when the story was published.
          */
@@ -47536,6 +48718,7 @@ public class TdApi {
          *
          * @param id Unique story identifier among stories of the given sender.
          * @param senderChatId Identifier of the chat that posted the story.
+         * @param senderId Identifier of the sender of the story; may be null if the story is posted on behalf of the senderChatId.
          * @param date Point in time (Unix timestamp) when the story was published.
          * @param isBeingSent True, if the story is being sent by the current user.
          * @param isBeingEdited True, if the story is being edited by the current user.
@@ -47558,9 +48741,10 @@ public class TdApi {
          * @param areas Clickable areas to be shown on the story content.
          * @param caption Caption of the story.
          */
-        public Story(int id, long senderChatId, int date, boolean isBeingSent, boolean isBeingEdited, boolean isEdited, boolean isPinned, boolean isVisibleOnlyForSelf, boolean canBeDeleted, boolean canBeEdited, boolean canBeForwarded, boolean canBeReplied, boolean canToggleIsPinned, boolean canGetStatistics, boolean canGetInteractions, boolean hasExpiredViewers, StoryRepostInfo repostInfo, StoryInteractionInfo interactionInfo, ReactionType chosenReactionType, StoryPrivacySettings privacySettings, StoryContent content, StoryArea[] areas, FormattedText caption) {
+        public Story(int id, long senderChatId, MessageSender senderId, int date, boolean isBeingSent, boolean isBeingEdited, boolean isEdited, boolean isPinned, boolean isVisibleOnlyForSelf, boolean canBeDeleted, boolean canBeEdited, boolean canBeForwarded, boolean canBeReplied, boolean canToggleIsPinned, boolean canGetStatistics, boolean canGetInteractions, boolean hasExpiredViewers, StoryRepostInfo repostInfo, StoryInteractionInfo interactionInfo, ReactionType chosenReactionType, StoryPrivacySettings privacySettings, StoryContent content, StoryArea[] areas, FormattedText caption) {
             this.id = id;
             this.senderChatId = senderChatId;
+            this.senderId = senderId;
             this.date = date;
             this.isBeingSent = isBeingSent;
             this.isBeingEdited = isBeingEdited;
@@ -47587,7 +48771,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 378731027;
+        public static final int CONSTRUCTOR = 1800780543;
 
         /**
          * @return this.CONSTRUCTOR
@@ -48114,7 +49298,7 @@ public class TdApi {
          */
         public MessageSender actorId;
         /**
-         * Approximate point in time (Unix timestamp) when the interaction happenned.
+         * Approximate point in time (Unix timestamp) when the interaction happened.
          */
         public int interactionDate;
         /**
@@ -48136,7 +49320,7 @@ public class TdApi {
          * Represents interaction with a story.
          *
          * @param actorId Identifier of the user or chat that made the interaction.
-         * @param interactionDate Approximate point in time (Unix timestamp) when the interaction happenned.
+         * @param interactionDate Approximate point in time (Unix timestamp) when the interaction happened.
          * @param blockList Block list to which the actor is added; may be null if none or for chat stories.
          * @param type Type of the interaction.
          */
@@ -49255,11 +50439,11 @@ public class TdApi {
          */
         public boolean isFake;
         /**
-         * True, if the channel has non-expired stories available to the current user.
+         * True, if the supergroup or channel has non-expired stories available to the current user.
          */
         public boolean hasActiveStories;
         /**
-         * True, if the channel has unread non-expired stories available to the current user.
+         * True, if the supergroup or channel has unread non-expired stories available to the current user.
          */
         public boolean hasUnreadActiveStories;
 
@@ -49291,8 +50475,8 @@ public class TdApi {
          * @param restrictionReason If non-empty, contains a human-readable description of the reason why access to this supergroup or channel must be restricted.
          * @param isScam True, if many users reported this supergroup or channel as a scam.
          * @param isFake True, if many users reported this supergroup or channel as a fake account.
-         * @param hasActiveStories True, if the channel has non-expired stories available to the current user.
-         * @param hasUnreadActiveStories True, if the channel has unread non-expired stories available to the current user.
+         * @param hasActiveStories True, if the supergroup or channel has non-expired stories available to the current user.
+         * @param hasUnreadActiveStories True, if the supergroup or channel has unread non-expired stories available to the current user.
          */
         public Supergroup(long id, Usernames usernames, int date, ChatMemberStatus status, int memberCount, int boostLevel, boolean hasLinkedChat, boolean hasLocation, boolean signMessages, boolean joinToSendMessages, boolean joinByRequest, boolean isSlowModeEnabled, boolean isChannel, boolean isBroadcastGroup, boolean isForum, boolean isVerified, String restrictionReason, boolean isScam, boolean isFake, boolean hasActiveStories, boolean hasUnreadActiveStories) {
             this.id = id;
@@ -49409,13 +50593,25 @@ public class TdApi {
          */
         public boolean hasAggressiveAntiSpamEnabled;
         /**
-         * True, if the channel has pinned stories.
+         * True, if the supergroup or channel has pinned stories.
          */
         public boolean hasPinnedStories;
         /**
-         * Identifier of the supergroup sticker set; 0 if none.
+         * Number of times the current user boosted the supergroup or channel.
+         */
+        public int myBoostCount;
+        /**
+         * Number of times the supergroup must be boosted by a user to ignore slow mode and chat permission restrictions; 0 if unspecified.
+         */
+        public int unrestrictBoostCount;
+        /**
+         * Identifier of the supergroup sticker set that must be shown before user sticker sets; 0 if none.
          */
         public long stickerSetId;
+        /**
+         * Identifier of the custom emoji sticker set that can be used in the supergroup without Telegram Premium subscription; 0 if none.
+         */
+        public long customEmojiStickerSetId;
         /**
          * Location to which the supergroup is connected; may be null if none.
          */
@@ -49464,15 +50660,18 @@ public class TdApi {
          * @param canToggleAggressiveAntiSpam True, if aggressive anti-spam checks can be enabled or disabled in the supergroup.
          * @param isAllHistoryAvailable True, if new chat members will have access to old messages. In public, discussion, of forum groups and all channels, old messages are always available, so this option affects only private non-forum supergroups without a linked chat. The value of this field is only available to chat administrators.
          * @param hasAggressiveAntiSpamEnabled True, if aggressive anti-spam checks are enabled in the supergroup. The value of this field is only available to chat administrators.
-         * @param hasPinnedStories True, if the channel has pinned stories.
-         * @param stickerSetId Identifier of the supergroup sticker set; 0 if none.
+         * @param hasPinnedStories True, if the supergroup or channel has pinned stories.
+         * @param myBoostCount Number of times the current user boosted the supergroup or channel.
+         * @param unrestrictBoostCount Number of times the supergroup must be boosted by a user to ignore slow mode and chat permission restrictions; 0 if unspecified.
+         * @param stickerSetId Identifier of the supergroup sticker set that must be shown before user sticker sets; 0 if none.
+         * @param customEmojiStickerSetId Identifier of the custom emoji sticker set that can be used in the supergroup without Telegram Premium subscription; 0 if none.
          * @param location Location to which the supergroup is connected; may be null if none.
          * @param inviteLink Primary invite link for the chat; may be null. For chat administrators with canInviteUsers right only.
          * @param botCommands List of commands of bots in the group.
          * @param upgradedFromBasicGroupId Identifier of the basic group from which supergroup was upgraded; 0 if none.
          * @param upgradedFromMaxMessageId Identifier of the last message in the basic group from which supergroup was upgraded; 0 if none.
          */
-        public SupergroupFullInfo(ChatPhoto photo, String description, int memberCount, int administratorCount, int restrictedCount, int bannedCount, long linkedChatId, int slowModeDelay, double slowModeDelayExpiresIn, boolean canGetMembers, boolean hasHiddenMembers, boolean canHideMembers, boolean canSetStickerSet, boolean canSetLocation, boolean canGetStatistics, boolean canToggleAggressiveAntiSpam, boolean isAllHistoryAvailable, boolean hasAggressiveAntiSpamEnabled, boolean hasPinnedStories, long stickerSetId, ChatLocation location, ChatInviteLink inviteLink, BotCommands[] botCommands, long upgradedFromBasicGroupId, long upgradedFromMaxMessageId) {
+        public SupergroupFullInfo(ChatPhoto photo, String description, int memberCount, int administratorCount, int restrictedCount, int bannedCount, long linkedChatId, int slowModeDelay, double slowModeDelayExpiresIn, boolean canGetMembers, boolean hasHiddenMembers, boolean canHideMembers, boolean canSetStickerSet, boolean canSetLocation, boolean canGetStatistics, boolean canToggleAggressiveAntiSpam, boolean isAllHistoryAvailable, boolean hasAggressiveAntiSpamEnabled, boolean hasPinnedStories, int myBoostCount, int unrestrictBoostCount, long stickerSetId, long customEmojiStickerSetId, ChatLocation location, ChatInviteLink inviteLink, BotCommands[] botCommands, long upgradedFromBasicGroupId, long upgradedFromMaxMessageId) {
             this.photo = photo;
             this.description = description;
             this.memberCount = memberCount;
@@ -49492,7 +50691,10 @@ public class TdApi {
             this.isAllHistoryAvailable = isAllHistoryAvailable;
             this.hasAggressiveAntiSpamEnabled = hasAggressiveAntiSpamEnabled;
             this.hasPinnedStories = hasPinnedStories;
+            this.myBoostCount = myBoostCount;
+            this.unrestrictBoostCount = unrestrictBoostCount;
             this.stickerSetId = stickerSetId;
+            this.customEmojiStickerSetId = customEmojiStickerSetId;
             this.location = location;
             this.inviteLink = inviteLink;
             this.botCommands = botCommands;
@@ -49503,7 +50705,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -993472804;
+        public static final int CONSTRUCTOR = 1614390502;
 
         /**
          * @return this.CONSTRUCTOR
@@ -50191,7 +51393,7 @@ public class TdApi {
      */
     public static class TelegramPaymentPurposePremiumGiftCodes extends TelegramPaymentPurpose {
         /**
-         * Identifier of the channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none.
+         * Identifier of the supergroup or channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none.
          */
         public long boostedChatId;
         /**
@@ -50220,7 +51422,7 @@ public class TdApi {
         /**
          * The user creating Telegram Premium gift codes for other users.
          *
-         * @param boostedChatId Identifier of the channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none.
+         * @param boostedChatId Identifier of the supergroup or channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none.
          * @param currency ISO 4217 currency code of the payment currency.
          * @param amount Paid amount, in the smallest units of the currency.
          * @param userIds Identifiers of the users which can activate the gift codes.
@@ -50249,7 +51451,7 @@ public class TdApi {
     }
 
     /**
-     * The user creating a Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+     * The user creating a Telegram Premium giveaway.
      */
     public static class TelegramPaymentPurposePremiumGiveaway extends TelegramPaymentPurpose {
         /**
@@ -50274,13 +51476,13 @@ public class TdApi {
         public int monthCount;
 
         /**
-         * The user creating a Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+         * The user creating a Telegram Premium giveaway.
          */
         public TelegramPaymentPurposePremiumGiveaway() {
         }
 
         /**
-         * The user creating a Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+         * The user creating a Telegram Premium giveaway.
          *
          * @param parameters Giveaway parameters.
          * @param currency ISO 4217 currency code of the payment currency.
@@ -53424,7 +54626,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * The new draft message; may be null.
+         * The new draft message; may be null if none.
          */
         public DraftMessage draftMessage;
         /**
@@ -53442,7 +54644,7 @@ public class TdApi {
          * A chat draft has changed. Be aware that the update may come in the currently opened chat but with old content of the draft. If the user has changed the content of the draft, this update mustn't be applied.
          *
          * @param chatId Chat identifier.
-         * @param draftMessage The new draft message; may be null.
+         * @param draftMessage The new draft message; may be null if none.
          * @param positions The new chat positions in the chat lists.
          */
         public UpdateChatDraftMessage(long chatId, DraftMessage draftMessage, ChatPosition[] positions) {
@@ -54346,6 +55548,82 @@ public class TdApi {
     }
 
     /**
+     * Basic information about a Saved Messages topic has changed. This update is guaranteed to come before the topic identifier is returned to the application.
+     */
+    public static class UpdateSavedMessagesTopic extends Update {
+        /**
+         * New data about the topic.
+         */
+        public SavedMessagesTopic topic;
+
+        /**
+         * Basic information about a Saved Messages topic has changed. This update is guaranteed to come before the topic identifier is returned to the application.
+         */
+        public UpdateSavedMessagesTopic() {
+        }
+
+        /**
+         * Basic information about a Saved Messages topic has changed. This update is guaranteed to come before the topic identifier is returned to the application.
+         *
+         * @param topic New data about the topic.
+         */
+        public UpdateSavedMessagesTopic(SavedMessagesTopic topic) {
+            this.topic = topic;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1618855120;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Number of Saved Messages topics has changed.
+     */
+    public static class UpdateSavedMessagesTopicCount extends Update {
+        /**
+         * Approximate total number of Saved Messages topics.
+         */
+        public int topicCount;
+
+        /**
+         * Number of Saved Messages topics has changed.
+         */
+        public UpdateSavedMessagesTopicCount() {
+        }
+
+        /**
+         * Number of Saved Messages topics has changed.
+         *
+         * @param topicCount Approximate total number of Saved Messages topics.
+         */
+        public UpdateSavedMessagesTopicCount(int topicCount) {
+            this.topicCount = topicCount;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -70092335;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Basic information about a topic in a forum chat was changed.
      */
     public static class UpdateForumTopicInfo extends Update {
@@ -54704,7 +55982,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * If not 0, a message thread identifier in which the action was performed.
+         * If not 0, the message thread identifier in which the action was performed.
          */
         public long messageThreadId;
         /**
@@ -54726,7 +56004,7 @@ public class TdApi {
          * A message sender activity in the chat has changed.
          *
          * @param chatId Chat identifier.
-         * @param messageThreadId If not 0, a message thread identifier in which the action was performed.
+         * @param messageThreadId If not 0, the message thread identifier in which the action was performed.
          * @param senderId Identifier of a message sender performing the action.
          * @param action The action.
          */
@@ -56936,6 +58214,50 @@ public class TdApi {
     }
 
     /**
+     * Tags used in Saved Messages or a Saved Messages topic have changed.
+     */
+    public static class UpdateSavedMessagesTags extends Update {
+        /**
+         * Identifier of Saved Messages topic which tags were changed; 0 if tags for the whole chat has changed.
+         */
+        public long savedMessagesTopicId;
+        /**
+         * The new tags.
+         */
+        public SavedMessagesTags tags;
+
+        /**
+         * Tags used in Saved Messages or a Saved Messages topic have changed.
+         */
+        public UpdateSavedMessagesTags() {
+        }
+
+        /**
+         * Tags used in Saved Messages or a Saved Messages topic have changed.
+         *
+         * @param savedMessagesTopicId Identifier of Saved Messages topic which tags were changed; 0 if tags for the whole chat has changed.
+         * @param tags The new tags.
+         */
+        public UpdateSavedMessagesTags(long savedMessagesTopicId, SavedMessagesTags tags) {
+            this.savedMessagesTopicId = savedMessagesTopicId;
+            this.tags = tags;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1938178634;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * The parameters of speech recognition without Telegram Premium subscription has changed.
      */
     public static class UpdateSpeechRecognitionTrial extends Update {
@@ -58254,6 +59576,10 @@ public class TdApi {
          */
         public boolean hasUnreadActiveStories;
         /**
+         * True, if the user may restrict new chats with non-contacts. Use canSendMessageToUser to check whether the current user can message the user or try to create a chat with them.
+         */
+        public boolean restrictsNewChats;
+        /**
          * If false, the user is inaccessible, and the only information known about the user is inside this class. Identifier of the user can't be passed to any method.
          */
         public boolean haveAccess;
@@ -58302,12 +59628,13 @@ public class TdApi {
          * @param isFake True, if many users reported this user as a fake account.
          * @param hasActiveStories True, if the user has non-expired stories available to the current user.
          * @param hasUnreadActiveStories True, if the user has unread non-expired stories available to the current user.
+         * @param restrictsNewChats True, if the user may restrict new chats with non-contacts. Use canSendMessageToUser to check whether the current user can message the user or try to create a chat with them.
          * @param haveAccess If false, the user is inaccessible, and the only information known about the user is inside this class. Identifier of the user can't be passed to any method.
          * @param type Type of the user.
          * @param languageCode IETF language tag of the user's language; only available to bots.
          * @param addedToAttachmentMenu True, if the user added the current bot to attachment menu; only available to bots.
          */
-        public User(long id, String firstName, String lastName, Usernames usernames, String phoneNumber, UserStatus status, ProfilePhoto profilePhoto, int accentColorId, long backgroundCustomEmojiId, int profileAccentColorId, long profileBackgroundCustomEmojiId, EmojiStatus emojiStatus, boolean isContact, boolean isMutualContact, boolean isCloseFriend, boolean isVerified, boolean isPremium, boolean isSupport, String restrictionReason, boolean isScam, boolean isFake, boolean hasActiveStories, boolean hasUnreadActiveStories, boolean haveAccess, UserType type, String languageCode, boolean addedToAttachmentMenu) {
+        public User(long id, String firstName, String lastName, Usernames usernames, String phoneNumber, UserStatus status, ProfilePhoto profilePhoto, int accentColorId, long backgroundCustomEmojiId, int profileAccentColorId, long profileBackgroundCustomEmojiId, EmojiStatus emojiStatus, boolean isContact, boolean isMutualContact, boolean isCloseFriend, boolean isVerified, boolean isPremium, boolean isSupport, String restrictionReason, boolean isScam, boolean isFake, boolean hasActiveStories, boolean hasUnreadActiveStories, boolean restrictsNewChats, boolean haveAccess, UserType type, String languageCode, boolean addedToAttachmentMenu) {
             this.id = id;
             this.firstName = firstName;
             this.lastName = lastName;
@@ -58331,6 +59658,7 @@ public class TdApi {
             this.isFake = isFake;
             this.hasActiveStories = hasActiveStories;
             this.hasUnreadActiveStories = hasUnreadActiveStories;
+            this.restrictsNewChats = restrictsNewChats;
             this.haveAccess = haveAccess;
             this.type = type;
             this.languageCode = languageCode;
@@ -58340,7 +59668,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -846399316;
+        public static final int CONSTRUCTOR = 408235106;
 
         /**
          * @return this.CONSTRUCTOR
@@ -58761,12 +60089,12 @@ public class TdApi {
     }
 
     /**
-     * A privacy setting for managing whether the user can receive voice and video messages in private chats.
+     * A privacy setting for managing whether the user can receive voice and video messages in private chats; for Telegram Premium users only.
      */
     public static class UserPrivacySettingAllowPrivateVoiceAndVideoNoteMessages extends UserPrivacySetting {
 
         /**
-         * A privacy setting for managing whether the user can receive voice and video messages in private chats.
+         * A privacy setting for managing whether the user can receive voice and video messages in private chats; for Telegram Premium users only.
          */
         public UserPrivacySettingAllowPrivateVoiceAndVideoNoteMessages() {
         }
@@ -59100,12 +60428,12 @@ public class TdApi {
     }
 
     /**
-     * The user status was never changed.
+     * The user's status has never been changed.
      */
     public static class UserStatusEmpty extends UserStatus {
 
         /**
-         * The user status was never changed.
+         * The user's status has never been changed.
          */
         public UserStatusEmpty() {
         }
@@ -59204,6 +60532,10 @@ public class TdApi {
      * The user was online recently.
      */
     public static class UserStatusRecently extends UserStatus {
+        /**
+         * Exact user's status is hidden because the current user enabled userPrivacySettingShowStatus privacy setting for the user and has no Telegram Premium.
+         */
+        public boolean byMyPrivacySettings;
 
         /**
          * The user was online recently.
@@ -59212,9 +60544,18 @@ public class TdApi {
         }
 
         /**
+         * The user was online recently.
+         *
+         * @param byMyPrivacySettings Exact user's status is hidden because the current user enabled userPrivacySettingShowStatus privacy setting for the user and has no Telegram Premium.
+         */
+        public UserStatusRecently(boolean byMyPrivacySettings) {
+            this.byMyPrivacySettings = byMyPrivacySettings;
+        }
+
+        /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -496024847;
+        public static final int CONSTRUCTOR = 262824117;
 
         /**
          * @return this.CONSTRUCTOR
@@ -59229,6 +60570,10 @@ public class TdApi {
      * The user is offline, but was online last week.
      */
     public static class UserStatusLastWeek extends UserStatus {
+        /**
+         * Exact user's status is hidden because the current user enabled userPrivacySettingShowStatus privacy setting for the user and has no Telegram Premium.
+         */
+        public boolean byMyPrivacySettings;
 
         /**
          * The user is offline, but was online last week.
@@ -59237,9 +60582,18 @@ public class TdApi {
         }
 
         /**
+         * The user is offline, but was online last week.
+         *
+         * @param byMyPrivacySettings Exact user's status is hidden because the current user enabled userPrivacySettingShowStatus privacy setting for the user and has no Telegram Premium.
+         */
+        public UserStatusLastWeek(boolean byMyPrivacySettings) {
+            this.byMyPrivacySettings = byMyPrivacySettings;
+        }
+
+        /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 129960444;
+        public static final int CONSTRUCTOR = 310385495;
 
         /**
          * @return this.CONSTRUCTOR
@@ -59254,6 +60608,10 @@ public class TdApi {
      * The user is offline, but was online last month.
      */
     public static class UserStatusLastMonth extends UserStatus {
+        /**
+         * Exact user's status is hidden because the current user enabled userPrivacySettingShowStatus privacy setting for the user and has no Telegram Premium.
+         */
+        public boolean byMyPrivacySettings;
 
         /**
          * The user is offline, but was online last month.
@@ -59262,9 +60620,18 @@ public class TdApi {
         }
 
         /**
+         * The user is offline, but was online last month.
+         *
+         * @param byMyPrivacySettings Exact user's status is hidden because the current user enabled userPrivacySettingShowStatus privacy setting for the user and has no Telegram Premium.
+         */
+        public UserStatusLastMonth(boolean byMyPrivacySettings) {
+            this.byMyPrivacySettings = byMyPrivacySettings;
+        }
+
+        /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 2011940674;
+        public static final int CONSTRUCTOR = -1194644996;
 
         /**
          * @return this.CONSTRUCTOR
@@ -60612,7 +61979,7 @@ public class TdApi {
     }
 
     /**
-     * Adds a new member to a chat. Members can't be added to private or secret chats.
+     * Adds a new member to a chat; requires canInviteUsers member right. Members can't be added to private or secret chats.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -60631,7 +61998,7 @@ public class TdApi {
         public int forwardLimit;
 
         /**
-         * Default constructor for a function, which adds a new member to a chat. Members can't be added to private or secret chats.
+         * Default constructor for a function, which adds a new member to a chat; requires canInviteUsers member right. Members can't be added to private or secret chats.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -60639,7 +62006,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which adds a new member to a chat. Members can't be added to private or secret chats.
+         * Creates a function, which adds a new member to a chat; requires canInviteUsers member right. Members can't be added to private or secret chats.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -60668,7 +62035,7 @@ public class TdApi {
     }
 
     /**
-     * Adds multiple new members to a chat. Currently, this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members.
+     * Adds multiple new members to a chat; requires canInviteUsers member right. Currently, this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -60683,7 +62050,7 @@ public class TdApi {
         public long[] userIds;
 
         /**
-         * Default constructor for a function, which adds multiple new members to a chat. Currently, this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members.
+         * Default constructor for a function, which adds multiple new members to a chat; requires canInviteUsers member right. Currently, this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -60691,7 +62058,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which adds multiple new members to a chat. Currently, this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members.
+         * Creates a function, which adds multiple new members to a chat; requires canInviteUsers member right. Currently, this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -61086,7 +62453,7 @@ public class TdApi {
     }
 
     /**
-     * Adds a reaction to a message. Use getMessageAvailableReactions to receive the list of available reactions for the message.
+     * Adds a reaction or a tag to a message. Use getMessageAvailableReactions to receive the list of available reactions for the message.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -61108,12 +62475,12 @@ public class TdApi {
          */
         public boolean isBig;
         /**
-         * Pass true if the reaction needs to be added to recent reactions.
+         * Pass true if the reaction needs to be added to recent reactions; tags are never added to the list of recent reactions.
          */
         public boolean updateRecentReactions;
 
         /**
-         * Default constructor for a function, which adds a reaction to a message. Use getMessageAvailableReactions to receive the list of available reactions for the message.
+         * Default constructor for a function, which adds a reaction or a tag to a message. Use getMessageAvailableReactions to receive the list of available reactions for the message.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -61121,7 +62488,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which adds a reaction to a message. Use getMessageAvailableReactions to receive the list of available reactions for the message.
+         * Creates a function, which adds a reaction or a tag to a message. Use getMessageAvailableReactions to receive the list of available reactions for the message.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -61129,7 +62496,7 @@ public class TdApi {
          * @param messageId Identifier of the message.
          * @param reactionType Type of the reaction to add.
          * @param isBig Pass true if the reaction is added with a big animation.
-         * @param updateRecentReactions Pass true if the reaction needs to be added to recent reactions.
+         * @param updateRecentReactions Pass true if the reaction needs to be added to recent reactions; tags are never added to the list of recent reactions.
          */
         public AddMessageReaction(long chatId, long messageId, ReactionType reactionType, boolean isBig, boolean updateRecentReactions) {
             this.chatId = chatId;
@@ -62046,7 +63413,7 @@ public class TdApi {
     }
 
     /**
-     * Bans a member in a chat. Members can't be banned in private or secret chats. In supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
+     * Bans a member in a chat; requires canRestrictMembers administrator right. Members can't be banned in private or secret chats. In supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -62069,7 +63436,7 @@ public class TdApi {
         public boolean revokeMessages;
 
         /**
-         * Default constructor for a function, which bans a member in a chat. Members can't be banned in private or secret chats. In supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
+         * Default constructor for a function, which bans a member in a chat; requires canRestrictMembers administrator right. Members can't be banned in private or secret chats. In supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -62077,7 +63444,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which bans a member in a chat. Members can't be banned in private or secret chats. In supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
+         * Creates a function, which bans a member in a chat; requires canRestrictMembers administrator right. Members can't be banned in private or secret chats. In supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -62308,7 +63675,57 @@ public class TdApi {
     }
 
     /**
-     * Checks whether the current user can send a story on behalf of a chat; requires canPostStories rights for channel chats.
+     * Check whether the current user can message another user or try to create a chat with them.
+     *
+     * <p> Returns {@link CanSendMessageToUserResult CanSendMessageToUserResult} </p>
+     */
+    public static class CanSendMessageToUser extends Function<CanSendMessageToUserResult> {
+        /**
+         * Identifier of the other user.
+         */
+        public long userId;
+        /**
+         * Pass true to get only locally available information without sending network requests.
+         */
+        public boolean onlyLocal;
+
+        /**
+         * Default constructor for a function, which check whether the current user can message another user or try to create a chat with them.
+         *
+         * <p> Returns {@link CanSendMessageToUserResult CanSendMessageToUserResult} </p>
+         */
+        public CanSendMessageToUser() {
+        }
+
+        /**
+         * Creates a function, which check whether the current user can message another user or try to create a chat with them.
+         *
+         * <p> Returns {@link CanSendMessageToUserResult CanSendMessageToUserResult} </p>
+         *
+         * @param userId Identifier of the other user.
+         * @param onlyLocal Pass true to get only locally available information without sending network requests.
+         */
+        public CanSendMessageToUser(long userId, boolean onlyLocal) {
+            this.userId = userId;
+            this.onlyLocal = onlyLocal;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1529489462;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Checks whether the current user can send a story on behalf of a chat; requires canPostStories right for supergroup and channel chats.
      *
      * <p> Returns {@link CanSendStoryResult CanSendStoryResult} </p>
      */
@@ -62319,7 +63736,7 @@ public class TdApi {
         public long chatId;
 
         /**
-         * Default constructor for a function, which checks whether the current user can send a story on behalf of a chat; requires canPostStories rights for channel chats.
+         * Default constructor for a function, which checks whether the current user can send a story on behalf of a chat; requires canPostStories right for supergroup and channel chats.
          *
          * <p> Returns {@link CanSendStoryResult CanSendStoryResult} </p>
          */
@@ -62327,7 +63744,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which checks whether the current user can send a story on behalf of a chat; requires canPostStories rights for channel chats.
+         * Creates a function, which checks whether the current user can send a story on behalf of a chat; requires canPostStories right for supergroup and channel chats.
          *
          * <p> Returns {@link CanSendStoryResult CanSendStoryResult} </p>
          *
@@ -62493,6 +63910,35 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 823412414;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Cancels verification of the 2-step verification recovery email address.
+     *
+     * <p> Returns {@link PasswordState PasswordState} </p>
+     */
+    public static class CancelRecoveryEmailAddressVerification extends Function<PasswordState> {
+
+        /**
+         * Default constructor for a function, which cancels verification of the 2-step verification recovery email address.
+         *
+         * <p> Returns {@link PasswordState PasswordState} </p>
+         */
+        public CancelRecoveryEmailAddressVerification() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1516728691;
 
         /**
          * @return this.CONSTRUCTOR
@@ -64431,7 +65877,7 @@ public class TdApi {
     }
 
     /**
-     * Creates a topic in a forum supergroup chat; requires canManageTopics rights in the supergroup.
+     * Creates a topic in a forum supergroup chat; requires canManageTopics administrator or canCreateTopics member right in the supergroup.
      *
      * <p> Returns {@link ForumTopicInfo ForumTopicInfo} </p>
      */
@@ -64450,7 +65896,7 @@ public class TdApi {
         public ForumTopicIcon icon;
 
         /**
-         * Default constructor for a function, which creates a topic in a forum supergroup chat; requires canManageTopics rights in the supergroup.
+         * Default constructor for a function, which creates a topic in a forum supergroup chat; requires canManageTopics administrator or canCreateTopics member right in the supergroup.
          *
          * <p> Returns {@link ForumTopicInfo ForumTopicInfo} </p>
          */
@@ -64458,7 +65904,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which creates a topic in a forum supergroup chat; requires canManageTopics rights in the supergroup.
+         * Creates a function, which creates a topic in a forum supergroup chat; requires canManageTopics administrator or canCreateTopics member right in the supergroup.
          *
          * <p> Returns {@link ForumTopicInfo ForumTopicInfo} </p>
          *
@@ -64991,7 +66437,7 @@ public class TdApi {
     }
 
     /**
-     * Creates a video chat (a group call bound to a chat). Available only for basic groups, supergroups and channels; requires canManageVideoChats rights.
+     * Creates a video chat (a group call bound to a chat). Available only for basic groups, supergroups and channels; requires canManageVideoChats administrator right.
      *
      * <p> Returns {@link GroupCallId GroupCallId} </p>
      */
@@ -65009,12 +66455,12 @@ public class TdApi {
          */
         public int startDate;
         /**
-         * Pass true to create an RTMP stream instead of an ordinary video chat; requires creator privileges.
+         * Pass true to create an RTMP stream instead of an ordinary video chat; requires owner privileges.
          */
         public boolean isRtmpStream;
 
         /**
-         * Default constructor for a function, which creates a video chat (a group call bound to a chat). Available only for basic groups, supergroups and channels; requires canManageVideoChats rights.
+         * Default constructor for a function, which creates a video chat (a group call bound to a chat). Available only for basic groups, supergroups and channels; requires canManageVideoChats administrator right.
          *
          * <p> Returns {@link GroupCallId GroupCallId} </p>
          */
@@ -65022,14 +66468,14 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which creates a video chat (a group call bound to a chat). Available only for basic groups, supergroups and channels; requires canManageVideoChats rights.
+         * Creates a function, which creates a video chat (a group call bound to a chat). Available only for basic groups, supergroups and channels; requires canManageVideoChats administrator right.
          *
          * <p> Returns {@link GroupCallId GroupCallId} </p>
          *
          * @param chatId Identifier of a chat in which the video chat will be created.
          * @param title Group call title; if empty, chat title will be used.
          * @param startDate Point in time (Unix timestamp) when the group call is supposed to be started by an administrator; 0 to start the video chat immediately. The date must be at least 10 seconds and at most 8 days in the future.
-         * @param isRtmpStream Pass true to create an RTMP stream instead of an ordinary video chat; requires creator privileges.
+         * @param isRtmpStream Pass true to create an RTMP stream instead of an ordinary video chat; requires owner privileges.
          */
         public CreateVideoChat(long chatId, String title, int startDate, boolean isRtmpStream) {
             this.chatId = chatId;
@@ -66064,6 +67510,106 @@ public class TdApi {
     }
 
     /**
+     * Deletes all messages in a Saved Messages topic.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class DeleteSavedMessagesTopicHistory extends Function<Ok> {
+        /**
+         * Identifier of Saved Messages topic which messages will be deleted.
+         */
+        public long savedMessagesTopicId;
+
+        /**
+         * Default constructor for a function, which deletes all messages in a Saved Messages topic.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public DeleteSavedMessagesTopicHistory() {
+        }
+
+        /**
+         * Creates a function, which deletes all messages in a Saved Messages topic.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param savedMessagesTopicId Identifier of Saved Messages topic which messages will be deleted.
+         */
+        public DeleteSavedMessagesTopicHistory(long savedMessagesTopicId) {
+            this.savedMessagesTopicId = savedMessagesTopicId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1776237930;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Deletes all messages between the specified dates in a Saved Messages topic. Messages sent in the last 30 seconds will not be deleted.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class DeleteSavedMessagesTopicMessagesByDate extends Function<Ok> {
+        /**
+         * Identifier of Saved Messages topic which messages will be deleted.
+         */
+        public long savedMessagesTopicId;
+        /**
+         * The minimum date of the messages to delete.
+         */
+        public int minDate;
+        /**
+         * The maximum date of the messages to delete.
+         */
+        public int maxDate;
+
+        /**
+         * Default constructor for a function, which deletes all messages between the specified dates in a Saved Messages topic. Messages sent in the last 30 seconds will not be deleted.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public DeleteSavedMessagesTopicMessagesByDate() {
+        }
+
+        /**
+         * Creates a function, which deletes all messages between the specified dates in a Saved Messages topic. Messages sent in the last 30 seconds will not be deleted.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param savedMessagesTopicId Identifier of Saved Messages topic which messages will be deleted.
+         * @param minDate The minimum date of the messages to delete.
+         * @param maxDate The maximum date of the messages to delete.
+         */
+        public DeleteSavedMessagesTopicMessagesByDate(long savedMessagesTopicId, int minDate, int maxDate) {
+            this.savedMessagesTopicId = savedMessagesTopicId;
+            this.minDate = minDate;
+            this.maxDate = maxDate;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1444389;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Deletes saved order information.
      *
      * <p> Returns {@link Ok Ok} </p>
@@ -66728,7 +68274,7 @@ public class TdApi {
     }
 
     /**
-     * Edits title and icon of a topic in a forum supergroup chat; requires canManageTopics administrator right in the supergroup unless the user is creator of the topic.
+     * Edits title and icon of a topic in a forum supergroup chat; requires canManageTopics right in the supergroup unless the user is creator of the topic.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -66755,7 +68301,7 @@ public class TdApi {
         public long iconCustomEmojiId;
 
         /**
-         * Default constructor for a function, which edits title and icon of a topic in a forum supergroup chat; requires canManageTopics administrator right in the supergroup unless the user is creator of the topic.
+         * Default constructor for a function, which edits title and icon of a topic in a forum supergroup chat; requires canManageTopics right in the supergroup unless the user is creator of the topic.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -66763,7 +68309,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which edits title and icon of a topic in a forum supergroup chat; requires canManageTopics administrator right in the supergroup unless the user is creator of the topic.
+         * Creates a function, which edits title and icon of a topic in a forum supergroup chat; requires canManageTopics right in the supergroup unless the user is creator of the topic.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -67826,7 +69372,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * If not 0, a message thread identifier in which the message will be sent; for forum threads only.
+         * If not 0, the message thread identifier in which the message will be sent; for forum threads only.
          */
         public long messageThreadId;
         /**
@@ -67864,7 +69410,7 @@ public class TdApi {
          * <p> Returns {@link Messages Messages} </p>
          *
          * @param chatId Identifier of the chat to which to forward messages.
-         * @param messageThreadId If not 0, a message thread identifier in which the message will be sent; for forum threads only.
+         * @param messageThreadId If not 0, the message thread identifier in which the message will be sent; for forum threads only.
          * @param fromChatId Identifier of the chat from which to forward messages.
          * @param messageIds Identifiers of the messages to forward. Message identifiers must be in a strictly increasing order. At most 100 messages can be forwarded simultaneously. A message can be forwarded only if message.canBeForwarded.
          * @param options Options to be used to send the messages; pass null to use default options.
@@ -69112,7 +70658,7 @@ public class TdApi {
     }
 
     /**
-     * Returns the list of all stories posted by the given chat; requires canEditStories rights for channel chats. The stories are returned in a reverse chronological order (i.e., in order of decreasing storyId). For optimal performance, the number of returned stories is chosen by TDLib.
+     * Returns the list of all stories posted by the given chat; requires canEditStories right in the chat. The stories are returned in a reverse chronological order (i.e., in order of decreasing storyId). For optimal performance, the number of returned stories is chosen by TDLib.
      *
      * <p> Returns {@link Stories Stories} </p>
      */
@@ -69131,7 +70677,7 @@ public class TdApi {
         public int limit;
 
         /**
-         * Default constructor for a function, which returns the list of all stories posted by the given chat; requires canEditStories rights for channel chats. The stories are returned in a reverse chronological order (i.e., in order of decreasing storyId). For optimal performance, the number of returned stories is chosen by TDLib.
+         * Default constructor for a function, which returns the list of all stories posted by the given chat; requires canEditStories right in the chat. The stories are returned in a reverse chronological order (i.e., in order of decreasing storyId). For optimal performance, the number of returned stories is chosen by TDLib.
          *
          * <p> Returns {@link Stories Stories} </p>
          */
@@ -69139,7 +70685,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns the list of all stories posted by the given chat; requires canEditStories rights for channel chats. The stories are returned in a reverse chronological order (i.e., in order of decreasing storyId). For optimal performance, the number of returned stories is chosen by TDLib.
+         * Creates a function, which returns the list of all stories posted by the given chat; requires canEditStories right in the chat. The stories are returned in a reverse chronological order (i.e., in order of decreasing storyId). For optimal performance, the number of returned stories is chosen by TDLib.
          *
          * <p> Returns {@link Stories Stories} </p>
          *
@@ -69217,6 +70763,10 @@ public class TdApi {
      * <p> Returns {@link ChatBoostFeatures ChatBoostFeatures} </p>
      */
     public static class GetChatBoostFeatures extends Function<ChatBoostFeatures> {
+        /**
+         * Pass true to get the list of features for channels; pass false to get the list of features for supergroups.
+         */
+        public boolean isChannel;
 
         /**
          * Default constructor for a function, which returns list of features available on the first 10 chat boost levels; this is an offline request.
@@ -69227,9 +70777,20 @@ public class TdApi {
         }
 
         /**
+         * Creates a function, which returns list of features available on the first 10 chat boost levels; this is an offline request.
+         *
+         * <p> Returns {@link ChatBoostFeatures ChatBoostFeatures} </p>
+         *
+         * @param isChannel Pass true to get the list of features for channels; pass false to get the list of features for supergroups.
+         */
+        public GetChatBoostFeatures(boolean isChannel) {
+            this.isChannel = isChannel;
+        }
+
+        /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 887580706;
+        public static final int CONSTRUCTOR = -389994336;
 
         /**
          * @return this.CONSTRUCTOR
@@ -69246,6 +70807,10 @@ public class TdApi {
      * <p> Returns {@link ChatBoostLevelFeatures ChatBoostLevelFeatures} </p>
      */
     public static class GetChatBoostLevelFeatures extends Function<ChatBoostLevelFeatures> {
+        /**
+         * Pass true to get the list of features for channels; pass false to get the list of features for supergroups.
+         */
+        public boolean isChannel;
         /**
          * Chat boost level.
          */
@@ -69264,16 +70829,18 @@ public class TdApi {
          *
          * <p> Returns {@link ChatBoostLevelFeatures ChatBoostLevelFeatures} </p>
          *
+         * @param isChannel Pass true to get the list of features for channels; pass false to get the list of features for supergroups.
          * @param level Chat boost level.
          */
-        public GetChatBoostLevelFeatures(int level) {
+        public GetChatBoostLevelFeatures(boolean isChannel, int level) {
+            this.isChannel = isChannel;
             this.level = level;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1911643643;
+        public static final int CONSTRUCTOR = 1172717195;
 
         /**
          * @return this.CONSTRUCTOR
@@ -69285,7 +70852,7 @@ public class TdApi {
     }
 
     /**
-     * Returns an HTTPS link to boost the specified channel chat.
+     * Returns an HTTPS link to boost the specified supergroup or channel chat.
      *
      * <p> Returns {@link ChatBoostLink ChatBoostLink} </p>
      */
@@ -69296,7 +70863,7 @@ public class TdApi {
         public long chatId;
 
         /**
-         * Default constructor for a function, which returns an HTTPS link to boost the specified channel chat.
+         * Default constructor for a function, which returns an HTTPS link to boost the specified supergroup or channel chat.
          *
          * <p> Returns {@link ChatBoostLink ChatBoostLink} </p>
          */
@@ -69304,7 +70871,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns an HTTPS link to boost the specified channel chat.
+         * Creates a function, which returns an HTTPS link to boost the specified supergroup or channel chat.
          *
          * <p> Returns {@link ChatBoostLink ChatBoostLink} </p>
          *
@@ -69373,18 +70940,18 @@ public class TdApi {
     }
 
     /**
-     * Returns the current boost status for a channel chat.
+     * Returns the current boost status for a supergroup or a channel chat.
      *
      * <p> Returns {@link ChatBoostStatus ChatBoostStatus} </p>
      */
     public static class GetChatBoostStatus extends Function<ChatBoostStatus> {
         /**
-         * Identifier of the channel chat.
+         * Identifier of the chat.
          */
         public long chatId;
 
         /**
-         * Default constructor for a function, which returns the current boost status for a channel chat.
+         * Default constructor for a function, which returns the current boost status for a supergroup or a channel chat.
          *
          * <p> Returns {@link ChatBoostStatus ChatBoostStatus} </p>
          */
@@ -69392,11 +70959,11 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns the current boost status for a channel chat.
+         * Creates a function, which returns the current boost status for a supergroup or a channel chat.
          *
          * <p> Returns {@link ChatBoostStatus ChatBoostStatus} </p>
          *
-         * @param chatId Identifier of the channel chat.
+         * @param chatId Identifier of the chat.
          */
         public GetChatBoostStatus(long chatId) {
             this.chatId = chatId;
@@ -69417,7 +70984,7 @@ public class TdApi {
     }
 
     /**
-     * Returns list of boosts applied to a chat; requires administrator rights in the channel chat.
+     * Returns list of boosts applied to a chat; requires administrator rights in the chat.
      *
      * <p> Returns {@link FoundChatBoosts FoundChatBoosts} </p>
      */
@@ -69440,7 +71007,7 @@ public class TdApi {
         public int limit;
 
         /**
-         * Default constructor for a function, which returns list of boosts applied to a chat; requires administrator rights in the channel chat.
+         * Default constructor for a function, which returns list of boosts applied to a chat; requires administrator rights in the chat.
          *
          * <p> Returns {@link FoundChatBoosts FoundChatBoosts} </p>
          */
@@ -69448,7 +71015,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns list of boosts applied to a chat; requires administrator rights in the channel chat.
+         * Creates a function, which returns list of boosts applied to a chat; requires administrator rights in the chat.
          *
          * <p> Returns {@link FoundChatBoosts FoundChatBoosts} </p>
          *
@@ -69831,7 +71398,7 @@ public class TdApi {
          */
         public long fromMessageId;
         /**
-         * Specify 0 to get results from exactly the fromMessageId or a negative offset up to 99 to get additionally some newer messages.
+         * Specify 0 to get results from exactly the message fromMessageId or a negative offset up to 99 to get additionally some newer messages.
          */
         public int offset;
         /**
@@ -69858,7 +71425,7 @@ public class TdApi {
          *
          * @param chatId Chat identifier.
          * @param fromMessageId Identifier of the message starting from which history must be fetched; use 0 to get results from the last message.
-         * @param offset Specify 0 to get results from exactly the fromMessageId or a negative offset up to 99 to get additionally some newer messages.
+         * @param offset Specify 0 to get results from exactly the message fromMessageId or a negative offset up to 99 to get additionally some newer messages.
          * @param limit The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
          * @param onlyLocal Pass true to get only messages that are available without sending network requests.
          */
@@ -70344,6 +71911,10 @@ public class TdApi {
          * The message identifier from which to return information about messages; use 0 to get results from the last message.
          */
         public long fromMessageId;
+        /**
+         * If not0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all messages, or for chats other than Saved Messages.
+         */
+        public long savedMessagesTopicId;
 
         /**
          * Default constructor for a function, which returns information about the next messages of the specified type in the chat split by days. Returns the results in reverse chronological order. Can return partial result for the last returned day. Behavior of this method depends on the value of the option &quot;utc_time_offset&quot;.
@@ -70361,17 +71932,19 @@ public class TdApi {
          * @param chatId Identifier of the chat in which to return information about messages.
          * @param filter Filter for message content. Filters searchMessagesFilterEmpty, searchMessagesFilterMention, searchMessagesFilterUnreadMention, and searchMessagesFilterUnreadReaction are unsupported in this function.
          * @param fromMessageId The message identifier from which to return information about messages; use 0 to get results from the last message.
+         * @param savedMessagesTopicId If not0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all messages, or for chats other than Saved Messages.
          */
-        public GetChatMessageCalendar(long chatId, SearchMessagesFilter filter, long fromMessageId) {
+        public GetChatMessageCalendar(long chatId, SearchMessagesFilter filter, long fromMessageId, long savedMessagesTopicId) {
             this.chatId = chatId;
             this.filter = filter;
             this.fromMessageId = fromMessageId;
+            this.savedMessagesTopicId = savedMessagesTopicId;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -326164204;
+        public static final int CONSTRUCTOR = -2119225929;
 
         /**
          * @return this.CONSTRUCTOR
@@ -70397,6 +71970,10 @@ public class TdApi {
          */
         public SearchMessagesFilter filter;
         /**
+         * If not 0, only messages in the specified Saved Messages topic will be counted; pass 0 to count all messages, or for chats other than Saved Messages.
+         */
+        public long savedMessagesTopicId;
+        /**
          * Pass true to get the number of messages without sending network requests, or -1 if the number of messages is unknown locally.
          */
         public boolean returnLocal;
@@ -70416,18 +71993,20 @@ public class TdApi {
          *
          * @param chatId Identifier of the chat in which to count messages.
          * @param filter Filter for message content; searchMessagesFilterEmpty is unsupported in this function.
+         * @param savedMessagesTopicId If not 0, only messages in the specified Saved Messages topic will be counted; pass 0 to count all messages, or for chats other than Saved Messages.
          * @param returnLocal Pass true to get the number of messages without sending network requests, or -1 if the number of messages is unknown locally.
          */
-        public GetChatMessageCount(long chatId, SearchMessagesFilter filter, boolean returnLocal) {
+        public GetChatMessageCount(long chatId, SearchMessagesFilter filter, long savedMessagesTopicId, boolean returnLocal) {
             this.chatId = chatId;
             this.filter = filter;
+            this.savedMessagesTopicId = savedMessagesTopicId;
             this.returnLocal = returnLocal;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 205435308;
+        public static final int CONSTRUCTOR = 955746569;
 
         /**
          * @return this.CONSTRUCTOR
@@ -70460,6 +72039,10 @@ public class TdApi {
          * If not 0, only messages in the specified thread will be considered; supergroups only.
          */
         public long messageThreadId;
+        /**
+         * If not 0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all relevant messages, or for chats other than Saved Messages.
+         */
+        public long savedMessagesTopicId;
 
         /**
          * Default constructor for a function, which returns approximate 1-based position of a message among messages, which can be found by the specified filter in the chat. Cannot be used in secret chats.
@@ -70478,18 +72061,20 @@ public class TdApi {
          * @param messageId Message identifier.
          * @param filter Filter for message content; searchMessagesFilterEmpty, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, and searchMessagesFilterFailedToSend are unsupported in this function.
          * @param messageThreadId If not 0, only messages in the specified thread will be considered; supergroups only.
+         * @param savedMessagesTopicId If not 0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all relevant messages, or for chats other than Saved Messages.
          */
-        public GetChatMessagePosition(long chatId, long messageId, SearchMessagesFilter filter, long messageThreadId) {
+        public GetChatMessagePosition(long chatId, long messageId, SearchMessagesFilter filter, long messageThreadId, long savedMessagesTopicId) {
             this.chatId = chatId;
             this.messageId = messageId;
             this.filter = filter;
             this.messageThreadId = messageThreadId;
+            this.savedMessagesTopicId = savedMessagesTopicId;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -559474920;
+        public static final int CONSTRUCTOR = 136051911;
 
         /**
          * @return this.CONSTRUCTOR
@@ -70810,6 +72395,10 @@ public class TdApi {
          * The expected number of message positions to be returned; 50-2000. A smaller number of positions can be returned, if there are not enough appropriate messages.
          */
         public int limit;
+        /**
+         * If not 0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all messages, or for chats other than Saved Messages.
+         */
+        public long savedMessagesTopicId;
 
         /**
          * Default constructor for a function, which returns sparse positions of messages of the specified type in the chat to be used for shared media scroll implementation. Returns the results in reverse chronological order (i.e., in order of decreasing messageId). Cannot be used in secret chats or with searchMessagesFilterFailedToSend filter without an enabled message database.
@@ -70828,18 +72417,20 @@ public class TdApi {
          * @param filter Filter for message content. Filters searchMessagesFilterEmpty, searchMessagesFilterMention, searchMessagesFilterUnreadMention, and searchMessagesFilterUnreadReaction are unsupported in this function.
          * @param fromMessageId The message identifier from which to return information about message positions.
          * @param limit The expected number of message positions to be returned; 50-2000. A smaller number of positions can be returned, if there are not enough appropriate messages.
+         * @param savedMessagesTopicId If not 0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all messages, or for chats other than Saved Messages.
          */
-        public GetChatSparseMessagePositions(long chatId, SearchMessagesFilter filter, long fromMessageId, int limit) {
+        public GetChatSparseMessagePositions(long chatId, SearchMessagesFilter filter, long fromMessageId, int limit, long savedMessagesTopicId) {
             this.chatId = chatId;
             this.filter = filter;
             this.fromMessageId = fromMessageId;
             this.limit = limit;
+            this.savedMessagesTopicId = savedMessagesTopicId;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -462227580;
+        public static final int CONSTRUCTOR = 994389757;
 
         /**
          * @return this.CONSTRUCTOR
@@ -71113,14 +72704,14 @@ public class TdApi {
     }
 
     /**
-     * Returns channel chats in which the current user has the right to post stories. The chats must be rechecked with canSendStory before actually trying to post a story there.
+     * Returns supergroup and channel chats in which the current user has the right to post stories. The chats must be rechecked with canSendStory before actually trying to post a story there.
      *
      * <p> Returns {@link Chats Chats} </p>
      */
     public static class GetChatsToSendStories extends Function<Chats> {
 
         /**
-         * Default constructor for a function, which returns channel chats in which the current user has the right to post stories. The chats must be rechecked with canSendStory before actually trying to post a story there.
+         * Default constructor for a function, which returns supergroup and channel chats in which the current user has the right to post stories. The chats must be rechecked with canSendStory before actually trying to post a story there.
          *
          * <p> Returns {@link Chats Chats} </p>
          */
@@ -71326,6 +72917,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 1540593906;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Returns an emoji for the given country. Returns an empty string on failure. Can be called synchronously.
+     *
+     * <p> Returns {@link Text Text} </p>
+     */
+    public static class GetCountryFlagEmoji extends Function<Text> {
+        /**
+         * A two-letter ISO 3166-1 alpha-2 country code as received from getCountries.
+         */
+        public String countryCode;
+
+        /**
+         * Default constructor for a function, which returns an emoji for the given country. Returns an empty string on failure. Can be called synchronously.
+         *
+         * <p> Returns {@link Text Text} </p>
+         */
+        public GetCountryFlagEmoji() {
+        }
+
+        /**
+         * Creates a function, which returns an emoji for the given country. Returns an empty string on failure. Can be called synchronously.
+         *
+         * <p> Returns {@link Text Text} </p>
+         *
+         * @param countryCode A two-letter ISO 3166-1 alpha-2 country code as received from getCountries.
+         */
+        public GetCountryFlagEmoji(String countryCode) {
+            this.countryCode = countryCode;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 981871098;
 
         /**
          * @return this.CONSTRUCTOR
@@ -71803,7 +73438,7 @@ public class TdApi {
     }
 
     /**
-     * Returns information about a emoji reaction. Returns a 404 error if the reaction is not found.
+     * Returns information about an emoji reaction. Returns a 404 error if the reaction is not found.
      *
      * <p> Returns {@link EmojiReaction EmojiReaction} </p>
      */
@@ -71814,7 +73449,7 @@ public class TdApi {
         public String emoji;
 
         /**
-         * Default constructor for a function, which returns information about a emoji reaction. Returns a 404 error if the reaction is not found.
+         * Default constructor for a function, which returns information about an emoji reaction. Returns a 404 error if the reaction is not found.
          *
          * <p> Returns {@link EmojiReaction EmojiReaction} </p>
          */
@@ -71822,7 +73457,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns information about a emoji reaction. Returns a 404 error if the reaction is not found.
+         * Creates a function, which returns information about an emoji reaction. Returns a 404 error if the reaction is not found.
          *
          * <p> Returns {@link EmojiReaction EmojiReaction} </p>
          *
@@ -73163,6 +74798,56 @@ public class TdApi {
     }
 
     /**
+     * Return emojis matching the keyword. Supported only if the file database is enabled. Order of results is unspecified.
+     *
+     * <p> Returns {@link Emojis Emojis} </p>
+     */
+    public static class GetKeywordEmojis extends Function<Emojis> {
+        /**
+         * Text to search for.
+         */
+        public String text;
+        /**
+         * List of possible IETF language tags of the user's input language; may be empty if unknown.
+         */
+        public String[] inputLanguageCodes;
+
+        /**
+         * Default constructor for a function, which return emojis matching the keyword. Supported only if the file database is enabled. Order of results is unspecified.
+         *
+         * <p> Returns {@link Emojis Emojis} </p>
+         */
+        public GetKeywordEmojis() {
+        }
+
+        /**
+         * Creates a function, which return emojis matching the keyword. Supported only if the file database is enabled. Order of results is unspecified.
+         *
+         * <p> Returns {@link Emojis Emojis} </p>
+         *
+         * @param text Text to search for.
+         * @param inputLanguageCodes List of possible IETF language tags of the user's input language; may be empty if unknown.
+         */
+        public GetKeywordEmojis(String text, String[] inputLanguageCodes) {
+            this.text = text;
+            this.inputLanguageCodes = inputLanguageCodes;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1969795990;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Returns information about a language pack. Returned language pack identifier may be different from a provided one. Can be called before authorization.
      *
      * <p> Returns {@link LanguagePackInfo LanguagePackInfo} </p>
@@ -74083,7 +75768,7 @@ public class TdApi {
      */
     public static class GetMessageImportConfirmationText extends Function<Text> {
         /**
-         * Identifier of a chat to which the messages will be imported. It must be an identifier of a private chat with a mutual contact or an identifier of a supergroup chat with canChangeInfo administrator right.
+         * Identifier of a chat to which the messages will be imported. It must be an identifier of a private chat with a mutual contact or an identifier of a supergroup chat with canChangeInfo member right.
          */
         public long chatId;
 
@@ -74100,7 +75785,7 @@ public class TdApi {
          *
          * <p> Returns {@link Text Text} </p>
          *
-         * @param chatId Identifier of a chat to which the messages will be imported. It must be an identifier of a private chat with a mutual contact or an identifier of a supergroup chat with canChangeInfo administrator right.
+         * @param chatId Identifier of a chat to which the messages will be imported. It must be an identifier of a private chat with a mutual contact or an identifier of a supergroup chat with canChangeInfo member right.
          */
         public GetMessageImportConfirmationText(long chatId) {
             this.chatId = chatId;
@@ -74345,6 +76030,56 @@ public class TdApi {
     }
 
     /**
+     * Returns read date of a recent outgoing message in a private chat. The method can be called if message.canGetReadDate == true and the message is read.
+     *
+     * <p> Returns {@link MessageReadDate MessageReadDate} </p>
+     */
+    public static class GetMessageReadDate extends Function<MessageReadDate> {
+        /**
+         * Chat identifier.
+         */
+        public long chatId;
+        /**
+         * Identifier of the message.
+         */
+        public long messageId;
+
+        /**
+         * Default constructor for a function, which returns read date of a recent outgoing message in a private chat. The method can be called if message.canGetReadDate == true and the message is read.
+         *
+         * <p> Returns {@link MessageReadDate MessageReadDate} </p>
+         */
+        public GetMessageReadDate() {
+        }
+
+        /**
+         * Creates a function, which returns read date of a recent outgoing message in a private chat. The method can be called if message.canGetReadDate == true and the message is read.
+         *
+         * <p> Returns {@link MessageReadDate MessageReadDate} </p>
+         *
+         * @param chatId Chat identifier.
+         * @param messageId Identifier of the message.
+         */
+        public GetMessageReadDate(long chatId, long messageId) {
+            this.chatId = chatId;
+            this.messageId = messageId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1484455101;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Returns detailed statistics about a message. Can be used only if message.canGetStatistics == true.
      *
      * <p> Returns {@link MessageStatistics MessageStatistics} </p>
@@ -74469,7 +76204,7 @@ public class TdApi {
          */
         public long fromMessageId;
         /**
-         * Specify 0 to get results from exactly the fromMessageId or a negative offset up to 99 to get additionally some newer messages.
+         * Specify 0 to get results from exactly the message fromMessageId or a negative offset up to 99 to get additionally some newer messages.
          */
         public int offset;
         /**
@@ -74493,7 +76228,7 @@ public class TdApi {
          * @param chatId Chat identifier.
          * @param messageId Message identifier, which thread history needs to be returned.
          * @param fromMessageId Identifier of the message starting from which history must be fetched; use 0 to get results from the last message.
-         * @param offset Specify 0 to get results from exactly the fromMessageId or a negative offset up to 99 to get additionally some newer messages.
+         * @param offset Specify 0 to get results from exactly the message fromMessageId or a negative offset up to 99 to get additionally some newer messages.
          * @param limit The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
          */
         public GetMessageThreadHistory(long chatId, long messageId, long fromMessageId, int offset, int limit) {
@@ -74652,6 +76387,35 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -986228706;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Returns privacy settings for new chat creation.
+     *
+     * <p> Returns {@link NewChatPrivacySettings NewChatPrivacySettings} </p>
+     */
+    public static class GetNewChatPrivacySettings extends Function<NewChatPrivacySettings> {
+
+        /**
+         * Default constructor for a function, which returns privacy settings for new chat creation.
+         *
+         * <p> Returns {@link NewChatPrivacySettings NewChatPrivacySettings} </p>
+         */
+        public GetNewChatPrivacySettings() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1295299657;
 
         /**
          * @return this.CONSTRUCTOR
@@ -75254,7 +77018,7 @@ public class TdApi {
      */
     public static class GetPremiumGiftCodePaymentOptions extends Function<PremiumGiftCodePaymentOptions> {
         /**
-         * Identifier of the channel chat, which will be automatically boosted by receivers of the gift codes and which is administered by the user; 0 if none.
+         * Identifier of the supergroup or channel chat, which will be automatically boosted by receivers of the gift codes and which is administered by the user; 0 if none.
          */
         public long boostedChatId;
 
@@ -75271,7 +77035,7 @@ public class TdApi {
          *
          * <p> Returns {@link PremiumGiftCodePaymentOptions PremiumGiftCodePaymentOptions} </p>
          *
-         * @param boostedChatId Identifier of the channel chat, which will be automatically boosted by receivers of the gift codes and which is administered by the user; 0 if none.
+         * @param boostedChatId Identifier of the supergroup or channel chat, which will be automatically boosted by receivers of the gift codes and which is administered by the user; 0 if none.
          */
         public GetPremiumGiftCodePaymentOptions(long boostedChatId) {
             this.boostedChatId = boostedChatId;
@@ -75594,6 +77358,35 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -286505294;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Returns privacy settings for message read date.
+     *
+     * <p> Returns {@link ReadDatePrivacySettings ReadDatePrivacySettings} </p>
+     */
+    public static class GetReadDatePrivacySettings extends Function<ReadDatePrivacySettings> {
+
+        /**
+         * Default constructor for a function, which returns privacy settings for message read date.
+         *
+         * <p> Returns {@link ReadDatePrivacySettings ReadDatePrivacySettings} </p>
+         */
+        public GetReadDatePrivacySettings() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 451435451;
 
         /**
          * @return this.CONSTRUCTOR
@@ -75986,6 +77779,162 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 7051032;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Returns tags used in Saved Messages or a Saved Messages topic.
+     *
+     * <p> Returns {@link SavedMessagesTags SavedMessagesTags} </p>
+     */
+    public static class GetSavedMessagesTags extends Function<SavedMessagesTags> {
+        /**
+         * Identifier of Saved Messages topic which tags will be returned; pass 0 to get all Saved Messages tags.
+         */
+        public long savedMessagesTopicId;
+
+        /**
+         * Default constructor for a function, which returns tags used in Saved Messages or a Saved Messages topic.
+         *
+         * <p> Returns {@link SavedMessagesTags SavedMessagesTags} </p>
+         */
+        public GetSavedMessagesTags() {
+        }
+
+        /**
+         * Creates a function, which returns tags used in Saved Messages or a Saved Messages topic.
+         *
+         * <p> Returns {@link SavedMessagesTags SavedMessagesTags} </p>
+         *
+         * @param savedMessagesTopicId Identifier of Saved Messages topic which tags will be returned; pass 0 to get all Saved Messages tags.
+         */
+        public GetSavedMessagesTags(long savedMessagesTopicId) {
+            this.savedMessagesTopicId = savedMessagesTopicId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1932105815;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Returns messages in a Saved Messages topic. The messages are returned in a reverse chronological order (i.e., in order of decreasing messageId).
+     *
+     * <p> Returns {@link Messages Messages} </p>
+     */
+    public static class GetSavedMessagesTopicHistory extends Function<Messages> {
+        /**
+         * Identifier of Saved Messages topic which messages will be fetched.
+         */
+        public long savedMessagesTopicId;
+        /**
+         * Identifier of the message starting from which messages must be fetched; use 0 to get results from the last message.
+         */
+        public long fromMessageId;
+        /**
+         * Specify 0 to get results from exactly the message fromMessageId or a negative offset up to 99 to get additionally some newer messages.
+         */
+        public int offset;
+        /**
+         * The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
+         */
+        public int limit;
+
+        /**
+         * Default constructor for a function, which returns messages in a Saved Messages topic. The messages are returned in a reverse chronological order (i.e., in order of decreasing messageId).
+         *
+         * <p> Returns {@link Messages Messages} </p>
+         */
+        public GetSavedMessagesTopicHistory() {
+        }
+
+        /**
+         * Creates a function, which returns messages in a Saved Messages topic. The messages are returned in a reverse chronological order (i.e., in order of decreasing messageId).
+         *
+         * <p> Returns {@link Messages Messages} </p>
+         *
+         * @param savedMessagesTopicId Identifier of Saved Messages topic which messages will be fetched.
+         * @param fromMessageId Identifier of the message starting from which messages must be fetched; use 0 to get results from the last message.
+         * @param offset Specify 0 to get results from exactly the message fromMessageId or a negative offset up to 99 to get additionally some newer messages.
+         * @param limit The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
+         */
+        public GetSavedMessagesTopicHistory(long savedMessagesTopicId, long fromMessageId, int offset, int limit) {
+            this.savedMessagesTopicId = savedMessagesTopicId;
+            this.fromMessageId = fromMessageId;
+            this.offset = offset;
+            this.limit = limit;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 2011552360;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Returns the last message sent in a Saved Messages topic no later than the specified date.
+     *
+     * <p> Returns {@link Message Message} </p>
+     */
+    public static class GetSavedMessagesTopicMessageByDate extends Function<Message> {
+        /**
+         * Identifier of Saved Messages topic which message will be returned.
+         */
+        public long savedMessagesTopicId;
+        /**
+         * Point in time (Unix timestamp) relative to which to search for messages.
+         */
+        public int date;
+
+        /**
+         * Default constructor for a function, which returns the last message sent in a Saved Messages topic no later than the specified date.
+         *
+         * <p> Returns {@link Message Message} </p>
+         */
+        public GetSavedMessagesTopicMessageByDate() {
+        }
+
+        /**
+         * Creates a function, which returns the last message sent in a Saved Messages topic no later than the specified date.
+         *
+         * <p> Returns {@link Message Message} </p>
+         *
+         * @param savedMessagesTopicId Identifier of Saved Messages topic which message will be returned.
+         * @param date Point in time (Unix timestamp) relative to which to search for messages.
+         */
+        public GetSavedMessagesTopicMessageByDate(long savedMessagesTopicId, int date) {
+            this.savedMessagesTopicId = savedMessagesTopicId;
+            this.date = date;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1050786176;
 
         /**
          * @return this.CONSTRUCTOR
@@ -77449,7 +79398,7 @@ public class TdApi {
     }
 
     /**
-     * Returns list of boosts applied to a chat by a given user; requires administrator rights in the channel chat; for bots only.
+     * Returns list of boosts applied to a chat by a given user; requires administrator rights in the chat; for bots only.
      *
      * <p> Returns {@link FoundChatBoosts FoundChatBoosts} </p>
      */
@@ -77464,7 +79413,7 @@ public class TdApi {
         public long userId;
 
         /**
-         * Default constructor for a function, which returns list of boosts applied to a chat by a given user; requires administrator rights in the channel chat; for bots only.
+         * Default constructor for a function, which returns list of boosts applied to a chat by a given user; requires administrator rights in the chat; for bots only.
          *
          * <p> Returns {@link FoundChatBoosts FoundChatBoosts} </p>
          */
@@ -77472,7 +79421,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns list of boosts applied to a chat by a given user; requires administrator rights in the channel chat; for bots only.
+         * Creates a function, which returns list of boosts applied to a chat by a given user; requires administrator rights in the chat; for bots only.
          *
          * <p> Returns {@link FoundChatBoosts FoundChatBoosts} </p>
          *
@@ -77760,7 +79709,7 @@ public class TdApi {
     }
 
     /**
-     * Returns RTMP URL for streaming to the chat; requires creator privileges.
+     * Returns RTMP URL for streaming to the chat; requires owner privileges.
      *
      * <p> Returns {@link RtmpUrl RtmpUrl} </p>
      */
@@ -77771,7 +79720,7 @@ public class TdApi {
         public long chatId;
 
         /**
-         * Default constructor for a function, which returns RTMP URL for streaming to the chat; requires creator privileges.
+         * Default constructor for a function, which returns RTMP URL for streaming to the chat; requires owner privileges.
          *
          * <p> Returns {@link RtmpUrl RtmpUrl} </p>
          */
@@ -77779,7 +79728,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which returns RTMP URL for streaming to the chat; requires creator privileges.
+         * Creates a function, which returns RTMP URL for streaming to the chat; requires owner privileges.
          *
          * <p> Returns {@link RtmpUrl RtmpUrl} </p>
          *
@@ -78140,7 +80089,7 @@ public class TdApi {
      */
     public static class ImportMessages extends Function<Ok> {
         /**
-         * Identifier of a chat to which the messages will be imported. It must be an identifier of a private chat with a mutual contact or an identifier of a supergroup chat with canChangeInfo administrator right.
+         * Identifier of a chat to which the messages will be imported. It must be an identifier of a private chat with a mutual contact or an identifier of a supergroup chat with canChangeInfo member right.
          */
         public long chatId;
         /**
@@ -78165,7 +80114,7 @@ public class TdApi {
          *
          * <p> Returns {@link Ok Ok} </p>
          *
-         * @param chatId Identifier of a chat to which the messages will be imported. It must be an identifier of a private chat with a mutual contact or an identifier of a supergroup chat with canChangeInfo administrator right.
+         * @param chatId Identifier of a chat to which the messages will be imported. It must be an identifier of a private chat with a mutual contact or an identifier of a supergroup chat with canChangeInfo member right.
          * @param messageFile File with messages to import. Only inputFileLocal and inputFileGenerated are supported. The file must not be previously uploaded.
          * @param attachedFiles Files used in the imported messages. Only inputFileLocal and inputFileGenerated are supported. The files must not be previously uploaded.
          */
@@ -78408,7 +80357,7 @@ public class TdApi {
     }
 
     /**
-     * Launches a prepaid Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+     * Launches a prepaid Telegram Premium giveaway.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -78423,7 +80372,7 @@ public class TdApi {
         public PremiumGiveawayParameters parameters;
 
         /**
-         * Default constructor for a function, which launches a prepaid Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+         * Default constructor for a function, which launches a prepaid Telegram Premium giveaway.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -78431,7 +80380,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which launches a prepaid Telegram Premium giveaway for subscribers of channel chats; requires canPostMessages rights in the channels.
+         * Creates a function, which launches a prepaid Telegram Premium giveaway.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -78679,6 +80628,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 938720974;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Loads more Saved Messages topics. The loaded topics will be sent through updateSavedMessagesTopic. Topics are sorted by their topic.order in descending order. Returns a 404 error if all topics have been loaded.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class LoadSavedMessagesTopics extends Function<Ok> {
+        /**
+         * The maximum number of topics to be loaded. For optimal performance, the number of loaded topics is chosen by TDLib and can be smaller than the specified limit, even if the end of the list is not reached.
+         */
+        public int limit;
+
+        /**
+         * Default constructor for a function, which loads more Saved Messages topics. The loaded topics will be sent through updateSavedMessagesTopic. Topics are sorted by their topic.order in descending order. Returns a 404 error if all topics have been loaded.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public LoadSavedMessagesTopics() {
+        }
+
+        /**
+         * Creates a function, which loads more Saved Messages topics. The loaded topics will be sent through updateSavedMessagesTopic. Topics are sorted by their topic.order in descending order. Returns a 404 error if all topics have been loaded.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param limit The maximum number of topics to be loaded. For optimal performance, the number of loaded topics is chosen by TDLib and can be smaller than the specified limit, even if the end of the list is not reached.
+         */
+        public LoadSavedMessagesTopics(int limit) {
+            this.limit = limit;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 289855160;
 
         /**
          * @return this.CONSTRUCTOR
@@ -78939,7 +80932,7 @@ public class TdApi {
          */
         public String applicationName;
         /**
-         * If not 0, a message thread identifier in which the message will be sent.
+         * If not 0, the message thread identifier in which the message will be sent.
          */
         public long messageThreadId;
         /**
@@ -78965,7 +80958,7 @@ public class TdApi {
          * @param url The URL from an inlineKeyboardButtonTypeWebApp button, a botMenuButton button, an internalLinkTypeAttachmentMenuBot link, or an empty string otherwise.
          * @param theme Preferred Web App theme; pass null to use the default theme.
          * @param applicationName Short name of the application; 0-64 English letters, digits, and underscores.
-         * @param messageThreadId If not 0, a message thread identifier in which the message will be sent.
+         * @param messageThreadId If not 0, the message thread identifier in which the message will be sent.
          * @param replyTo Information about the message or story to be replied in the message sent by the Web App; pass null if none.
          */
         public OpenWebApp(long chatId, long botUserId, String url, ThemeParameters theme, String applicationName, long messageThreadId, InputMessageReplyTo replyTo) {
@@ -79179,7 +81172,7 @@ public class TdApi {
     }
 
     /**
-     * Pins a message in a chat; requires canPinMessages rights or canEditMessages rights in the channel.
+     * Pins a message in a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -79202,7 +81195,7 @@ public class TdApi {
         public boolean onlyForSelf;
 
         /**
-         * Default constructor for a function, which pins a message in a chat; requires canPinMessages rights or canEditMessages rights in the channel.
+         * Default constructor for a function, which pins a message in a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -79210,7 +81203,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which pins a message in a chat; requires canPinMessages rights or canEditMessages rights in the channel.
+         * Creates a function, which pins a message in a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -80116,6 +82109,10 @@ public class TdApi {
          * The last name of the user; 0-64 characters.
          */
         public String lastName;
+        /**
+         * Pass true to disable notification about the current user joining Telegram for other users that added them to contact list.
+         */
+        public boolean disableNotification;
 
         /**
          * Default constructor for a function, which finishes user registration. Works only when the current authorization state is authorizationStateWaitRegistration.
@@ -80132,16 +82129,18 @@ public class TdApi {
          *
          * @param firstName The first name of the user; 1-64 characters.
          * @param lastName The last name of the user; 0-64 characters.
+         * @param disableNotification Pass true to disable notification about the current user joining Telegram for other users that added them to contact list.
          */
-        public RegisterUser(String firstName, String lastName) {
+        public RegisterUser(String firstName, String lastName, boolean disableNotification) {
             this.firstName = firstName;
             this.lastName = lastName;
+            this.disableNotification = disableNotification;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -109994467;
+        public static final int CONSTRUCTOR = -1012247828;
 
         /**
          * @return this.CONSTRUCTOR
@@ -81243,7 +83242,7 @@ public class TdApi {
     }
 
     /**
-     * Replaces the current RTMP URL for streaming to the chat; requires creator privileges.
+     * Replaces the current RTMP URL for streaming to the chat; requires owner privileges.
      *
      * <p> Returns {@link RtmpUrl RtmpUrl} </p>
      */
@@ -81254,7 +83253,7 @@ public class TdApi {
         public long chatId;
 
         /**
-         * Default constructor for a function, which replaces the current RTMP URL for streaming to the chat; requires creator privileges.
+         * Default constructor for a function, which replaces the current RTMP URL for streaming to the chat; requires owner privileges.
          *
          * <p> Returns {@link RtmpUrl RtmpUrl} </p>
          */
@@ -81262,7 +83261,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which replaces the current RTMP URL for streaming to the chat; requires creator privileges.
+         * Creates a function, which replaces the current RTMP URL for streaming to the chat; requires owner privileges.
          *
          * <p> Returns {@link RtmpUrl RtmpUrl} </p>
          *
@@ -82385,7 +84384,7 @@ public class TdApi {
     }
 
     /**
-     * Searches for a specified query in the first name, last name and usernames of the members of a specified chat. Requires administrator rights in channels.
+     * Searches for a specified query in the first name, last name and usernames of the members of a specified chat. Requires administrator rights if the chat is a channel.
      *
      * <p> Returns {@link ChatMembers ChatMembers} </p>
      */
@@ -82408,7 +84407,7 @@ public class TdApi {
         public ChatMembersFilter filter;
 
         /**
-         * Default constructor for a function, which searches for a specified query in the first name, last name and usernames of the members of a specified chat. Requires administrator rights in channels.
+         * Default constructor for a function, which searches for a specified query in the first name, last name and usernames of the members of a specified chat. Requires administrator rights if the chat is a channel.
          *
          * <p> Returns {@link ChatMembers ChatMembers} </p>
          */
@@ -82416,7 +84415,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which searches for a specified query in the first name, last name and usernames of the members of a specified chat. Requires administrator rights in channels.
+         * Creates a function, which searches for a specified query in the first name, last name and usernames of the members of a specified chat. Requires administrator rights if the chat is a channel.
          *
          * <p> Returns {@link ChatMembers ChatMembers} </p>
          *
@@ -82469,7 +84468,7 @@ public class TdApi {
          */
         public long fromMessageId;
         /**
-         * Specify 0 to get results from exactly the fromMessageId or a negative offset to get the specified message and some newer messages.
+         * Specify 0 to get results from exactly the message fromMessageId or a negative offset to get the specified message and some newer messages.
          */
         public int offset;
         /**
@@ -82484,6 +84483,10 @@ public class TdApi {
          * If not 0, only messages in the specified thread will be returned; supergroups only.
          */
         public long messageThreadId;
+        /**
+         * If not 0, only messages in the specified Saved Messages topic will be returned; pass 0 to return all messages, or for chats other than Saved Messages.
+         */
+        public long savedMessagesTopicId;
 
         /**
          * Default constructor for a function, which searches for messages with given words in the chat. Returns the results in reverse chronological order, i.e. in order of decreasing messageId. Cannot be used in secret chats with a non-empty query (searchSecretMessages must be used instead), or without an enabled message database. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit. A combination of query, senderId, filter and messageThreadId search criteria is expected to be supported, only if it is required for Telegram official application implementation.
@@ -82502,12 +84505,13 @@ public class TdApi {
          * @param query Query to search for.
          * @param senderId Identifier of the sender of messages to search for; pass null to search for messages from any sender. Not supported in secret chats.
          * @param fromMessageId Identifier of the message starting from which history must be fetched; use 0 to get results from the last message.
-         * @param offset Specify 0 to get results from exactly the fromMessageId or a negative offset to get the specified message and some newer messages.
+         * @param offset Specify 0 to get results from exactly the message fromMessageId or a negative offset to get the specified message and some newer messages.
          * @param limit The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
          * @param filter Additional filter for messages to search; pass null to search for all messages.
          * @param messageThreadId If not 0, only messages in the specified thread will be returned; supergroups only.
+         * @param savedMessagesTopicId If not 0, only messages in the specified Saved Messages topic will be returned; pass 0 to return all messages, or for chats other than Saved Messages.
          */
-        public SearchChatMessages(long chatId, String query, MessageSender senderId, long fromMessageId, int offset, int limit, SearchMessagesFilter filter, long messageThreadId) {
+        public SearchChatMessages(long chatId, String query, MessageSender senderId, long fromMessageId, int offset, int limit, SearchMessagesFilter filter, long messageThreadId, long savedMessagesTopicId) {
             this.chatId = chatId;
             this.query = query;
             this.senderId = senderId;
@@ -82516,12 +84520,13 @@ public class TdApi {
             this.limit = limit;
             this.filter = filter;
             this.messageThreadId = messageThreadId;
+            this.savedMessagesTopicId = savedMessagesTopicId;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1879195132;
+        public static final int CONSTRUCTOR = -539052602;
 
         /**
          * @return this.CONSTRUCTOR
@@ -82777,51 +84782,45 @@ public class TdApi {
     }
 
     /**
-     * Searches for emojis by keywords. Supported only if the file database is enabled.
+     * Searches for emojis by keywords. Supported only if the file database is enabled. Order of results is unspecified.
      *
-     * <p> Returns {@link Emojis Emojis} </p>
+     * <p> Returns {@link EmojiKeywords EmojiKeywords} </p>
      */
-    public static class SearchEmojis extends Function<Emojis> {
+    public static class SearchEmojis extends Function<EmojiKeywords> {
         /**
          * Text to search for.
          */
         public String text;
-        /**
-         * Pass true if only emojis, which exactly match the text, needs to be returned.
-         */
-        public boolean exactMatch;
         /**
          * List of possible IETF language tags of the user's input language; may be empty if unknown.
          */
         public String[] inputLanguageCodes;
 
         /**
-         * Default constructor for a function, which searches for emojis by keywords. Supported only if the file database is enabled.
+         * Default constructor for a function, which searches for emojis by keywords. Supported only if the file database is enabled. Order of results is unspecified.
          *
-         * <p> Returns {@link Emojis Emojis} </p>
+         * <p> Returns {@link EmojiKeywords EmojiKeywords} </p>
          */
         public SearchEmojis() {
         }
 
         /**
-         * Creates a function, which searches for emojis by keywords. Supported only if the file database is enabled.
+         * Creates a function, which searches for emojis by keywords. Supported only if the file database is enabled. Order of results is unspecified.
          *
-         * <p> Returns {@link Emojis Emojis} </p>
+         * <p> Returns {@link EmojiKeywords EmojiKeywords} </p>
          *
          * @param text Text to search for.
-         * @param exactMatch Pass true if only emojis, which exactly match the text, needs to be returned.
          * @param inputLanguageCodes List of possible IETF language tags of the user's input language; may be empty if unknown.
          */
-        public SearchEmojis(String text, boolean exactMatch, String[] inputLanguageCodes) {
+        public SearchEmojis(String text, String[] inputLanguageCodes) {
             this.text = text;
-            this.exactMatch = exactMatch;
             this.inputLanguageCodes = inputLanguageCodes;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 398837927;
+        public static final int CONSTRUCTOR = -1456187668;
 
         /**
          * @return this.CONSTRUCTOR
@@ -83331,6 +85330,80 @@ public class TdApi {
     }
 
     /**
+     * Searches for messages tagged by the given reaction and with the given words in the Saved Messages chat; for Telegram Premium users only. Returns the results in reverse chronological order, i.e. in order of decreasing messageId For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
+     *
+     * <p> Returns {@link FoundChatMessages FoundChatMessages} </p>
+     */
+    public static class SearchSavedMessages extends Function<FoundChatMessages> {
+        /**
+         * If not 0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all messages.
+         */
+        public long savedMessagesTopicId;
+        /**
+         * Tag to search for; pass null to return all suitable messages.
+         */
+        public ReactionType tag;
+        /**
+         * Query to search for.
+         */
+        public String query;
+        /**
+         * Identifier of the message starting from which messages must be fetched; use 0 to get results from the last message.
+         */
+        public long fromMessageId;
+        /**
+         * Specify 0 to get results from exactly the message fromMessageId or a negative offset to get the specified message and some newer messages.
+         */
+        public int offset;
+        /**
+         * The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
+         */
+        public int limit;
+
+        /**
+         * Default constructor for a function, which searches for messages tagged by the given reaction and with the given words in the Saved Messages chat; for Telegram Premium users only. Returns the results in reverse chronological order, i.e. in order of decreasing messageId For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
+         *
+         * <p> Returns {@link FoundChatMessages FoundChatMessages} </p>
+         */
+        public SearchSavedMessages() {
+        }
+
+        /**
+         * Creates a function, which searches for messages tagged by the given reaction and with the given words in the Saved Messages chat; for Telegram Premium users only. Returns the results in reverse chronological order, i.e. in order of decreasing messageId For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
+         *
+         * <p> Returns {@link FoundChatMessages FoundChatMessages} </p>
+         *
+         * @param savedMessagesTopicId If not 0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all messages.
+         * @param tag Tag to search for; pass null to return all suitable messages.
+         * @param query Query to search for.
+         * @param fromMessageId Identifier of the message starting from which messages must be fetched; use 0 to get results from the last message.
+         * @param offset Specify 0 to get results from exactly the message fromMessageId or a negative offset to get the specified message and some newer messages.
+         * @param limit The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit.
+         */
+        public SearchSavedMessages(long savedMessagesTopicId, ReactionType tag, String query, long fromMessageId, int offset, int limit) {
+            this.savedMessagesTopicId = savedMessagesTopicId;
+            this.tag = tag;
+            this.query = query;
+            this.fromMessageId = fromMessageId;
+            this.offset = offset;
+            this.limit = limit;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1969512554;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Searches for messages in secret chats. Returns the results in reverse chronological order. For optimal performance, the number of returned messages is chosen by TDLib.
      *
      * <p> Returns {@link FoundMessages FoundMessages} </p>
@@ -83793,7 +85866,7 @@ public class TdApi {
     }
 
     /**
-     * Invites a bot to a chat (if it is not yet a member) and sends it the /start command. Bots can't be invited to a private chat other than the chat with the bot. Bots can't be invited to channels (although they can be added as admins) and secret chats. Returns the sent message.
+     * Invites a bot to a chat (if it is not yet a member) and sends it the /start command; requires canInviteUsers member right. Bots can't be invited to a private chat other than the chat with the bot. Bots can't be invited to channels (although they can be added as admins) and secret chats. Returns the sent message.
      *
      * <p> Returns {@link Message Message} </p>
      */
@@ -83812,7 +85885,7 @@ public class TdApi {
         public String parameter;
 
         /**
-         * Default constructor for a function, which invites a bot to a chat (if it is not yet a member) and sends it the /start command. Bots can't be invited to a private chat other than the chat with the bot. Bots can't be invited to channels (although they can be added as admins) and secret chats. Returns the sent message.
+         * Default constructor for a function, which invites a bot to a chat (if it is not yet a member) and sends it the /start command; requires canInviteUsers member right. Bots can't be invited to a private chat other than the chat with the bot. Bots can't be invited to channels (although they can be added as admins) and secret chats. Returns the sent message.
          *
          * <p> Returns {@link Message Message} </p>
          */
@@ -83820,7 +85893,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which invites a bot to a chat (if it is not yet a member) and sends it the /start command. Bots can't be invited to a private chat other than the chat with the bot. Bots can't be invited to channels (although they can be added as admins) and secret chats. Returns the sent message.
+         * Creates a function, which invites a bot to a chat (if it is not yet a member) and sends it the /start command; requires canInviteUsers member right. Bots can't be invited to a private chat other than the chat with the bot. Bots can't be invited to channels (although they can be added as admins) and secret chats. Returns the sent message.
          *
          * <p> Returns {@link Message Message} </p>
          *
@@ -84071,7 +86144,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * If not 0, a message thread identifier in which the action was performed.
+         * If not 0, the message thread identifier in which the action was performed.
          */
         public long messageThreadId;
         /**
@@ -84093,7 +86166,7 @@ public class TdApi {
          * <p> Returns {@link Ok Ok} </p>
          *
          * @param chatId Chat identifier.
-         * @param messageThreadId If not 0, a message thread identifier in which the action was performed.
+         * @param messageThreadId If not 0, the message thread identifier in which the action was performed.
          * @param action The action description; pass null to cancel the currently active action.
          */
         public SendChatAction(long chatId, long messageThreadId, ChatAction action) {
@@ -84221,7 +86294,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * If not 0, a message thread identifier in which the message will be sent.
+         * If not 0, the message thread identifier in which the message will be sent.
          */
         public long messageThreadId;
         /**
@@ -84259,7 +86332,7 @@ public class TdApi {
          * <p> Returns {@link Message Message} </p>
          *
          * @param chatId Target chat.
-         * @param messageThreadId If not 0, a message thread identifier in which the message will be sent.
+         * @param messageThreadId If not 0, the message thread identifier in which the message will be sent.
          * @param replyTo Information about the message or story to be replied; pass null if none.
          * @param options Options to be used to send the message; pass null to use default options.
          * @param queryId Identifier of the inline query.
@@ -84301,7 +86374,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * If not 0, a message thread identifier in which the message will be sent.
+         * If not 0, the message thread identifier in which the message will be sent.
          */
         public long messageThreadId;
         /**
@@ -84335,7 +86408,7 @@ public class TdApi {
          * <p> Returns {@link Message Message} </p>
          *
          * @param chatId Target chat.
-         * @param messageThreadId If not 0, a message thread identifier in which the message will be sent.
+         * @param messageThreadId If not 0, the message thread identifier in which the message will be sent.
          * @param replyTo Information about the message or story to be replied; pass null if none.
          * @param options Options to be used to send the message; pass null to use default options.
          * @param replyMarkup Markup for replying to the message; pass null if none; for bots only.
@@ -84375,7 +86448,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * If not 0, a message thread identifier in which the messages will be sent.
+         * If not 0, the message thread identifier in which the messages will be sent.
          */
         public long messageThreadId;
         /**
@@ -84405,7 +86478,7 @@ public class TdApi {
          * <p> Returns {@link Messages Messages} </p>
          *
          * @param chatId Target chat.
-         * @param messageThreadId If not 0, a message thread identifier in which the messages will be sent.
+         * @param messageThreadId If not 0, the message thread identifier in which the messages will be sent.
          * @param replyTo Information about the message or story to be replied; pass null if none.
          * @param options Options to be used to send the messages; pass null to use default options.
          * @param inputMessageContents Contents of messages to be sent. At most 10 messages can be added to an album.
@@ -84663,7 +86736,7 @@ public class TdApi {
     }
 
     /**
-     * Sends a new story to a chat; requires canPostStories rights for channel chats. Returns a temporary story.
+     * Sends a new story to a chat; requires canPostStories right for supergroup and channel chats. Returns a temporary story.
      *
      * <p> Returns {@link Story Story} </p>
      */
@@ -84685,7 +86758,7 @@ public class TdApi {
          */
         public FormattedText caption;
         /**
-         * The privacy settings for the story.
+         * The privacy settings for the story; ignored for stories sent to supergroup and channel chats.
          */
         public StoryPrivacySettings privacySettings;
         /**
@@ -84706,7 +86779,7 @@ public class TdApi {
         public boolean protectContent;
 
         /**
-         * Default constructor for a function, which sends a new story to a chat; requires canPostStories rights for channel chats. Returns a temporary story.
+         * Default constructor for a function, which sends a new story to a chat; requires canPostStories right for supergroup and channel chats. Returns a temporary story.
          *
          * <p> Returns {@link Story Story} </p>
          */
@@ -84714,7 +86787,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which sends a new story to a chat; requires canPostStories rights for channel chats. Returns a temporary story.
+         * Creates a function, which sends a new story to a chat; requires canPostStories right for supergroup and channel chats. Returns a temporary story.
          *
          * <p> Returns {@link Story Story} </p>
          *
@@ -84722,7 +86795,7 @@ public class TdApi {
          * @param content Content of the story.
          * @param areas Clickable rectangle areas to be shown on the story media; pass null if none.
          * @param caption Story caption; pass null to use an empty caption; 0-getOption(&quot;story_caption_length_max&quot;) characters.
-         * @param privacySettings The privacy settings for the story.
+         * @param privacySettings The privacy settings for the story; ignored for stories sent to supergroup and channel chats.
          * @param activePeriod Period after which the story is moved to archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or 2 * 86400 for Telegram Premium users, and 86400 otherwise.
          * @param fromStoryFullId Full identifier of the original story, which content was used to create the story.
          * @param isPinned Pass true to keep the story accessible after expiration.
@@ -85555,7 +87628,7 @@ public class TdApi {
     }
 
     /**
-     * Changes accent color and background custom emoji of a chat. Requires canChangeInfo administrator right.
+     * Changes accent color and background custom emoji of a channel chat. Requires canChangeInfo administrator right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -85565,7 +87638,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * Identifier of the accent color to use. The chat must have at least accentColor.minChatBoostLevel boost level to pass the corresponding color.
+         * Identifier of the accent color to use. The chat must have at least accentColor.minChannelChatBoostLevel boost level to pass the corresponding color.
          */
         public int accentColorId;
         /**
@@ -85574,7 +87647,7 @@ public class TdApi {
         public long backgroundCustomEmojiId;
 
         /**
-         * Default constructor for a function, which changes accent color and background custom emoji of a chat. Requires canChangeInfo administrator right.
+         * Default constructor for a function, which changes accent color and background custom emoji of a channel chat. Requires canChangeInfo administrator right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -85582,12 +87655,12 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes accent color and background custom emoji of a chat. Requires canChangeInfo administrator right.
+         * Creates a function, which changes accent color and background custom emoji of a channel chat. Requires canChangeInfo administrator right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
          * @param chatId Chat identifier.
-         * @param accentColorId Identifier of the accent color to use. The chat must have at least accentColor.minChatBoostLevel boost level to pass the corresponding color.
+         * @param accentColorId Identifier of the accent color to use. The chat must have at least accentColor.minChannelChatBoostLevel boost level to pass the corresponding color.
          * @param backgroundCustomEmojiId Identifier of a custom emoji to be shown on the reply header and link preview background; 0 if none. Use chatBoostLevelFeatures.canSetBackgroundCustomEmoji to check whether a custom emoji can be set.
          */
         public SetChatAccentColor(long chatId, int accentColorId, long backgroundCustomEmojiId) {
@@ -85661,7 +87734,7 @@ public class TdApi {
     }
 
     /**
-     * Changes reactions, available in a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo administrator right.
+     * Changes reactions, available in a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo member right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -85671,12 +87744,12 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * Reactions available in the chat. All explicitly specified emoji reactions must be active. Up to the chat's boost level custom emoji reactions can be explicitly specified.
+         * Reactions available in the chat. All explicitly specified emoji reactions must be active. In channel chats up to the chat's boost level custom emoji reactions can be explicitly specified.
          */
         public ChatAvailableReactions availableReactions;
 
         /**
-         * Default constructor for a function, which changes reactions, available in a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo administrator right.
+         * Default constructor for a function, which changes reactions, available in a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -85684,12 +87757,12 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes reactions, available in a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo administrator right.
+         * Creates a function, which changes reactions, available in a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
          * @param chatId Identifier of the chat.
-         * @param availableReactions Reactions available in the chat. All explicitly specified emoji reactions must be active. Up to the chat's boost level custom emoji reactions can be explicitly specified.
+         * @param availableReactions Reactions available in the chat. All explicitly specified emoji reactions must be active. In channel chats up to the chat's boost level custom emoji reactions can be explicitly specified.
          */
         public SetChatAvailableReactions(long chatId, ChatAvailableReactions availableReactions) {
             this.chatId = chatId;
@@ -85829,7 +87902,7 @@ public class TdApi {
     }
 
     /**
-     * Changes information about a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo administrator right.
+     * Changes information about a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo member right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -85844,7 +87917,7 @@ public class TdApi {
         public String description;
 
         /**
-         * Default constructor for a function, which changes information about a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo administrator right.
+         * Default constructor for a function, which changes information about a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -85852,7 +87925,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes information about a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo administrator right.
+         * Creates a function, which changes information about a chat. Available for basic groups, supergroups, and channels. Requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -85885,7 +87958,7 @@ public class TdApi {
      */
     public static class SetChatDiscussionGroup extends Function<Ok> {
         /**
-         * Identifier of the channel chat. Pass 0 to remove a link from the supergroup passed in the second argument to a linked channel chat (requires canPinMessages rights in the supergroup).
+         * Identifier of the channel chat. Pass 0 to remove a link from the supergroup passed in the second argument to a linked channel chat (requires canPinMessages member right in the supergroup).
          */
         public long chatId;
         /**
@@ -85906,7 +87979,7 @@ public class TdApi {
          *
          * <p> Returns {@link Ok Ok} </p>
          *
-         * @param chatId Identifier of the channel chat. Pass 0 to remove a link from the supergroup passed in the second argument to a linked channel chat (requires canPinMessages rights in the supergroup).
+         * @param chatId Identifier of the channel chat. Pass 0 to remove a link from the supergroup passed in the second argument to a linked channel chat (requires canPinMessages member right in the supergroup).
          * @param discussionChatId Identifier of a new channel's discussion group. Use 0 to remove the discussion group. Use the method getSuitableDiscussionChats to find all suitable groups. Basic group chats must be first upgraded to supergroup chats. If new chat members don't have access to old messages in the supergroup, then toggleSupergroupIsAllHistoryAvailable must be used first to change that.
          */
         public SetChatDiscussionGroup(long chatId, long discussionChatId) {
@@ -85939,11 +88012,11 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * If not 0, a message thread identifier in which the draft was changed.
+         * If not 0, the message thread identifier in which the draft was changed.
          */
         public long messageThreadId;
         /**
-         * New draft message; pass null to remove the draft.
+         * New draft message; pass null to remove the draft. All files in draft message content must be of the type inputFileLocal. Media thumbnails and captions are ignored.
          */
         public DraftMessage draftMessage;
 
@@ -85961,8 +88034,8 @@ public class TdApi {
          * <p> Returns {@link Ok Ok} </p>
          *
          * @param chatId Chat identifier.
-         * @param messageThreadId If not 0, a message thread identifier in which the draft was changed.
-         * @param draftMessage New draft message; pass null to remove the draft.
+         * @param messageThreadId If not 0, the message thread identifier in which the draft was changed.
+         * @param draftMessage New draft message; pass null to remove the draft. All files in draft message content must be of the type inputFileLocal. Media thumbnails and captions are ignored.
          */
         public SetChatDraftMessage(long chatId, long messageThreadId, DraftMessage draftMessage) {
             this.chatId = chatId;
@@ -86085,7 +88158,7 @@ public class TdApi {
     }
 
     /**
-     * Changes the status of a chat member, needs appropriate privileges. This function is currently not suitable for transferring chat ownership; use transferChatOwnership instead. Use addChatMember or banChatMember if some additional parameters needs to be passed.
+     * Changes the status of a chat member; requires canInviteUsers member right to add a chat member, canPromoteMembers administrator right to change administrator rights of the member, and canRestrictMembers administrator right to change restrictions of a user. This function is currently not suitable for transferring chat ownership; use transferChatOwnership instead. Use addChatMember or banChatMember if some additional parameters needs to be passed.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -86104,7 +88177,7 @@ public class TdApi {
         public ChatMemberStatus status;
 
         /**
-         * Default constructor for a function, which changes the status of a chat member, needs appropriate privileges. This function is currently not suitable for transferring chat ownership; use transferChatOwnership instead. Use addChatMember or banChatMember if some additional parameters needs to be passed.
+         * Default constructor for a function, which changes the status of a chat member; requires canInviteUsers member right to add a chat member, canPromoteMembers administrator right to change administrator rights of the member, and canRestrictMembers administrator right to change restrictions of a user. This function is currently not suitable for transferring chat ownership; use transferChatOwnership instead. Use addChatMember or banChatMember if some additional parameters needs to be passed.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -86112,7 +88185,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes the status of a chat member, needs appropriate privileges. This function is currently not suitable for transferring chat ownership; use transferChatOwnership instead. Use addChatMember or banChatMember if some additional parameters needs to be passed.
+         * Creates a function, which changes the status of a chat member; requires canInviteUsers member right to add a chat member, canPromoteMembers administrator right to change administrator rights of the member, and canRestrictMembers administrator right to change restrictions of a user. This function is currently not suitable for transferring chat ownership; use transferChatOwnership instead. Use addChatMember or banChatMember if some additional parameters needs to be passed.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -86341,7 +88414,7 @@ public class TdApi {
     }
 
     /**
-     * Changes the photo of a chat. Supported only for basic groups, supergroups and channels. Requires canChangeInfo administrator right.
+     * Changes the photo of a chat. Supported only for basic groups, supergroups and channels. Requires canChangeInfo member right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -86356,7 +88429,7 @@ public class TdApi {
         public InputChatPhoto photo;
 
         /**
-         * Default constructor for a function, which changes the photo of a chat. Supported only for basic groups, supergroups and channels. Requires canChangeInfo administrator right.
+         * Default constructor for a function, which changes the photo of a chat. Supported only for basic groups, supergroups and channels. Requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -86364,7 +88437,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes the photo of a chat. Supported only for basic groups, supergroups and channels. Requires canChangeInfo administrator right.
+         * Creates a function, which changes the photo of a chat. Supported only for basic groups, supergroups and channels. Requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -86391,7 +88464,7 @@ public class TdApi {
     }
 
     /**
-     * Changes accent color and background custom emoji for profile of a chat. Requires canChangeInfo administrator right.
+     * Changes accent color and background custom emoji for profile of a supergroup or channel chat. Requires canChangeInfo administrator right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -86401,7 +88474,7 @@ public class TdApi {
          */
         public long chatId;
         /**
-         * Identifier of the accent color to use for profile; pass -1 if none. The chat must have at least profileAccentColor.minChatBoostLevel boost level to pass the corresponding color.
+         * Identifier of the accent color to use for profile; pass -1 if none. The chat must have at least profileAccentColor.minSupergroupChatBoostLevel for supergroups or profileAccentColor.minChannelChatBoostLevel for channels boost level to pass the corresponding color.
          */
         public int profileAccentColorId;
         /**
@@ -86410,7 +88483,7 @@ public class TdApi {
         public long profileBackgroundCustomEmojiId;
 
         /**
-         * Default constructor for a function, which changes accent color and background custom emoji for profile of a chat. Requires canChangeInfo administrator right.
+         * Default constructor for a function, which changes accent color and background custom emoji for profile of a supergroup or channel chat. Requires canChangeInfo administrator right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -86418,12 +88491,12 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes accent color and background custom emoji for profile of a chat. Requires canChangeInfo administrator right.
+         * Creates a function, which changes accent color and background custom emoji for profile of a supergroup or channel chat. Requires canChangeInfo administrator right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
          * @param chatId Chat identifier.
-         * @param profileAccentColorId Identifier of the accent color to use for profile; pass -1 if none. The chat must have at least profileAccentColor.minChatBoostLevel boost level to pass the corresponding color.
+         * @param profileAccentColorId Identifier of the accent color to use for profile; pass -1 if none. The chat must have at least profileAccentColor.minSupergroupChatBoostLevel for supergroups or profileAccentColor.minChannelChatBoostLevel for channels boost level to pass the corresponding color.
          * @param profileBackgroundCustomEmojiId Identifier of a custom emoji to be shown on the chat's profile photo background; 0 if none. Use chatBoostLevelFeatures.canSetProfileBackgroundCustomEmoji to check whether a custom emoji can be set.
          */
         public SetChatProfileAccentColor(long chatId, int profileAccentColorId, long profileBackgroundCustomEmojiId) {
@@ -86447,7 +88520,7 @@ public class TdApi {
     }
 
     /**
-     * Changes the slow mode delay of a chat. Available only for supergroups; requires canRestrictMembers rights.
+     * Changes the slow mode delay of a chat. Available only for supergroups; requires canRestrictMembers right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -86462,7 +88535,7 @@ public class TdApi {
         public int slowModeDelay;
 
         /**
-         * Default constructor for a function, which changes the slow mode delay of a chat. Available only for supergroups; requires canRestrictMembers rights.
+         * Default constructor for a function, which changes the slow mode delay of a chat. Available only for supergroups; requires canRestrictMembers right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -86470,7 +88543,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes the slow mode delay of a chat. Available only for supergroups; requires canRestrictMembers rights.
+         * Creates a function, which changes the slow mode delay of a chat. Available only for supergroups; requires canRestrictMembers right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -86547,7 +88620,7 @@ public class TdApi {
     }
 
     /**
-     * Changes the chat title. Supported only for basic groups, supergroups and channels. Requires canChangeInfo administrator right.
+     * Changes the chat title. Supported only for basic groups, supergroups and channels. Requires canChangeInfo member right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -86562,7 +88635,7 @@ public class TdApi {
         public String title;
 
         /**
-         * Default constructor for a function, which changes the chat title. Supported only for basic groups, supergroups and channels. Requires canChangeInfo administrator right.
+         * Default constructor for a function, which changes the chat title. Supported only for basic groups, supergroups and channels. Requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -86570,7 +88643,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes the chat title. Supported only for basic groups, supergroups and channels. Requires canChangeInfo administrator right.
+         * Creates a function, which changes the chat title. Supported only for basic groups, supergroups and channels. Requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -88109,6 +90182,50 @@ public class TdApi {
     }
 
     /**
+     * Changes privacy settings for new chat creation; for Telegram Premium users only.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetNewChatPrivacySettings extends Function<Ok> {
+        /**
+         * New settings.
+         */
+        public NewChatPrivacySettings settings;
+
+        /**
+         * Default constructor for a function, which changes privacy settings for new chat creation; for Telegram Premium users only.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetNewChatPrivacySettings() {
+        }
+
+        /**
+         * Creates a function, which changes privacy settings for new chat creation; for Telegram Premium users only.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param settings New settings.
+         */
+        public SetNewChatPrivacySettings(NewChatPrivacySettings settings) {
+            this.settings = settings;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1774139215;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Sets the value of an option. (Check the list of available options on https://core.telegram.org/tdlib/options.) Only writable options can be set. Can be called before authorization.
      *
      * <p> Returns {@link Ok Ok} </p>
@@ -88377,7 +90494,7 @@ public class TdApi {
     }
 
     /**
-     * Changes the order of pinned forum topics.
+     * Changes the order of pinned forum topics; requires canManageTopics right in the supergroup.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -88392,7 +90509,7 @@ public class TdApi {
         public long[] messageThreadIds;
 
         /**
-         * Default constructor for a function, which changes the order of pinned forum topics.
+         * Default constructor for a function, which changes the order of pinned forum topics; requires canManageTopics right in the supergroup.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -88400,7 +90517,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes the order of pinned forum topics.
+         * Creates a function, which changes the order of pinned forum topics; requires canManageTopics right in the supergroup.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -88416,6 +90533,50 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -475084011;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Changes the order of pinned Saved Messages topics.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetPinnedSavedMessagesTopics extends Function<Ok> {
+        /**
+         * Identifiers of the new pinned Saved Messages topics.
+         */
+        public long[] savedMessagesTopicIds;
+
+        /**
+         * Default constructor for a function, which changes the order of pinned Saved Messages topics.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetPinnedSavedMessagesTopics() {
+        }
+
+        /**
+         * Creates a function, which changes the order of pinned Saved Messages topics.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param savedMessagesTopicIds Identifiers of the new pinned Saved Messages topics.
+         */
+        public SetPinnedSavedMessagesTopics(long[] savedMessagesTopicIds) {
+            this.savedMessagesTopicIds = savedMessagesTopicIds;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -194818924;
 
         /**
          * @return this.CONSTRUCTOR
@@ -88583,6 +90744,50 @@ public class TdApi {
     }
 
     /**
+     * Changes privacy settings for message read date.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetReadDatePrivacySettings extends Function<Ok> {
+        /**
+         * New settings.
+         */
+        public ReadDatePrivacySettings settings;
+
+        /**
+         * Default constructor for a function, which changes privacy settings for message read date.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetReadDatePrivacySettings() {
+        }
+
+        /**
+         * Creates a function, which changes privacy settings for message read date.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param settings New settings.
+         */
+        public SetReadDatePrivacySettings(ReadDatePrivacySettings settings) {
+            this.settings = settings;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 493913782;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Changes the 2-step verification recovery email address of the user. If a new recovery email address is specified, then the change will not be applied until the new recovery email address is confirmed. If newRecoveryEmailAddress is the same as the email address that is currently set up, this call succeeds immediately and aborts all other requests waiting for an email confirmation.
      *
      * <p> Returns {@link PasswordState PasswordState} </p>
@@ -88622,6 +90827,56 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1981836385;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Changes label of a Saved Messages tag; for Telegram Premium users only.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetSavedMessagesTagLabel extends Function<Ok> {
+        /**
+         * The tag which label will be changed.
+         */
+        public ReactionType tag;
+        /**
+         * New label for the tag; 0-12 characters.
+         */
+        public String label;
+
+        /**
+         * Default constructor for a function, which changes label of a Saved Messages tag; for Telegram Premium users only.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetSavedMessagesTagLabel() {
+        }
+
+        /**
+         * Creates a function, which changes label of a Saved Messages tag; for Telegram Premium users only.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param tag The tag which label will be changed.
+         * @param label New label for the tag; 0-12 characters.
+         */
+        public SetSavedMessagesTagLabel(ReactionType tag, String label) {
+            this.tag = tag;
+            this.label = label;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1338323696;
 
         /**
          * @return this.CONSTRUCTOR
@@ -88989,15 +91244,11 @@ public class TdApi {
     }
 
     /**
-     * Changes privacy settings of a story. Can be called only if story.canBeEdited == true.
+     * Changes privacy settings of a story. The method can be called only for stories posted on behalf of the current user and if story.canBeEdited == true.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
     public static class SetStoryPrivacySettings extends Function<Ok> {
-        /**
-         * Identifier of the chat that posted the story.
-         */
-        public long storySenderChatId;
         /**
          * Identifier of the story.
          */
@@ -89008,7 +91259,7 @@ public class TdApi {
         public StoryPrivacySettings privacySettings;
 
         /**
-         * Default constructor for a function, which changes privacy settings of a story. Can be called only if story.canBeEdited == true.
+         * Default constructor for a function, which changes privacy settings of a story. The method can be called only for stories posted on behalf of the current user and if story.canBeEdited == true.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -89016,16 +91267,14 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes privacy settings of a story. Can be called only if story.canBeEdited == true.
+         * Creates a function, which changes privacy settings of a story. The method can be called only for stories posted on behalf of the current user and if story.canBeEdited == true.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
-         * @param storySenderChatId Identifier of the chat that posted the story.
          * @param storyId Identifier of the story.
          * @param privacySettings The new privacy settigs for the story.
          */
-        public SetStoryPrivacySettings(long storySenderChatId, int storyId, StoryPrivacySettings privacySettings) {
-            this.storySenderChatId = storySenderChatId;
+        public SetStoryPrivacySettings(int storyId, StoryPrivacySettings privacySettings) {
             this.storyId = storyId;
             this.privacySettings = privacySettings;
         }
@@ -89033,7 +91282,7 @@ public class TdApi {
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 460084276;
+        public static final int CONSTRUCTOR = -655801550;
 
         /**
          * @return this.CONSTRUCTOR
@@ -89045,7 +91294,7 @@ public class TdApi {
     }
 
     /**
-     * Changes chosen reaction on a story.
+     * Changes chosen reaction on a story that has already been sent.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -89068,7 +91317,7 @@ public class TdApi {
         public boolean updateRecentReactions;
 
         /**
-         * Default constructor for a function, which changes chosen reaction on a story.
+         * Default constructor for a function, which changes chosen reaction on a story that has already been sent.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -89076,7 +91325,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes chosen reaction on a story.
+         * Creates a function, which changes chosen reaction on a story that has already been sent.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -89096,6 +91345,56 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -1400156249;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Changes the custom emoji sticker set of a supergroup; requires canChangeInfo administrator right. The chat must have at least chatBoostFeatures.minCustomEmojiStickerSetBoostLevel boost level to pass the corresponding color.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetSupergroupCustomEmojiStickerSet extends Function<Ok> {
+        /**
+         * Identifier of the supergroup.
+         */
+        public long supergroupId;
+        /**
+         * New value of the custom emoji sticker set identifier for the supergroup. Use 0 to remove the custom emoji sticker set in the supergroup.
+         */
+        public long customEmojiStickerSetId;
+
+        /**
+         * Default constructor for a function, which changes the custom emoji sticker set of a supergroup; requires canChangeInfo administrator right. The chat must have at least chatBoostFeatures.minCustomEmojiStickerSetBoostLevel boost level to pass the corresponding color.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetSupergroupCustomEmojiStickerSet() {
+        }
+
+        /**
+         * Creates a function, which changes the custom emoji sticker set of a supergroup; requires canChangeInfo administrator right. The chat must have at least chatBoostFeatures.minCustomEmojiStickerSetBoostLevel boost level to pass the corresponding color.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param supergroupId Identifier of the supergroup.
+         * @param customEmojiStickerSetId New value of the custom emoji sticker set identifier for the supergroup. Use 0 to remove the custom emoji sticker set in the supergroup.
+         */
+        public SetSupergroupCustomEmojiStickerSet(long supergroupId, long customEmojiStickerSetId) {
+            this.supergroupId = supergroupId;
+            this.customEmojiStickerSetId = customEmojiStickerSetId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1328894639;
 
         /**
          * @return this.CONSTRUCTOR
@@ -89146,6 +91445,56 @@ public class TdApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -2056344215;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     * Changes the number of times the supergroup must be boosted by a user to ignore slow mode and chat permission restrictions; requires canRestrictMembers administrator right.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class SetSupergroupUnrestrictBoostCount extends Function<Ok> {
+        /**
+         * Identifier of the supergroup.
+         */
+        public long supergroupId;
+        /**
+         * New value of the unrestrictBoostCount supergroup setting; 0-8. Use 0 to remove the setting.
+         */
+        public int unrestrictBoostCount;
+
+        /**
+         * Default constructor for a function, which changes the number of times the supergroup must be boosted by a user to ignore slow mode and chat permission restrictions; requires canRestrictMembers administrator right.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public SetSupergroupUnrestrictBoostCount() {
+        }
+
+        /**
+         * Creates a function, which changes the number of times the supergroup must be boosted by a user to ignore slow mode and chat permission restrictions; requires canRestrictMembers administrator right.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param supergroupId Identifier of the supergroup.
+         * @param unrestrictBoostCount New value of the unrestrictBoostCount supergroup setting; 0-8. Use 0 to remove the setting.
+         */
+        public SetSupergroupUnrestrictBoostCount(long supergroupId, int unrestrictBoostCount) {
+            this.supergroupId = supergroupId;
+            this.unrestrictBoostCount = unrestrictBoostCount;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 969814179;
 
         /**
          * @return this.CONSTRUCTOR
@@ -89268,14 +91617,6 @@ public class TdApi {
          * Application version; must be non-empty.
          */
         public String applicationVersion;
-        /**
-         * Pass true to automatically delete old files in background.
-         */
-        public boolean enableStorageOptimizer;
-        /**
-         * Pass true to ignore original file names for downloaded files. Otherwise, downloaded files are saved under names as close as possible to the original name.
-         */
-        public boolean ignoreFileNames;
 
         /**
          * Default constructor for a function, which sets the parameters for TDLib initialization. Works only when the current authorization state is authorizationStateWaitTdlibParameters.
@@ -89304,10 +91645,8 @@ public class TdApi {
          * @param deviceModel Model of the device the application is being run on; must be non-empty.
          * @param systemVersion Version of the operating system the application is being run on. If empty, the version is automatically detected by TDLib.
          * @param applicationVersion Application version; must be non-empty.
-         * @param enableStorageOptimizer Pass true to automatically delete old files in background.
-         * @param ignoreFileNames Pass true to ignore original file names for downloaded files. Otherwise, downloaded files are saved under names as close as possible to the original name.
          */
-        public SetTdlibParameters(boolean useTestDc, String databaseDirectory, String filesDirectory, byte[] databaseEncryptionKey, boolean useFileDatabase, boolean useChatInfoDatabase, boolean useMessageDatabase, boolean useSecretChats, int apiId, String apiHash, String systemLanguageCode, String deviceModel, String systemVersion, String applicationVersion, boolean enableStorageOptimizer, boolean ignoreFileNames) {
+        public SetTdlibParameters(boolean useTestDc, String databaseDirectory, String filesDirectory, byte[] databaseEncryptionKey, boolean useFileDatabase, boolean useChatInfoDatabase, boolean useMessageDatabase, boolean useSecretChats, int apiId, String apiHash, String systemLanguageCode, String deviceModel, String systemVersion, String applicationVersion) {
             this.useTestDc = useTestDc;
             this.databaseDirectory = databaseDirectory;
             this.filesDirectory = filesDirectory;
@@ -89322,14 +91661,12 @@ public class TdApi {
             this.deviceModel = deviceModel;
             this.systemVersion = systemVersion;
             this.applicationVersion = applicationVersion;
-            this.enableStorageOptimizer = enableStorageOptimizer;
-            this.ignoreFileNames = ignoreFileNames;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1384743481;
+        public static final int CONSTRUCTOR = -775883218;
 
         /**
          * @return this.CONSTRUCTOR
@@ -91098,7 +93435,7 @@ public class TdApi {
     }
 
     /**
-     * Changes the viewAsTopics setting of a forum chat.
+     * Changes the viewAsTopics setting of a forum chat or Saved Messages.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -91113,7 +93450,7 @@ public class TdApi {
         public boolean viewAsTopics;
 
         /**
-         * Default constructor for a function, which changes the viewAsTopics setting of a forum chat.
+         * Default constructor for a function, which changes the viewAsTopics setting of a forum chat or Saved Messages.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -91121,7 +93458,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes the viewAsTopics setting of a forum chat.
+         * Creates a function, which changes the viewAsTopics setting of a forum chat or Saved Messages.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -91198,7 +93535,7 @@ public class TdApi {
     }
 
     /**
-     * Toggles whether a topic is closed in a forum supergroup chat; requires canManageTopics administrator right in the supergroup unless the user is creator of the topic.
+     * Toggles whether a topic is closed in a forum supergroup chat; requires canManageTopics right in the supergroup unless the user is creator of the topic.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -91217,7 +93554,7 @@ public class TdApi {
         public boolean isClosed;
 
         /**
-         * Default constructor for a function, which toggles whether a topic is closed in a forum supergroup chat; requires canManageTopics administrator right in the supergroup unless the user is creator of the topic.
+         * Default constructor for a function, which toggles whether a topic is closed in a forum supergroup chat; requires canManageTopics right in the supergroup unless the user is creator of the topic.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -91225,7 +93562,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which toggles whether a topic is closed in a forum supergroup chat; requires canManageTopics administrator right in the supergroup unless the user is creator of the topic.
+         * Creates a function, which toggles whether a topic is closed in a forum supergroup chat; requires canManageTopics right in the supergroup unless the user is creator of the topic.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -91254,7 +93591,7 @@ public class TdApi {
     }
 
     /**
-     * Changes the pinned state of a forum topic; requires canManageTopics administrator right in the supergroup. There can be up to getOption(&quot;pinned_forum_topic_count_max&quot;) pinned forum topics.
+     * Changes the pinned state of a forum topic; requires canManageTopics right in the supergroup. There can be up to getOption(&quot;pinned_forum_topic_count_max&quot;) pinned forum topics.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -91273,7 +93610,7 @@ public class TdApi {
         public boolean isPinned;
 
         /**
-         * Default constructor for a function, which changes the pinned state of a forum topic; requires canManageTopics administrator right in the supergroup. There can be up to getOption(&quot;pinned_forum_topic_count_max&quot;) pinned forum topics.
+         * Default constructor for a function, which changes the pinned state of a forum topic; requires canManageTopics right in the supergroup. There can be up to getOption(&quot;pinned_forum_topic_count_max&quot;) pinned forum topics.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -91281,7 +93618,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes the pinned state of a forum topic; requires canManageTopics administrator right in the supergroup. There can be up to getOption(&quot;pinned_forum_topic_count_max&quot;) pinned forum topics.
+         * Creates a function, which changes the pinned state of a forum topic; requires canManageTopics right in the supergroup. There can be up to getOption(&quot;pinned_forum_topic_count_max&quot;) pinned forum topics.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -91310,7 +93647,7 @@ public class TdApi {
     }
 
     /**
-     * Toggles whether a General topic is hidden in a forum supergroup chat; requires canManageTopics administrator right in the supergroup.
+     * Toggles whether a General topic is hidden in a forum supergroup chat; requires canManageTopics right in the supergroup.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -91325,7 +93662,7 @@ public class TdApi {
         public boolean isHidden;
 
         /**
-         * Default constructor for a function, which toggles whether a General topic is hidden in a forum supergroup chat; requires canManageTopics administrator right in the supergroup.
+         * Default constructor for a function, which toggles whether a General topic is hidden in a forum supergroup chat; requires canManageTopics right in the supergroup.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -91333,7 +93670,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which toggles whether a General topic is hidden in a forum supergroup chat; requires canManageTopics administrator right in the supergroup.
+         * Creates a function, which toggles whether a General topic is hidden in a forum supergroup chat; requires canManageTopics right in the supergroup.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -91722,6 +94059,56 @@ public class TdApi {
     }
 
     /**
+     * Changes the pinned state of a Saved Messages topic. There can be up to getOption(&quot;pinned_saved_messages_topic_count_max&quot;) pinned topics. The limit can be increased with Telegram Premium.
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class ToggleSavedMessagesTopicIsPinned extends Function<Ok> {
+        /**
+         * Identifier of Saved Messages topic to pin or unpin.
+         */
+        public long savedMessagesTopicId;
+        /**
+         * Pass true to pin the topic; pass false to unpin it.
+         */
+        public boolean isPinned;
+
+        /**
+         * Default constructor for a function, which changes the pinned state of a Saved Messages topic. There can be up to getOption(&quot;pinned_saved_messages_topic_count_max&quot;) pinned topics. The limit can be increased with Telegram Premium.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public ToggleSavedMessagesTopicIsPinned() {
+        }
+
+        /**
+         * Creates a function, which changes the pinned state of a Saved Messages topic. There can be up to getOption(&quot;pinned_saved_messages_topic_count_max&quot;) pinned topics. The limit can be increased with Telegram Premium.
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         *
+         * @param savedMessagesTopicId Identifier of Saved Messages topic to pin or unpin.
+         * @param isPinned Pass true to pin the topic; pass false to unpin it.
+         */
+        public ToggleSavedMessagesTopicIsPinned(long savedMessagesTopicId, boolean isPinned) {
+            this.savedMessagesTopicId = savedMessagesTopicId;
+            this.isPinned = isPinned;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1588378164;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
      * Toggles whether a session can accept incoming calls.
      *
      * <p> Returns {@link Ok Ok} </p>
@@ -91978,7 +94365,7 @@ public class TdApi {
     }
 
     /**
-     * Toggles whether the message history of a supergroup is available to new members; requires canChangeInfo administrator right.
+     * Toggles whether the message history of a supergroup is available to new members; requires canChangeInfo member right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -91993,7 +94380,7 @@ public class TdApi {
         public boolean isAllHistoryAvailable;
 
         /**
-         * Default constructor for a function, which toggles whether the message history of a supergroup is available to new members; requires canChangeInfo administrator right.
+         * Default constructor for a function, which toggles whether the message history of a supergroup is available to new members; requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -92001,7 +94388,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which toggles whether the message history of a supergroup is available to new members; requires canChangeInfo administrator right.
+         * Creates a function, which toggles whether the message history of a supergroup is available to new members; requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -92222,7 +94609,7 @@ public class TdApi {
     }
 
     /**
-     * Toggles whether sender signature is added to sent messages in a channel; requires canChangeInfo administrator right.
+     * Toggles whether sender signature is added to sent messages in a channel; requires canChangeInfo member right.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -92237,7 +94624,7 @@ public class TdApi {
         public boolean signMessages;
 
         /**
-         * Default constructor for a function, which toggles whether sender signature is added to sent messages in a channel; requires canChangeInfo administrator right.
+         * Default constructor for a function, which toggles whether sender signature is added to sent messages in a channel; requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -92245,7 +94632,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which toggles whether sender signature is added to sent messages in a channel; requires canChangeInfo administrator right.
+         * Creates a function, which toggles whether sender signature is added to sent messages in a channel; requires canChangeInfo member right.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -92378,7 +94765,7 @@ public class TdApi {
     }
 
     /**
-     * Changes the owner of a chat. The current user must be a current owner of the chat. Use the method canTransferOwnership to check whether the ownership can be transferred from the current session. Available only for supergroups and channel chats.
+     * Changes the owner of a chat; requires owner privileges in the chat. Use the method canTransferOwnership to check whether the ownership can be transferred from the current session. Available only for supergroups and channel chats.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -92397,7 +94784,7 @@ public class TdApi {
         public String password;
 
         /**
-         * Default constructor for a function, which changes the owner of a chat. The current user must be a current owner of the chat. Use the method canTransferOwnership to check whether the ownership can be transferred from the current session. Available only for supergroups and channel chats.
+         * Default constructor for a function, which changes the owner of a chat; requires owner privileges in the chat. Use the method canTransferOwnership to check whether the ownership can be transferred from the current session. Available only for supergroups and channel chats.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -92405,7 +94792,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which changes the owner of a chat. The current user must be a current owner of the chat. Use the method canTransferOwnership to check whether the ownership can be transferred from the current session. Available only for supergroups and channel chats.
+         * Creates a function, which changes the owner of a chat; requires owner privileges in the chat. Use the method canTransferOwnership to check whether the ownership can be transferred from the current session. Available only for supergroups and channel chats.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -92540,7 +94927,7 @@ public class TdApi {
     }
 
     /**
-     * Removes all pinned messages from a chat; requires canPinMessages rights in the group or canEditMessages rights in the channel.
+     * Removes all pinned messages from a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -92551,7 +94938,7 @@ public class TdApi {
         public long chatId;
 
         /**
-         * Default constructor for a function, which removes all pinned messages from a chat; requires canPinMessages rights in the group or canEditMessages rights in the channel.
+         * Default constructor for a function, which removes all pinned messages from a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -92559,7 +94946,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which removes all pinned messages from a chat; requires canPinMessages rights in the group or canEditMessages rights in the channel.
+         * Creates a function, which removes all pinned messages from a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -92584,7 +94971,7 @@ public class TdApi {
     }
 
     /**
-     * Removes all pinned messages from a forum topic; requires canPinMessages rights in the supergroup.
+     * Removes all pinned messages from a forum topic; requires canPinMessages member right in the supergroup.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -92599,7 +94986,7 @@ public class TdApi {
         public long messageThreadId;
 
         /**
-         * Default constructor for a function, which removes all pinned messages from a forum topic; requires canPinMessages rights in the supergroup.
+         * Default constructor for a function, which removes all pinned messages from a forum topic; requires canPinMessages member right in the supergroup.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -92607,7 +94994,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which removes all pinned messages from a forum topic; requires canPinMessages rights in the supergroup.
+         * Creates a function, which removes all pinned messages from a forum topic; requires canPinMessages member right in the supergroup.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -92634,7 +95021,7 @@ public class TdApi {
     }
 
     /**
-     * Removes a pinned message from a chat; requires canPinMessages rights in the group or canEditMessages rights in the channel.
+     * Removes a pinned message from a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
      *
      * <p> Returns {@link Ok Ok} </p>
      */
@@ -92649,7 +95036,7 @@ public class TdApi {
         public long messageId;
 
         /**
-         * Default constructor for a function, which removes a pinned message from a chat; requires canPinMessages rights in the group or canEditMessages rights in the channel.
+         * Default constructor for a function, which removes a pinned message from a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -92657,7 +95044,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which removes a pinned message from a chat; requires canPinMessages rights in the group or canEditMessages rights in the channel.
+         * Creates a function, which removes a pinned message from a chat; requires canPinMessages member right if the chat is a basic group or supergroup, or canEditMessages administrator right if the chat is a channel.
          *
          * <p> Returns {@link Ok Ok} </p>
          *
@@ -92684,7 +95071,7 @@ public class TdApi {
     }
 
     /**
-     * Creates a new supergroup from an existing basic group and sends a corresponding messageChatUpgradeTo and messageChatUpgradeFrom; requires creator privileges. Deactivates the original basic group.
+     * Creates a new supergroup from an existing basic group and sends a corresponding messageChatUpgradeTo and messageChatUpgradeFrom; requires owner privileges. Deactivates the original basic group.
      *
      * <p> Returns {@link Chat Chat} </p>
      */
@@ -92695,7 +95082,7 @@ public class TdApi {
         public long chatId;
 
         /**
-         * Default constructor for a function, which creates a new supergroup from an existing basic group and sends a corresponding messageChatUpgradeTo and messageChatUpgradeFrom; requires creator privileges. Deactivates the original basic group.
+         * Default constructor for a function, which creates a new supergroup from an existing basic group and sends a corresponding messageChatUpgradeTo and messageChatUpgradeFrom; requires owner privileges. Deactivates the original basic group.
          *
          * <p> Returns {@link Chat Chat} </p>
          */
@@ -92703,7 +95090,7 @@ public class TdApi {
         }
 
         /**
-         * Creates a function, which creates a new supergroup from an existing basic group and sends a corresponding messageChatUpgradeTo and messageChatUpgradeFrom; requires creator privileges. Deactivates the original basic group.
+         * Creates a function, which creates a new supergroup from an existing basic group and sends a corresponding messageChatUpgradeTo and messageChatUpgradeFrom; requires owner privileges. Deactivates the original basic group.
          *
          * <p> Returns {@link Chat Chat} </p>
          *

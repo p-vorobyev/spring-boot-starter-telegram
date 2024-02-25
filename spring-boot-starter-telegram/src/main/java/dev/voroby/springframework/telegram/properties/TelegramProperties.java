@@ -24,8 +24,6 @@ public record TelegramProperties(
         String deviceModel,
         String systemVersion,
         String applicationVersion,
-        boolean enableStorageOptimizer,
-        boolean ignoreFileNames,
         int logVerbosityLevel,
         Proxy proxy
 ) {

@@ -174,8 +174,6 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
         String applicationVersion = "1.8.25";
-        boolean enableStorageOptimizer = properties.enableStorageOptimizer();
-        boolean ignoreFileNames = properties.ignoreFileNames();
         return new TdApi.SetTdlibParameters(
                 useTestDc,
                 databaseDirectory,
@@ -190,9 +188,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
                 systemLanguageCode,
                 deviceModel,
                 systemVersion,
-                applicationVersion,
-                enableStorageOptimizer,
-                ignoreFileNames
+                applicationVersion
         );
     }
 
