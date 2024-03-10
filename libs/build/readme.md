@@ -1,7 +1,7 @@
 ## Build native library
 
 * To build TDLib you must follow official [instructions](https://tdlib.github.io/td/build.html?language=Java).
-* After step `git clone https://github.com/tdlib/td.git` checkout to v1.8.25 in TDLib repository `git checkout fe620155`.
+* After step `git clone https://github.com/tdlib/td.git` checkout to v1.8.26 in TDLib repository `git checkout b1b33cf4`.
 * Continue steps from the official instructions.
 * After step `cd example/java` 
 replace original `CMakeLists.txt` to [CMakeLists.txt](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/CMakeLists.txt) 
