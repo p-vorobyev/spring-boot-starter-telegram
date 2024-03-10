@@ -173,7 +173,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         String systemLanguageCode = properties.systemLanguageCode();
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
-        String applicationVersion = "1.8.25";
+        String applicationVersion = "1.8.26";
         return new TdApi.SetTdlibParameters(
                 useTestDc,
                 databaseDirectory,
