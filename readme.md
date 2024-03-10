@@ -13,13 +13,14 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 - [Javadoc](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram)
 - [Notice](#notice)
 - [License](#license)
+- [Support](#support)
 
 <a name="requirements"></a>
 ## Requirements
 | Technology  | Version                                                                               |
 |-------------|---------------------------------------------------------------------------------------|
 | jdk         | 17                                                                                    |
-| TDLib       | [1.8.25](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
+| TDLib       | [1.8.26](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
 | Spring Boot | 3                                                                                     |
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
@@ -99,17 +100,17 @@ repositories {
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.9.0</version>
+    <version>1.10.0</version>
 </dependency>
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Gradle**:
 
 ```kotlin
-implementation("dev.voroby:spring-boot-starter-telegram:1.9.0")
+implementation("dev.voroby:spring-boot-starter-telegram:1.10.0")
 ```
 
-Or just download artifact by path `Releases -> 1.9.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.9.0.jar` 
+Or just download artifact by path `Releases -> 1.10.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.10.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
@@ -268,10 +269,10 @@ telegramClient.sendWithCallback(new TdApi.GetMe(), (user, error) -> {
 - An example of asynchronous call with `CompletableFuture`. Let's send hello message to ourselves:
 ```java
 telegramClient.sendAsync(new TdApi.GetMe())
-        .thenApply(user -> user.usernames.activeUsernames[0])
+        .thenApply(user -> user.object().usernames.activeUsernames[0])
         .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1)))
         .thenCompose(chatsFuture ->
-        chatsFuture.thenApply(chats -> chats.chatIds[0]))
+        chatsFuture.thenApply(chats -> chats.object().chatIds[0]))
         .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
 
 private TdApi.SendMessage sendMessageQuery(Long chatId) {
@@ -324,3 +325,9 @@ Be careful and do not push personal data like `api-id`,`api-hash`, `phone` to re
 <a name="license"></a>
 ## License
 [MIT License](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/LICENSE)
+
+<a name="support"></a>
+## Support
+Thanks for the best IDE [support](https://jb.gg/OpenSourceSupport).
+
+<img alt="jb_beam" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" width="400"/>

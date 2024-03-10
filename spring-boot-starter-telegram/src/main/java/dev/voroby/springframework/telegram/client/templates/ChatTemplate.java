@@ -6,30 +6,28 @@ import dev.voroby.springframework.telegram.client.templates.response.Response;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class simplifies the use of {@link TelegramClient} for chat related objects.
  *
  * @author Pavel Vorobyev
  */
-public class ChatTemplate extends AbstractTemplate {
+public class ChatTemplate {
+
+    private final TelegramClient telegramClient;
 
     public ChatTemplate(TelegramClient telegramClient) {
-        super(telegramClient);
+        this.telegramClient = telegramClient;
     }
 
     /**
      * Returns information about a chat by its identifier; this is an offline request if the current user is not a bot.
      *
      * @param chatId Chat identifier.
-     * @return {@link CompletableFuture<TdApi.Chat>}.
+     * @return {@link CompletableFuture<Response<TdApi.Chat>>}.
      */
     public CompletableFuture<Response<TdApi.Chat>> getChat(long chatId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.GetChat(chatId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(chat -> createResponse(chat, errorReference));
+        return telegramClient.sendAsync(new TdApi.GetChat(chatId));
     }
 
     /**
@@ -40,10 +38,7 @@ public class ChatTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.Ok>>} Response to action.
      */
     public CompletableFuture<Response<TdApi.Ok>> joinChat(long chatId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.JoinChat(chatId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(ok -> createResponse(ok, errorReference));
+        return telegramClient.sendAsync(new TdApi.JoinChat(chatId));
     }
 
     /**
@@ -56,10 +51,7 @@ public class ChatTemplate extends AbstractTemplate {
      */
     public CompletableFuture<Response<TdApi.Chats>> searchChats(String query, int limit) {
         Objects.requireNonNull(query);
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.SearchChats(query, limit))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(chats -> createResponse(chats, errorReference));
+        return telegramClient.sendAsync(new TdApi.SearchChats(query, limit));
     }
 
     /**
@@ -71,10 +63,7 @@ public class ChatTemplate extends AbstractTemplate {
      */
     public CompletableFuture<Response<TdApi.Chat>> searchPublicChat(String username) {
         Objects.requireNonNull(username);
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.SearchPublicChat(username))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(chat -> createResponse(chat, errorReference));
+        return telegramClient.sendAsync(new TdApi.SearchPublicChat(username));
     }
 
     /**
@@ -87,10 +76,7 @@ public class ChatTemplate extends AbstractTemplate {
      */
     public CompletableFuture<Response<TdApi.Chats>> searchPublicChats(String query) {
         Objects.requireNonNull(query);
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.SearchPublicChats(query))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(chats -> createResponse(chats, errorReference));
+        return telegramClient.sendAsync(new TdApi.SearchPublicChats(query));
     }
 
     /**
@@ -100,10 +86,7 @@ public class ChatTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.Ok>>}.
      */
     public CompletableFuture<Response<TdApi.Ok>> leaveChat(long chatId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.LeaveChat(chatId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(ok -> createResponse(ok, errorReference));
+        return telegramClient.sendAsync(new TdApi.LeaveChat(chatId));
     }
 
     /**
@@ -115,10 +98,7 @@ public class ChatTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.Ok>>}.
      */
     public CompletableFuture<Response<TdApi.Ok>> deleteChat(long chatId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.DeleteChat(chatId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(ok -> createResponse(ok, errorReference));
+        return telegramClient.sendAsync(new TdApi.DeleteChat(chatId));
     }
 
     /**
@@ -128,10 +108,7 @@ public class ChatTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.BasicGroup>>}.
      */
     public CompletableFuture<Response<TdApi.BasicGroup>> getBasicGroup(long basicGroupId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.GetBasicGroup(basicGroupId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(basicGroup -> createResponse(basicGroup, errorReference));
+        return telegramClient.sendAsync(new TdApi.GetBasicGroup(basicGroupId));
     }
 
     /**
@@ -141,10 +118,7 @@ public class ChatTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.BasicGroupFullInfo>>}.
      */
     public CompletableFuture<Response<TdApi.BasicGroupFullInfo>> getBasicGroupFullInfo(long basicGroupId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.GetBasicGroupFullInfo(basicGroupId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(basicGroupFullInfo -> createResponse(basicGroupFullInfo, errorReference));
+        return telegramClient.sendAsync(new TdApi.GetBasicGroupFullInfo(basicGroupId));
     }
 
     /**
@@ -155,10 +129,7 @@ public class ChatTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.Supergroup>>}.
      */
     public CompletableFuture<Response<TdApi.Supergroup>> getSupergroup(long supergroupId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.GetSupergroup(supergroupId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(supergroup -> createResponse(supergroup, errorReference));
+        return telegramClient.sendAsync(new TdApi.GetSupergroup(supergroupId));
     }
 
     /**
@@ -168,10 +139,7 @@ public class ChatTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.SupergroupFullInfo>>}.
      */
     public CompletableFuture<Response<TdApi.SupergroupFullInfo>> getSupergroupFullInfo(long supergroupId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.GetSupergroupFullInfo(supergroupId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(supergroupFullInfo -> createResponse(supergroupFullInfo, errorReference));
+        return telegramClient.sendAsync(new TdApi.GetSupergroupFullInfo(supergroupId));
     }
 
 }

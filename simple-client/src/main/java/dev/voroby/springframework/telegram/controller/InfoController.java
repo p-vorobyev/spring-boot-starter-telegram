@@ -58,10 +58,10 @@ public class InfoController {
     @GetMapping("/sendHello")
     public void helloToYourself() {
         telegramClient.sendAsync(new TdApi.GetMe())
-                .thenApply(user -> user.usernames.activeUsernames[0])
+                .thenApply(user -> user.object().usernames.activeUsernames[0])
                 .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1)))
                 .thenCompose(chatsFuture ->
-                        chatsFuture.thenApply(chats -> chats.chatIds[0]))
+                        chatsFuture.thenApply(chats -> chats.object().chatIds[0]))
                 .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
     }
 

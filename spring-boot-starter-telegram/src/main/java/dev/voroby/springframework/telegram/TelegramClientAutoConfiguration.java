@@ -35,8 +35,8 @@ public class TelegramClientAutoConfiguration {
         try {
             String os = System.getProperty("os.name");
             if (os != null && os.toLowerCase().startsWith("windows")) {
-                System.loadLibrary("libcrypto-1_1-x64");
-                System.loadLibrary("libssl-1_1-x64");
+                System.loadLibrary("libcrypto-3-x64");
+                System.loadLibrary("libssl-3-x64");
                 System.loadLibrary("zlib1");
             }
             System.loadLibrary("tdjni");
