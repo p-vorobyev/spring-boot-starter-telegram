@@ -268,10 +268,10 @@ telegramClient.sendWithCallback(new TdApi.GetMe(), (user, error) -> {
 - An example of asynchronous call with `CompletableFuture`. Let's send hello message to ourselves:
 ```java
 telegramClient.sendAsync(new TdApi.GetMe())
-        .thenApply(user -> user.usernames.activeUsernames[0])
+        .thenApply(user -> user.object().usernames.activeUsernames[0])
         .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1)))
         .thenCompose(chatsFuture ->
-        chatsFuture.thenApply(chats -> chats.chatIds[0]))
+        chatsFuture.thenApply(chats -> chats.object().chatIds[0]))
         .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
 
 private TdApi.SendMessage sendMessageQuery(Long chatId) {

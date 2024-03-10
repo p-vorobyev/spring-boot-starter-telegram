@@ -1,5 +1,6 @@
 package dev.voroby.springframework.telegram.client;
 
+import dev.voroby.springframework.telegram.client.templates.response.Response;
 import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
@@ -165,6 +166,7 @@ public class TelegramClient {
      * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
      * @return response from TDLib.
      */
+    @SuppressWarnings("unchecked")
     public <T extends TdApi.Object> T sendSync(TdApi.Function<T> query) {
         Objects.requireNonNull(query);
         var ref = new AtomicReference<TdApi.Object>();
@@ -198,20 +200,17 @@ public class TelegramClient {
      * If this stage completes exceptionally you can handle cause {@link TelegramClientTdApiException}
      *
      * @throws NullPointerException if query is null.
-     * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
      * @param query object representing a query to the TDLib.
-     * @return {@link CompletableFuture<TdApi.Object>} response from TDLib.
+     * @return {@link CompletableFuture<Response>} response from TDLib.
      */
-    public <T extends TdApi.Object> CompletableFuture<T> sendAsync(TdApi.Function<T> query) {
+    public <T extends TdApi.Object> CompletableFuture<Response<T>> sendAsync(TdApi.Function<T> query) {
         Objects.requireNonNull(query);
-        var future = new CompletableFuture<T>();
+        var future = new CompletableFuture<Response<T>>();
         sendWithCallback(query, ((obj, error) -> {
             if (error != null) {
                 logError(query, error);
-                future.completeExceptionally(new TelegramClientTdApiException("Received an error from TDLib.", error, query));
-            } else {
-                future.complete(obj);
             }
+            future.complete(new Response<>(obj, error));
         }));
         return future;
     }
@@ -236,6 +235,7 @@ public class TelegramClient {
      * @param resultHandler Result handler for results of queries with callback to TDLib
      * @param <T> The object type that is returned by the function
      */
+    @SuppressWarnings("unchecked")
     public <T extends TdApi.Object> void sendWithCallback(TdApi.Function<T> query,
                                                           QueryResultHandler<T> resultHandler) {
         Objects.requireNonNull(query);

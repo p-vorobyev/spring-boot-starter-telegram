@@ -3,21 +3,21 @@ package dev.voroby.springframework.telegram.client.templates;
 import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.client.templates.response.Response;
-import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class simplifies the use of {@link TelegramClient} for {@link TdApi.User} related objects.
  *
  * @author Pavel Vorobyev
  */
-public class UserTemplate extends AbstractTemplate {
+public class UserTemplate {
+
+    private final TelegramClient telegramClient;
 
     public UserTemplate(TelegramClient telegramClient) {
-        super(telegramClient);
+        this.telegramClient = telegramClient;
     }
 
     /**
@@ -27,10 +27,7 @@ public class UserTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.User>>}.
      */
     public CompletableFuture<Response<TdApi.User>> getUser(long userId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.GetUser(userId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(user -> createResponse(user, errorReference));
+        return telegramClient.sendAsync(new TdApi.GetUser(userId));
     }
 
     /**
@@ -40,29 +37,24 @@ public class UserTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.UserFullInfo>>}.
      */
     public CompletableFuture<Response<TdApi.UserFullInfo>> getUserFullInfo(long userId) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.GetUserFullInfo(userId))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(userFullInfo -> createResponse(userFullInfo, errorReference));
+        return telegramClient.sendAsync(new TdApi.GetUserFullInfo(userId));
     }
 
     /**
      * Returns an HTTPS link, which can be used to get information about the current user.
      *
-     * @return {@link CompletableFuture<TdApi.UserLink>}.
-     * @throws TelegramClientTdApiException in case of exceptional completion.
+     * @return {@link CompletableFuture<Response<TdApi.UserLink>>}.
      */
-    public CompletableFuture<TdApi.UserLink> getUserLink() {
+    public CompletableFuture<Response<TdApi.UserLink>> getUserLink() {
         return telegramClient.sendAsync(new TdApi.GetUserLink());
     }
 
     /**
      * Returns the current user.
      *
-     * @return {@link CompletableFuture<TdApi.User>}.
-     * @throws TelegramClientTdApiException in case of exceptional completion.
+     * @return {@link CompletableFuture<Response<TdApi.User>>}.
      */
-    public CompletableFuture<TdApi.User> getMe() {
+    public CompletableFuture<Response<TdApi.User>> getMe() {
         return telegramClient.sendAsync(new TdApi.GetMe());
     }
 
@@ -91,7 +83,12 @@ public class UserTemplate extends AbstractTemplate {
      */
     public CompletableFuture<Response<TdApi.ChatPhoto>> getPublicPhoto(long userId) {
         return getUserFullInfo(userId)
-                .thenApply(userFullInfoResponse -> createResponse(userFullInfoResponse.object().publicPhoto, userFullInfoResponse.error()));
+                .thenApply(userFullInfoResponse -> {
+                    if (userFullInfoResponse.error() != null) {
+                        return new Response<>(null, userFullInfoResponse.error());
+                    }
+                    return new Response<>(userFullInfoResponse.object().publicPhoto, null);
+                });
     }
 
     /**
@@ -103,10 +100,7 @@ public class UserTemplate extends AbstractTemplate {
      * @return {@link CompletableFuture<Response<TdApi.ChatPhotos>>}.
      */
     public CompletableFuture<Response<TdApi.ChatPhotos>> getUserProfilePhotos(long userId, int offset, int limit) {
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.GetUserProfilePhotos(userId, offset, limit))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(chatPhotos -> createResponse(chatPhotos, errorReference));
+        return telegramClient.sendAsync(new TdApi.GetUserProfilePhotos(userId, offset, limit));
     }
 
     /**
@@ -117,28 +111,23 @@ public class UserTemplate extends AbstractTemplate {
      */
     public CompletableFuture<Response<TdApi.User>> searchUserByPhoneNumber(String phoneNumber) {
         Objects.requireNonNull(phoneNumber);
-        var errorReference = new AtomicReference<TdApi.Error>();
-        return telegramClient.sendAsync(new TdApi.SearchUserByPhoneNumber(phoneNumber))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenApply(user -> createResponse(user, errorReference));
+        return telegramClient.sendAsync(new TdApi.SearchUserByPhoneNumber(phoneNumber));
     }
 
     /**
      * Searches a user by username. Returns null if user can't be found.
      *
      * @param username Username to search for.
-     * @return {@link CompletableFuture<TdApi.User>}. TdApi.User may be null.
+     * @return {@link CompletableFuture<Response<TdApi.User>>}. TdApi.User may be null.
      */
     public CompletableFuture<Response<TdApi.User>> searchUserByUsername(String username) {
         Objects.requireNonNull(username);
-        var errorReference = new AtomicReference<TdApi.Error>();
         return telegramClient.sendAsync(new TdApi.SearchPublicChat(username))
-                .exceptionally(throwable -> onException(throwable, errorReference))
-                .thenCompose(chat -> {
-                    if (errorReference.get() != null) {
-                        return CompletableFuture.completedFuture(new Response<>(null, errorReference.get()));
+                .thenCompose(chatResponse -> {
+                    if (chatResponse.error() != null) {
+                        return CompletableFuture.completedFuture(new Response<>(null, chatResponse.error()));
                     }
-                    if (chat.type instanceof TdApi.ChatTypePrivate typePrivate) {
+                    if (chatResponse.object().type instanceof TdApi.ChatTypePrivate typePrivate) {
                         return getUser(typePrivate.userId);
                     }
                     return CompletableFuture.completedFuture(new Response<>(null, null));
