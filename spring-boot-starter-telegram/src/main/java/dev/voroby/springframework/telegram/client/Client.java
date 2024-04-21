@@ -1,12 +1,9 @@
-//
-// Copyright Aliaksei Levin (levlam@telegram.org), Arseny Smirnov (arseny30@gmail.com) 2014-2023
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
 package dev.voroby.springframework.telegram.client;
 
+import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
+
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -125,22 +122,27 @@ public final class Client {
      * Creates new Client.
      *
      * @param updateHandler           Handler for incoming updates.
-     * @param updateExceptionHandler  Handler for exceptions thrown from updateHandler. If it is null, exceptions will be iggnored.
-     * @param defaultExceptionHandler Default handler for exceptions thrown from all ResultHandler. If it is null, exceptions will be iggnored.
+     * @param updateExceptionHandler  Handler for exceptions thrown from updateHandler. If it is null, exceptions will be ignored.
+     * @param defaultExceptionHandler Default handler for exceptions thrown from all ResultHandler. If it is null, exceptions will be ignored.
      * @return created Client
+     * @throws TelegramClientConfigurationException if a Client instance has already been created for this JVM process.
+     *                                              If you want to create the instance again, you should close the running instance and get AuthorizationStateClosed.
+     *                                              After this, a new instance of the {@link TelegramClient} bean must be registered in context.
      */
-    public static Client create(ResultHandler updateHandler, ExceptionHandler updateExceptionHandler, ExceptionHandler defaultExceptionHandler) {
-        Client client = new Client(updateHandler, updateExceptionHandler, defaultExceptionHandler);
-        synchronized (responseReceiver) {
+    public synchronized static Client create(ResultHandler updateHandler, ExceptionHandler updateExceptionHandler, ExceptionHandler defaultExceptionHandler) {
+        if (!clientStarted.get()) {
+            Client client = new Client(updateHandler, updateExceptionHandler, defaultExceptionHandler);
             if (!responseReceiver.isRun) {
                 responseReceiver.isRun = true;
-
                 Thread receiverThread = new Thread(responseReceiver, "TDLib thread");
                 receiverThread.setDaemon(true);
                 receiverThread.start();
             }
-        }
-        return client;
+            clientStarted.set(true);
+
+            return client;
+        } else
+            throw new TelegramClientConfigurationException("Client instance is already running.");
     }
 
     /**
@@ -199,6 +201,7 @@ public final class Client {
                 updateHandlers.remove(clientId);           // there will be no more updates
                 defaultExceptionHandlers.remove(clientId); // ignore further exceptions
                 clientCount.decrementAndGet();
+                clientStarted.set(false);
             }
         }
 
@@ -215,6 +218,7 @@ public final class Client {
     private static final ConcurrentHashMap<Long, Handler> handlers = new ConcurrentHashMap<Long, Handler>();
     private static final AtomicLong currentQueryId = new AtomicLong();
     private static final AtomicLong clientCount = new AtomicLong();
+    private static final AtomicBoolean clientStarted = new AtomicBoolean();
 
     private static final ResponseReceiver responseReceiver = new ResponseReceiver();
 

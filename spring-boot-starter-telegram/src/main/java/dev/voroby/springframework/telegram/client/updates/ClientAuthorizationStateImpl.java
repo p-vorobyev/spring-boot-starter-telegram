@@ -9,7 +9,7 @@ import static org.springframework.util.StringUtils.hasText;
  *
  * @author Pavel Vorobyev
  */
-public class ClientAuthorizationStateImpl implements ClientAuthorizationState {
+public final class ClientAuthorizationStateImpl implements ClientAuthorizationState {
 
     private final AtomicBoolean haveAuthorization = new AtomicBoolean();
 
