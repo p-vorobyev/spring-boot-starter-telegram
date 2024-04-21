@@ -3,6 +3,8 @@ package dev.voroby.springframework.telegram;
 import dev.voroby.springframework.telegram.client.Client;
 import dev.voroby.springframework.telegram.client.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
+import dev.voroby.springframework.telegram.client.runner.TelegramRunnersConsumer;
+import dev.voroby.springframework.telegram.client.runner.TelegramRunnersConsumerImpl;
 import dev.voroby.springframework.telegram.client.templates.ChatTemplate;
 import dev.voroby.springframework.telegram.client.templates.UserTemplate;
 import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
@@ -12,7 +14,11 @@ import dev.voroby.springframework.telegram.client.updates.UpdateNotificationList
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -116,6 +122,32 @@ public class TelegramClientAutoConfiguration {
                 log.debug("\nSTART DEFAULT HANDLER\n" +
                         object.toString() + "\n" +
                         "END DEFAULT HANDLER");
+    }
+
+    /**
+     * Creates a consumer of {@link TelegramRunner} implementations.
+     *
+     * @param authorizationState authorization state of the client
+     * @param applicationArguments the arguments that were used to run a {@link SpringApplication}
+     * @param applicationContext interface to provide configuration for an spring application
+     * @return {@link TelegramRunnersConsumer}
+     */
+    @Bean
+    public TelegramRunnersConsumer telegramRunnersConsumer(ClientAuthorizationState authorizationState,
+                                                           ApplicationArguments applicationArguments,
+                                                           ApplicationContext applicationContext) {
+        return new TelegramRunnersConsumerImpl(authorizationState, applicationArguments, applicationContext);
+    }
+
+    /**
+     * @param telegramRunners collection of {@link TelegramRunner} implementations
+     * @param telegramRunnersConsumer consumer of {@link TelegramRunner} implementations
+     * @return {@link ApplicationRunner}
+     */
+    @Bean
+    public ApplicationRunner telegramClientRunner(Collection<TelegramRunner> telegramRunners,
+                                                  TelegramRunnersConsumer telegramRunnersConsumer) {
+        return args -> telegramRunnersConsumer.accept(telegramRunners);
     }
 
 }
