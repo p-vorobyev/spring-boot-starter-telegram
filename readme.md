@@ -10,6 +10,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 - [Configuration properties](#configuration)
 - [Example](#example)
 - [Templates](#templates)
+- [Runners](#runners)
 - [Javadoc](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram)
 - [Notice](#notice)
 - [License](#license)
@@ -100,17 +101,17 @@ repositories {
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.10.0</version>
+    <version>1.10.1</version>
 </dependency>
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Gradle**:
 
 ```kotlin
-implementation("dev.voroby:spring-boot-starter-telegram:1.10.0")
+implementation("dev.voroby:spring-boot-starter-telegram:1.10.1")
 ```
 
-Or just download artifact by path `Releases -> 1.10.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.10.0.jar` 
+Or just download artifact by path `Releases -> 1.10.1 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.10.1.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
@@ -317,6 +318,13 @@ Templates simplify the use of `TelegramClient` for related objects. Just autowir
 
 - [UserTemplate](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram/dev/voroby/springframework/telegram/client/templates/UserTemplate.html)
 - [ChatTemplate](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram/dev/voroby/springframework/telegram/client/templates/ChatTemplate.html)
+
+<a name="runners"></a>
+## Runners
+You can register implementations of the `TelegramRunner` interface to run it when application starts. It will be executed 
+only after authorization state is ready and TDLib is ready to answer general requests. Multiple `TelegramRunner` beans 
+can be defined within the same application context and can be ordered using `@Order` annotation. You can see an [example](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/simple-client/src/main/java/dev/voroby/springframework/telegram/ChatsLoader.java) 
+how to load chats when application starts.
 
 <a name="notice"></a>
 ## Notice
