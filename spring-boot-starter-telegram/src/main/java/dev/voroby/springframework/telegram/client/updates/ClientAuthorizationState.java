@@ -10,7 +10,7 @@ import dev.voroby.springframework.telegram.client.TdApi;
  *
  * @author Pavel Vorobyev
  */
-public interface ClientAuthorizationState {
+public sealed interface ClientAuthorizationState permits ClientAuthorizationStateImpl {
     /**
      * Sends an authentication code to the TDLib for check.
      *
