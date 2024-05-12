@@ -14,7 +14,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 - [Javadoc](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram)
 - [Notice](#notice)
 - [License](#license)
-- [Support](#support)
+- [Acknowledgements](#acknowledgements)
 
 <a name="requirements"></a>
 ## Requirements
@@ -334,8 +334,8 @@ Be careful and do not push personal data like `api-id`,`api-hash`, `phone` to re
 ## License
 [MIT License](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/LICENSE)
 
-<a name="support"></a>
-## Support
+<a name="acknowledgements"></a>
+## Acknowledgements
 Thanks for the best IDE [support](https://jb.gg/OpenSourceSupport).
 
 <img alt="jb_beam" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" width="400"/>
