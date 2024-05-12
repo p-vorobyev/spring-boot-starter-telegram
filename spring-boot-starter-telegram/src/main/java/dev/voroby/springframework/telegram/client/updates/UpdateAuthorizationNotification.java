@@ -173,7 +173,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         String systemLanguageCode = properties.systemLanguageCode();
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
-        String applicationVersion = "1.8.26";
+        String applicationVersion = "1.8.29";
         return new TdApi.SetTdlibParameters(
                 useTestDc,
                 databaseDirectory,
@@ -199,9 +199,20 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
      * @param proxy proxy properties
      */
     private void addProxy(TelegramProperties.Proxy proxy) {
-        TelegramProperties.Proxy.ProxyHttp http = proxy.http();
-        TelegramProperties.Proxy.ProxySocks5 socks5 = proxy.socks5();
-        TelegramProperties.Proxy.ProxyMtProto mtProto = proxy.mtproto();
+        TdApi.ProxyType proxyType = getProxyType(proxy);
+        var addProxy = new TdApi.AddProxy(proxy.server(), proxy.port(), true, proxyType);
+        telegramClient.sendWithCallback(addProxy, ((obj, error) -> {
+            if (error == null) {
+                log.info("Proxy server: [server: {}, port: {}, type: {}]",
+                        addProxy.server, addProxy.port, proxyType.getClass().getSimpleName());
+            }
+        }));
+    }
+
+    private static TdApi.ProxyType getProxyType(TelegramProperties.Proxy proxy) {
+        var http = proxy.http();
+        var socks5 = proxy.socks5();
+        var mtProto = proxy.mtproto();
         TdApi.ProxyType proxyType;
         if (http != null) {
             proxyType = new TdApi.ProxyTypeHttp(http.username(), http.password(), http.httpOnly());
@@ -212,13 +223,7 @@ public class UpdateAuthorizationNotification implements UpdateNotificationListen
         } else {
             throw new TelegramClientConfigurationException("ProxyType not filled. Available types - http, socks5, mtProto");
         }
-        var addProxy = new TdApi.AddProxy(proxy.server(), proxy.port(), true, proxyType);
-        telegramClient.sendWithCallback(addProxy, ((obj, error) -> {
-            if (error == null) {
-                log.info("Proxy server: [server: {}, port: {}, type: {}]",
-                        addProxy.server, addProxy.port, proxyType.getClass().getSimpleName());
-            }
-        }));
+        return proxyType;
     }
 
     private String checkStringOrEmpty(String s) {
