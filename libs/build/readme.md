@@ -1,5 +1,14 @@
 ## Build native library
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Build by script**:
+
+* Go to the project directory `cd libs/build`.
+* Prepare environment for build by script `./prepare_env_<your_os_name>.sh`(skip this step for Windows).
+* Run build script `./build_<your_os_name>.sh`(for Windows, you can find instructions for preparing the environment 
+in the `build_windows.sh` file comments).
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Build manually**:
+
 * To build TDLib you must follow official [instructions](https://tdlib.github.io/td/build.html?language=Java).
 * After step `git clone https://github.com/tdlib/td.git` checkout to v1.8.29 in TDLib repository `git checkout e4796b9b`.
 * Continue steps from the official instructions.
