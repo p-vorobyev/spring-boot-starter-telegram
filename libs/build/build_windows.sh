@@ -10,7 +10,7 @@
 rm -rf td
 git clone https://github.com/tdlib/td.git
 cd td
-git checkout e4796b9b
+git checkout 8f19c751
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 git checkout cd5e746ec203c8c3c61647e0886a8df8c1e78e41
