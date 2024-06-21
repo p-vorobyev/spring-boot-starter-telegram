@@ -3,7 +3,7 @@
 rm -rf td
 git clone https://github.com/tdlib/td.git
 cd td
-git checkout e4796b9b
+git checkout 8f19c751
 rm -rf build
 mkdir build
 cd build

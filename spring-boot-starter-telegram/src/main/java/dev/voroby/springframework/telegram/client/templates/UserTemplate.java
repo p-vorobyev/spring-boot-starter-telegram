@@ -111,7 +111,7 @@ public class UserTemplate {
      */
     public CompletableFuture<Response<TdApi.User>> searchUserByPhoneNumber(String phoneNumber) {
         Objects.requireNonNull(phoneNumber);
-        return telegramClient.sendAsync(new TdApi.SearchUserByPhoneNumber(phoneNumber));
+        return telegramClient.sendAsync(new TdApi.SearchUserByPhoneNumber(phoneNumber, false));
     }
 
     /**
