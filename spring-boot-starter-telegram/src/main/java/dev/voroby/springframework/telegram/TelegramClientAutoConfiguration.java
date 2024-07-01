@@ -9,7 +9,7 @@ import dev.voroby.springframework.telegram.client.templates.ChatTemplate;
 import dev.voroby.springframework.telegram.client.templates.UserTemplate;
 import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationState;
 import dev.voroby.springframework.telegram.client.updates.ClientAuthorizationStateImpl;
-import dev.voroby.springframework.telegram.client.updates.UpdateAuthorizationNotification;
+import dev.voroby.springframework.telegram.client.updates.UpdateAuthorizationState;
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
 import org.slf4j.Logger;
@@ -85,9 +85,8 @@ public class TelegramClientAutoConfiguration {
      */
     @Bean
     public UpdateNotificationListener<TdApi.UpdateAuthorizationState> updateAuthorizationNotification(TelegramProperties properties,
-                                                                                                      @Lazy TelegramClient telegramClient,
-                                                                                                      ClientAuthorizationState clientAuthorizationState) {
-        return new UpdateAuthorizationNotification(properties, telegramClient, clientAuthorizationState);
+                                                                                                      @Lazy TelegramClient telegramClient) {
+        return new UpdateAuthorizationState(properties, telegramClient);
     }
 
     /**

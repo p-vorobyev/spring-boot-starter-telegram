@@ -1,9 +1,11 @@
 package dev.voroby.springframework.telegram.client.updates;
 
 import dev.voroby.springframework.telegram.AbstractTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static dev.voroby.springframework.telegram.client.updates.AuthorizationStateCache.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClientAuthorizationStateImplTest extends AbstractTest {
@@ -11,61 +13,61 @@ class ClientAuthorizationStateImplTest extends AbstractTest {
     @Autowired
     private ClientAuthorizationState clientAuthorizationState;
 
+    @BeforeEach
+    void clearCacheValues() {
+        codeInputToCheck = null;
+        passwordInputToCheck = null;
+        emailAddressInputToCheck = null;
+        waitAuthenticationCode.set(false);
+        waitAuthenticationPassword.set(false);
+        waitEmailAddress.set(false);
+        haveAuthorization.set(false);
+        stateClosed.set(false);
+    }
+
     @Test
     void checkAuthenticationCode() {
-        try {
-            //setup flag that client waits authentication code
-            ((ClientAuthorizationStateImpl) clientAuthorizationState).setWaitAuthenticationCode();
-            assertTrue(clientAuthorizationState.isWaitAuthenticationCode());
+        //setup flag that client waits authentication code
+        waitAuthenticationCode.set(true);
+        assertTrue(clientAuthorizationState.isWaitAuthenticationCode());
 
-            //check code
-            var code = "code";
-            clientAuthorizationState.checkAuthenticationCode(code);
+        //check code
+        var code = "code";
+        clientAuthorizationState.checkAuthenticationCode(code);
 
-            //code accepted
-            assertFalse(clientAuthorizationState.isWaitAuthenticationCode());
-            assertEquals(code, ((ClientAuthorizationStateImpl) clientAuthorizationState).getCode());
-        } finally {
-            ((ClientAuthorizationStateImpl) clientAuthorizationState).clearCode();
-        }
+        //code accepted
+        assertFalse(clientAuthorizationState.isWaitAuthenticationCode());
+        assertEquals(code, AuthorizationStateCache.codeInputToCheck);
     }
 
     @Test
     void checkAuthenticationPassword() {
-        try {
-            //setup flag that client waits authentication password
-            ((ClientAuthorizationStateImpl) clientAuthorizationState).setWaitAuthenticationPassword();
-            assertTrue(clientAuthorizationState.isWaitAuthenticationPassword());
+        //setup flag that client waits authentication password
+        waitAuthenticationPassword.set(true);
+        assertTrue(clientAuthorizationState.isWaitAuthenticationPassword());
 
-            //check password
-            var password = "password";
-            clientAuthorizationState.checkAuthenticationPassword(password);
+        //check password
+        var password = "password";
+        clientAuthorizationState.checkAuthenticationPassword(password);
 
-            //password accepted
-            assertFalse(clientAuthorizationState.isWaitAuthenticationPassword());
-            assertEquals(password, ((ClientAuthorizationStateImpl) clientAuthorizationState).getPassword());
-        } finally {
-            ((ClientAuthorizationStateImpl) clientAuthorizationState).clearPassword();
-        }
+        //password accepted
+        assertFalse(clientAuthorizationState.isWaitAuthenticationPassword());
+        assertEquals(password, AuthorizationStateCache.passwordInputToCheck);
     }
 
     @Test
     void checkEmailAddress() {
-        try {
-            //setup flag that client waits authentication email
-            ((ClientAuthorizationStateImpl) clientAuthorizationState).setWaitEmailAddress();
-            assertTrue(clientAuthorizationState.isWaitEmailAddress());
+        //setup flag that client waits authentication email
+        waitEmailAddress.set(true);
+        assertTrue(clientAuthorizationState.isWaitEmailAddress());
 
-            //check email
-            var email = "some_email";
-            clientAuthorizationState.checkEmailAddress(email);
+        //check email
+        var email = "some_email";
+        clientAuthorizationState.checkEmailAddress(email);
 
-            //email accepted
-            assertFalse(clientAuthorizationState.isWaitEmailAddress());
-            assertEquals(email, ((ClientAuthorizationStateImpl) clientAuthorizationState).getEmailAddress());
-        } finally {
-            ((ClientAuthorizationStateImpl) clientAuthorizationState).clearCode();
-        }
+        //email accepted
+        assertFalse(clientAuthorizationState.isWaitEmailAddress());
+        assertEquals(email, emailAddressInputToCheck);
     }
 
     @Test

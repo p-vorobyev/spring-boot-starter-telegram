@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.stream.Stream;
 
@@ -17,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class UpdateAuthorizationNotificationTest extends AbstractTest {
+class UpdateAuthorizationStateTest extends AbstractTest {
 
     @Autowired
     private UpdateNotificationListener<TdApi.UpdateAuthorizationState> updateAuthorizationNotification;
 
-    @MockBean(name = "clientAuthorizationState")
-    private ClientAuthorizationStateImpl clientAuthorizationState;
+    @Autowired
+    private ClientAuthorizationState clientAuthorizationState;
 
     private final TdApi.UpdateAuthorizationState updateAuthorizationState = new TdApi.UpdateAuthorizationState();
 
@@ -65,36 +64,36 @@ class UpdateAuthorizationNotificationTest extends AbstractTest {
                 handleAuthorizationStateWaitOtherDeviceConfirmation();
             }
             case TdApi.AuthorizationStateWaitCode.CONSTRUCTOR -> {
-                when(clientAuthorizationState.getCode()).thenReturn(authCode);
+                AuthorizationStateCache.codeInputToCheck = authCode;
                 updateAuthorizationNotification.handleNotification(updateAuthorizationState);
-                handleAuthorizationStateWaitCode();
+                verifyAuthorizationStateWaitCode();
             }
             case TdApi.AuthorizationStateWaitPassword.CONSTRUCTOR -> {
-                when(clientAuthorizationState.getPassword()).thenReturn(twoStepPassword);
+                AuthorizationStateCache.passwordInputToCheck = twoStepPassword;
                 updateAuthorizationNotification.handleNotification(updateAuthorizationState);
-                handleAuthorizationStateWaitPassword();
+                verifyAuthorizationStateWaitPassword();
             }
             case TdApi.AuthorizationStateWaitEmailAddress.CONSTRUCTOR -> {
-                when(clientAuthorizationState.getEmailAddress()).thenReturn(email);
+                AuthorizationStateCache.emailAddressInputToCheck = email;
                 updateAuthorizationNotification.handleNotification(updateAuthorizationState);
-                handleAuthorizationStateWaitEmailAddress();
+                verifyAuthorizationStateWaitEmailAddress();
             }
             case TdApi.AuthorizationStateWaitEmailCode.CONSTRUCTOR -> {
-                when(clientAuthorizationState.getCode()).thenReturn(authCode);
+                AuthorizationStateCache.codeInputToCheck = authCode;
                 updateAuthorizationNotification.handleNotification(updateAuthorizationState);
-                handleAuthorizationStateWaitEmailCode();
+                verifyAuthorizationStateWaitEmailCode();
             }
             case TdApi.AuthorizationStateReady.CONSTRUCTOR -> {
                 updateAuthorizationNotification.handleNotification(updateAuthorizationState);
-                handeAuthorizationStateReady();
+                verifyAuthorizationStateReady();
             }
             case TdApi.AuthorizationStateLoggingOut.CONSTRUCTOR, TdApi.AuthorizationStateClosing.CONSTRUCTOR -> {
                 updateAuthorizationNotification.handleNotification(updateAuthorizationState);
-                handleAuthorizationStateLoggingOutOrClosing();
+                verifyAuthorizationStateLoggingOutOrClosing();
             }
             case TdApi.AuthorizationStateClosed.CONSTRUCTOR -> {
                 updateAuthorizationNotification.handleNotification(updateAuthorizationState);
-                handleAuthorizationStateClosed();
+                verifyAuthorizationStateClosed();
             }
             default -> throw new RuntimeException("Unknown state");
         }
@@ -131,53 +130,45 @@ class UpdateAuthorizationNotificationTest extends AbstractTest {
         verify(telegramClient, never()).sendAsync(any(TdApi.Function.class));
     }
 
-    private void handleAuthorizationStateWaitCode() {
-        ArgumentCaptor<TdApi.CheckAuthenticationCode> authCodeCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationCode.class);
+    private void verifyAuthorizationStateWaitCode() {
+        var authCodeCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationCode.class);
         verify(telegramClient).sendWithCallback(authCodeCaptor.capture(), any(QueryResultHandler.class));
         assertEquals(authCode, authCodeCaptor.getValue().code);
-        verify(clientAuthorizationState).clearCode();
+        assertNull(AuthorizationStateCache.codeInputToCheck); // drop from cache after check
     }
 
-    private void handleAuthorizationStateWaitPassword() {
-        ArgumentCaptor<TdApi.CheckAuthenticationPassword> authCodeCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationPassword.class);
-        verify(telegramClient).sendWithCallback(authCodeCaptor.capture(), any(QueryResultHandler.class));
-        assertEquals(twoStepPassword, authCodeCaptor.getValue().password);
-        verify(clientAuthorizationState).clearPassword();
+    private void verifyAuthorizationStateWaitPassword() {
+        var passwordCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationPassword.class);
+        verify(telegramClient).sendWithCallback(passwordCaptor.capture(), any(QueryResultHandler.class));
+        assertEquals(twoStepPassword, passwordCaptor.getValue().password);
+        assertNull(AuthorizationStateCache.passwordInputToCheck); // drop from cache after check
     }
 
-    private void handleAuthorizationStateWaitEmailAddress() {
-        ArgumentCaptor<TdApi.SetAuthenticationEmailAddress> emailAddressCaptor = ArgumentCaptor.forClass(TdApi.SetAuthenticationEmailAddress.class);
+    private void verifyAuthorizationStateWaitEmailAddress() {
+        var emailAddressCaptor = ArgumentCaptor.forClass(TdApi.SetAuthenticationEmailAddress.class);
         verify(telegramClient).sendWithCallback(emailAddressCaptor.capture(), any(QueryResultHandler.class));
         assertEquals(email, emailAddressCaptor.getValue().emailAddress);
-        verify(clientAuthorizationState).clearEmailAddress();
+        assertNull(AuthorizationStateCache.emailAddressInputToCheck); // drop from cache after check
     }
 
-    private void handleAuthorizationStateWaitEmailCode() {
-        ArgumentCaptor<TdApi.CheckAuthenticationEmailCode> emailCheckCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationEmailCode.class);
-        verify(telegramClient).sendWithCallback(emailCheckCaptor.capture(), any(QueryResultHandler.class));
-        TdApi.EmailAddressAuthenticationCode emailCode = (TdApi.EmailAddressAuthenticationCode) emailCheckCaptor.getValue().code;
+    private void verifyAuthorizationStateWaitEmailCode() {
+        var codeFromEmailCaptor = ArgumentCaptor.forClass(TdApi.CheckAuthenticationEmailCode.class);
+        verify(telegramClient).sendWithCallback(codeFromEmailCaptor.capture(), any(QueryResultHandler.class));
+        TdApi.EmailAddressAuthenticationCode emailCode = (TdApi.EmailAddressAuthenticationCode) codeFromEmailCaptor.getValue().code;
         assertEquals(authCode, emailCode.code);
-        verify(clientAuthorizationState).clearCode();
+        assertNull(AuthorizationStateCache.codeInputToCheck); // drop from cache after check
     }
 
-    private void handeAuthorizationStateReady() {
-        assertTrue(verifyAndCaptureIsHaveAuthorization().getValue());
+    private void verifyAuthorizationStateReady() {
+        assertTrue(AuthorizationStateCache.haveAuthorization.get());
     }
 
-    private void handleAuthorizationStateLoggingOutOrClosing() {
-        assertFalse(verifyAndCaptureIsHaveAuthorization().getValue());
+    private void verifyAuthorizationStateLoggingOutOrClosing() {
+        assertFalse(AuthorizationStateCache.haveAuthorization.get());
     }
 
-    private void handleAuthorizationStateClosed() {
+    private void verifyAuthorizationStateClosed() {
         verifyTelegramClientNotInvoked();
-        verify(clientAuthorizationState).setStateClosed();
-    }
-
-    private ArgumentCaptor<Boolean> verifyAndCaptureIsHaveAuthorization() {
-        verifyTelegramClientNotInvoked();
-        ArgumentCaptor<Boolean> haveAuthorizationCaptor = ArgumentCaptor.forClass(Boolean.class);
-        verify(clientAuthorizationState).setHaveAuthorization(haveAuthorizationCaptor.capture());
-
-        return haveAuthorizationCaptor;
+        assertTrue(AuthorizationStateCache.stateClosed.get());
     }
 }
