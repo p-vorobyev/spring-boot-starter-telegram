@@ -122,6 +122,10 @@ You can find compiled libraries for several platforms in [libs](https://github.c
 If you haven't found a library for your OS and architecture, you can build it yourself
 following this [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
+5) If you are using IntelliJ IDEA, set the property `idea.max.intellisense.filesize` for comfortable work with `TdApi` 
+objects. Go to `Help -> Edit Custom Properties...` and add `idea.max.intellisense.filesize=5000`, then restart the IDE. 
+([Info](https://github.com/tdlib/td/issues/2949))
+
 <a name="configuration"></a>
 ## Configuration properties
 
