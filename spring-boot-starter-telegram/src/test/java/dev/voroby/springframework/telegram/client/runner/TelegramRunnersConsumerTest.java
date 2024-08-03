@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = TelegramRunnersConsumerConfig.class)
 public class TelegramRunnersConsumerTest {
 
-    private static List<Integer> nums = new ArrayList<>();
+    private static final List<Integer> nums = new ArrayList<>();
 
     static TelegramRunner first = args -> nums.add(1);
 
