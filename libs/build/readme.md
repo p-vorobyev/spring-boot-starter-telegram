@@ -10,7 +10,7 @@ in the `build_windows.sh` file comments).
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Build manually**:
 
 * To build TDLib you must follow official [instructions](https://tdlib.github.io/td/build.html?language=Java).
-* After step `git clone https://github.com/tdlib/td.git` checkout to v1.8.31 in TDLib repository `git checkout 8f19c751`.
+* After step `git clone https://github.com/tdlib/td.git` checkout to v1.8.34 in TDLib repository `git checkout a24af099`.
 * Continue steps from the official instructions.
 * After step `cd example/java` 
 replace original `CMakeLists.txt` to [CMakeLists.txt](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/CMakeLists.txt) 
