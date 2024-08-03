@@ -101,17 +101,17 @@ repositories {
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.12.0</version>
+    <version>1.13.0</version>
 </dependency>
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Gradle**:
 
 ```kotlin
-implementation("dev.voroby:spring-boot-starter-telegram:1.12.0")
+implementation("dev.voroby:spring-boot-starter-telegram:1.13.0")
 ```
 
-Or just download artifact by path `Releases -> 1.12.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.12.0.jar` 
+Or just download artifact by path `Releases -> 1.13.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.13.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
