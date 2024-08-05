@@ -178,7 +178,7 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
         String systemLanguageCode = properties.systemLanguageCode();
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
-        String applicationVersion = "1.8.31";
+        String applicationVersion = "1.8.34";
         return new TdApi.SetTdlibParameters(
                 useTestDc,
                 databaseDirectory,

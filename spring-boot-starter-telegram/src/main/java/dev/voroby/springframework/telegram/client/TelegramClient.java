@@ -147,7 +147,7 @@ public class TelegramClient {
      */
     @PreDestroy
     void cleanUp() throws InterruptedException {
-        sendSync(new TdApi.Close());
+        send(new TdApi.Close());
         Instant startAwait = Instant.now();
         while (!clientAuthorizationState.isStateClosed() && startAwait.plusSeconds(30).isAfter(Instant.now())) {
             TimeUnit.MILLISECONDS.sleep(200);
@@ -165,7 +165,15 @@ public class TelegramClient {
      * @throws NullPointerException if query is null.
      * @throws TelegramClientTdApiException for TDLib request timeout or returned {@link TdApi.Error}.
      * @return response from TDLib.
+     * @deprecated Because of this method throws a RuntimeException when we get an error from TDLib. It's better
+     * to return a value object. Can be replaced by
+     *
+     * <pre>{@code
+     *  telegramClient.send(TdApi.Function<T> query)
+     * }</pre>
+     *
      */
+    @Deprecated(since = "1.13.0")
     @SuppressWarnings("unchecked")
     public <T extends TdApi.Object> T sendSync(TdApi.Function<T> query) {
         Objects.requireNonNull(query);
@@ -193,6 +201,43 @@ public class TelegramClient {
         }
 
         return (T) obj;
+    }
+
+    /**
+     * Sends a request to the TDLib.
+     *
+     * @param query object representing a query to the TDLib.
+     * @throws NullPointerException if query is null.
+     * @return {@link Response<T>} response.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends TdApi.Object> Response<T> send(TdApi.Function<T> query) {
+        Objects.requireNonNull(query);
+        var ref = new AtomicReference<TdApi.Object>();
+        client.send(query, ref::set);
+        var sent = Instant.now();
+        while (ref.get() == null &&
+                sent.plus(30, ChronoUnit.SECONDS).isAfter(Instant.now())) {
+            /*wait for result*/
+            try {
+                TimeUnit.MILLISECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+
+        TdApi.Object obj = ref.get();
+        if (obj == null) {
+            var error = new TdApi.Error(0, "TDLib request timeout.");
+            logError(query, error);
+            return new Response<>(null, error);
+        } else if (obj instanceof TdApi.Error err) {
+            logError(query, err);
+            return new Response<>(null, err);
+        }
+
+        return new Response<>((T) obj, null);
     }
 
     /**

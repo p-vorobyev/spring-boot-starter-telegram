@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Optional.ofNullable;
+
 @RestController
 @RequestMapping(value = "/api/info", produces = MediaType.APPLICATION_JSON_VALUE)
 public class InfoController {
@@ -30,7 +32,8 @@ public class InfoController {
 
     @GetMapping("/getMe")
     public TdApi.User getMe() {
-        return telegramClient.sendSync(new TdApi.GetMe());
+        Response<TdApi.User> userResponse = telegramClient.send(new TdApi.GetMe());
+        return userResponse.object();
     }
 
     record Query(String value){}
@@ -47,10 +50,12 @@ public class InfoController {
 
     @GetMapping("/chatTitles")
     public List<String> getMyChats() {
-        TdApi.Chats chats = telegramClient.sendSync(new TdApi.GetChats(new TdApi.ChatListMain(), 100));
+        Response<TdApi.Chats> chatsResponse = telegramClient.send(new TdApi.GetChats(new TdApi.ChatListMain(), 100));
+        TdApi.Chats chats = ofNullable(chatsResponse.object()).orElseThrow();
         return Arrays.stream(chats.chatIds)
                 .mapToObj(chatId -> {
-                    TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(chatId));
+                    Response<TdApi.Chat> chatResponse = telegramClient.send(new TdApi.GetChat(chatId));
+                    TdApi.Chat chat = ofNullable(chatResponse.object()).orElseThrow();
                     return chat.title;
                 }).toList();
     }

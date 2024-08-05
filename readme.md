@@ -18,11 +18,11 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 
 <a name="requirements"></a>
 ## Requirements
-| Technology  | Version                                                                               |
-|-------------|---------------------------------------------------------------------------------------|
-| jdk         | 17                                                                                    |
-| TDLib       | [1.8.31](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) |
-| Spring Boot | 3                                                                                     |
+| Technology  | Version  |
+|-------------|----------|
+| jdk         | 17       |
+| TDLib       | 1.8.34   |
+| Spring Boot | 3        |
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
 
@@ -101,26 +101,26 @@ repositories {
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.12.0</version>
+    <version>1.13.0</version>
 </dependency>
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Gradle**:
 
 ```kotlin
-implementation("dev.voroby:spring-boot-starter-telegram:1.12.0")
+implementation("dev.voroby:spring-boot-starter-telegram:1.13.0")
 ```
 
-Or just download artifact by path `Releases -> 1.12.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.12.0.jar` 
+Or just download artifact by path `Releases -> 1.13.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.13.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
 -Djava.library.path=<path_to_shared_library>
 ```
-You can find compiled libraries for several platforms in [libs](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) directory of the source code from the latest release.
-If you haven't found a library for your OS and architecture, you can build it yourself
-following this [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
+You can find compiled libraries for several platforms in [libs](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) 
+directory from the latest [release](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/tag/1.13.0).
+If you haven't found a library for your OS and architecture, you can build it yourself following these [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
 5) If you are using IntelliJ IDEA, set the property `idea.max.intellisense.filesize` for comfortable work with `TdApi` 
 objects. Go to `Help -> Edit Custom Properties...` and add `idea.max.intellisense.filesize=5000`, then restart the IDE. 

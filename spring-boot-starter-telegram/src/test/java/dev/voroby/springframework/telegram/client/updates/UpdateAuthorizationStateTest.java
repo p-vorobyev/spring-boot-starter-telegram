@@ -124,8 +124,8 @@ class UpdateAuthorizationStateTest extends AbstractTest {
 
     private void verifyTelegramClientNotInvoked() {
         verify(telegramClient, never()).sendWithCallback(any(TdApi.Function.class), any(QueryResultHandler.class));
-        verify(telegramClient, never()).sendSync(any(TdApi.Function.class));
-        verify(telegramClient, never()).sendSync(any(TdApi.Function.class));
+        verify(telegramClient, never()).send(any(TdApi.Function.class));
+        verify(telegramClient, never()).send(any(TdApi.Function.class));
         verify(telegramClient, never()).sendAsync(any(TdApi.Function.class));
         verify(telegramClient, never()).sendAsync(any(TdApi.Function.class));
     }
