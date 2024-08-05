@@ -118,7 +118,7 @@ from the latest release and add it to your project's classpath instead of the st
 ```shell
 -Djava.library.path=<path_to_shared_library>
 ```
-You can find compiled libraries for several platforms in [libs](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs) 
+You can find compiled libraries for several platforms in [libs](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/download/1.13.0/libs.zip) 
 directory from the latest [release](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/tag/1.13.0).
 If you haven't found a library for your OS and architecture, you can build it yourself following these [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
