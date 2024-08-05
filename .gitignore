@@ -3,3 +3,6 @@ database
 .idea
 *.log
 *.iml
+*.so
+*.dylib
+*.dll
