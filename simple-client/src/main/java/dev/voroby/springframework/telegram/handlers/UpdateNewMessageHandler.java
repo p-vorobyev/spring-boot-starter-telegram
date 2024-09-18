@@ -6,7 +6,7 @@ import dev.voroby.springframework.telegram.service.TelegramClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Component @Slf4j
+//@Component @Slf4j
 public class UpdateNewMessageHandler implements UpdateNotificationListener<TdApi.UpdateNewMessage> {
 
     private final TelegramClientService telegramService;
@@ -17,7 +17,7 @@ public class UpdateNewMessageHandler implements UpdateNotificationListener<TdApi
 
     @Override
     public void handleNotification(TdApi.UpdateNewMessage notification) {
-        telegramService.putMessage(notification.message);
+//        telegramService.putMessage(notification.message);
     }
 
     @Override
