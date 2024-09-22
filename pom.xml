@@ -7,6 +7,7 @@
     <modules>
         <module>spring-boot-starter-telegram</module>
         <module>simple-client</module>
+        <module>spring-boot-starter-telegram-kt</module>
     </modules>
 
     <groupId>dev.voroby</groupId>
