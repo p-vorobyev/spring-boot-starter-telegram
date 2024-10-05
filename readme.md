@@ -22,7 +22,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 | Technology  | Version  |
 |-------------|----------|
 | jdk         | 17       |
-| TDLib       | 1.8.34   |
+| TDLib       | 1.8.37   |
 | Spring Boot | 3        |
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
@@ -99,27 +99,39 @@ repositories {
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Maven**:
 
 ```xml
+<!-- Java -->
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.13.0</version>
+    <version>1.14.0</version>
+</dependency>
+
+<!-- Kotlin -->
+<dependency>
+    <groupId>dev.voroby</groupId>
+    <artifactId>spring-boot-starter-telegram-kt</artifactId>
+    <version>1.14.0</version>
 </dependency>
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Gradle**:
 
 ```kotlin
-implementation("dev.voroby:spring-boot-starter-telegram:1.13.0")
+// Java
+implementation("dev.voroby:spring-boot-starter-telegram:1.14.0")
+
+// Kotlin
+implementation("dev.voroby:spring-boot-starter-telegram-kt:1.14.0")
 ```
 
-Or just download artifact by path `Releases -> 1.13.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.13.0.jar` 
+Or just download artifact by path `Releases -> 1.14.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.14.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
 -Djava.library.path=<path_to_shared_library>
 ```
-You can find compiled libraries for several platforms in the `libs.zip` archive from the latest [release](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/tag/1.13.0).
+You can find compiled libraries for several platforms in the `libs.zip` archive from the latest [release](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/tag/1.14.0).
 If you haven't found a library for your OS and architecture, you can build it yourself following these [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
 5) If you are using IntelliJ IDEA, set the property `idea.max.intellisense.filesize` for comfortable work with `TdApi` 
@@ -200,12 +212,21 @@ spring.telegram.client.database-directory=/my/directory/database
 
 2) Now we can inject and work with client and authorization beans.
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Java**:
+
 ```java
 @Autowired
 private TelegramClient telegramClient;
 
 @Autowired
 private ClientAuthorizationState authorizationState;
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Kotlin**:
+
+```kotlin
+@Autowired
+lateinit var kTelegramClient: KTelegramClient
 ```
 
 3) At the first start you need to authorize client. If the client waiting for some credentials you can check this
