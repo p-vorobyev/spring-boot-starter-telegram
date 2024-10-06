@@ -3,16 +3,13 @@
 rm -rf td
 git clone https://github.com/tdlib/td.git
 cd td
-git checkout a24af099
+git checkout 63be0bc9fd942862aa8e585b22ea00a906ff8d19
 rm -rf build
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DJAVA_HOME=$JAVA_HOME -DOPENSSL_ROOT_DIR=/opt/homebrew/opt/openssl/ -DCMAKE_INSTALL_PREFIX:PATH=../example/java/td -DTD_ENABLE_JNI=ON ..
 cmake --build . --target install
 cd ..
-rm example/java/CMakeLists.txt
-cp ../CMakeLists.txt example/java
-cp -R ../dev example/java
 cd example/java
 rm -rf build
 mkdir build
