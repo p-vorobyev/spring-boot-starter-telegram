@@ -1,6 +1,6 @@
 package dev.voroby.springframework.telegram;
 
-import dev.voroby.springframework.telegram.client.TdApi;
+import org.drinkless.tdlib.TdApi;
 import org.springframework.boot.ApplicationArguments;
 
 /**

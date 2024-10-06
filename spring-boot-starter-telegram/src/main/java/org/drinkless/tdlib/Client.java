@@ -1,5 +1,6 @@
-package dev.voroby.springframework.telegram.client;
+package org.drinkless.tdlib;
 
+import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
 
 import java.util.concurrent.ConcurrentHashMap;

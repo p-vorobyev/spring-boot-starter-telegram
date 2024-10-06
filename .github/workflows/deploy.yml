@@ -14,7 +14,11 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Publish package
+      - name: Publish spring-boot-starter-telegram
         run: mvn -f spring-boot-starter-telegram/pom.xml --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish spring-boot-starter-telegram-kt
+        run: mvn -f spring-boot-starter-telegram-kt/pom.xml --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -10,7 +10,7 @@
 rm -rf td
 git clone https://github.com/tdlib/td.git
 cd td
-git checkout a24af099
+git checkout 63be0bc9fd942862aa8e585b22ea00a906ff8d19
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 git checkout cd5e746ec203c8c3c61647e0886a8df8c1e78e41
@@ -23,9 +23,6 @@ cd build
 cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../example/java/td -DTD_ENABLE_JNI=ON -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake ..
 cmake --build . --target install --config Release
 cd ..
-rm example/java/CMakeLists.txt
-cp ../CMakeLists.txt example/java
-cp -R ../dev example/java
 cd example/java
 rm -rf build
 mkdir build

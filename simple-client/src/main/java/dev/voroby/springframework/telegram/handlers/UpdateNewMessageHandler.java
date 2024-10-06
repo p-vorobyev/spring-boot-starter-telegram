@@ -1,6 +1,6 @@
 package dev.voroby.springframework.telegram.handlers;
 
-import dev.voroby.springframework.telegram.client.TdApi;
+import org.drinkless.tdlib.TdApi;
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.service.TelegramClientService;
 import lombok.extern.slf4j.Slf4j;

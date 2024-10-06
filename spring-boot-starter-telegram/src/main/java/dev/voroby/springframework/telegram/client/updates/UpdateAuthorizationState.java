@@ -1,7 +1,7 @@
 package dev.voroby.springframework.telegram.client.updates;
 
 import dev.voroby.springframework.telegram.client.QueryResultHandler;
-import dev.voroby.springframework.telegram.client.TdApi;
+import org.drinkless.tdlib.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
@@ -178,7 +178,7 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
         String systemLanguageCode = properties.systemLanguageCode();
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
-        String applicationVersion = "1.8.34";
+        String applicationVersion = "1.8.37";
         return new TdApi.SetTdlibParameters(
                 useTestDc,
                 databaseDirectory,

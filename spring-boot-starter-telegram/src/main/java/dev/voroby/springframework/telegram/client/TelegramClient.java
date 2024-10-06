@@ -7,6 +7,8 @@ import dev.voroby.springframework.telegram.exception.TelegramClientConfiguration
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
 import jakarta.annotation.PreDestroy;
+import org.drinkless.tdlib.Client;
+import org.drinkless.tdlib.TdApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

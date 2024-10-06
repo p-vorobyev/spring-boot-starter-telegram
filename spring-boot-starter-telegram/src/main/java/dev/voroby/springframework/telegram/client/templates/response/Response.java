@@ -1,6 +1,6 @@
 package dev.voroby.springframework.telegram.client.templates.response;
 
-import dev.voroby.springframework.telegram.client.TdApi;
+import org.drinkless.tdlib.TdApi;
 
 /**
  * Response wrapper for queries.
