@@ -1,6 +1,7 @@
 package dev.voroby.springframework.telegram.client;
 
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
+import org.drinkless.tdlib.TdApi;
 
 import java.util.function.Consumer;
 

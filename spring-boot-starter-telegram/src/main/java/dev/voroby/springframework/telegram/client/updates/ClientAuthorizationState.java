@@ -1,6 +1,6 @@
 package dev.voroby.springframework.telegram.client.updates;
 
-import dev.voroby.springframework.telegram.client.TdApi;
+import org.drinkless.tdlib.TdApi;
 
 /**
  * Authorization state of the client.

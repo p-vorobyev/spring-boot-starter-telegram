@@ -2,7 +2,7 @@ package dev.voroby.springframework.telegram.client.updates;
 
 import dev.voroby.springframework.telegram.AbstractTest;
 import dev.voroby.springframework.telegram.client.QueryResultHandler;
-import dev.voroby.springframework.telegram.client.TdApi;
+import org.drinkless.tdlib.TdApi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

@@ -2,6 +2,8 @@ package dev.voroby.springframework.telegram.client;
 
 import dev.voroby.springframework.telegram.client.updates.UpdateNotificationListener;
 import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
+import org.drinkless.tdlib.Client;
+import org.drinkless.tdlib.TdApi;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,5 +1,7 @@
 package dev.voroby.springframework.telegram.client;
 
+import org.drinkless.tdlib.TdApi;
+
 /**
  * Interface for handler for results of queries with callback to TDLib.
  * @param <T> The object type that is returned by the function

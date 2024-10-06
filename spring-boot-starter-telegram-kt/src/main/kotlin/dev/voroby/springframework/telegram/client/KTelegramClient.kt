@@ -5,6 +5,7 @@ import arrow.core.left
 import arrow.core.raise.nullable
 import arrow.core.right
 import dev.voroby.springframework.telegram.client.templates.response.Response
+import org.drinkless.tdlib.TdApi
 import java.util.concurrent.CompletableFuture
 
 class KTelegramClient(private val delegate: TelegramClient) {
