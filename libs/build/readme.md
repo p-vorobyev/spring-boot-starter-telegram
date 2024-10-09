@@ -10,3 +10,4 @@ in the `build_windows.sh` file comments).
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Build from TDLib repository**:
 
 * To build TDLib you must follow official [instructions](https://tdlib.github.io/td/build.html?language=Java).
+* Build from git commit hash `63be0bc9fd942862aa8e585b22ea00a906ff8d19`.
