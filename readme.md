@@ -9,12 +9,12 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 - [Installation](#installation)
 - [Configuration properties](#configuration)
 - [Example](#example)
-- [Desktop client example](https://github.com/p-vorobyev/telegram-desktop-compose-multiplatform)
 - [Templates](#templates)
 - [Runners](#runners)
 - [Javadoc](https://p-vorobyev.github.io/javadoc_spring-boot-starter-telegram)
 - [Notice](#notice)
 - [License](#license)
+- [Other projects](#others)
 - [Acknowledgements](#acknowledgements)
 
 <a name="requirements"></a>
@@ -358,6 +358,11 @@ Be careful and do not push personal data like `api-id`,`api-hash`, `phone` to re
 <a name="license"></a>
 ## License
 [MIT License](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/LICENSE)
+
+<a name="others"></a>
+## Other projects
+- [Telegram Desktop](https://github.com/p-vorobyev/telegram-desktop-compose-multiplatform)
+- [Telegram Gateway SDK](https://github.com/p-vorobyev/telegram-gateway-sdk)
 
 <a name="acknowledgements"></a>
 ## Acknowledgements
