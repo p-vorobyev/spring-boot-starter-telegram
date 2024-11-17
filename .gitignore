@@ -1,6 +1,7 @@
 target
 database
 .idea
+.gigaide
 *.log
 *.iml
 *.so
