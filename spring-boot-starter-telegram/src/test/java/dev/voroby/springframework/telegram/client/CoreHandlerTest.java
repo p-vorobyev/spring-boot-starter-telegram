@@ -13,11 +13,11 @@ class CoreHandlerTest {
 
     @Test
     void onResult() {
-        var actualValue = new AtomicInteger();
+        var actualConstructorIdentifier = new AtomicInteger();
         var updateNewChatListener = new UpdateNotificationListener<TdApi.UpdateNewChat>() {
             @Override
             public void handleNotification(TdApi.UpdateNewChat notification) {
-                actualValue.set(notification.getConstructor());
+                actualConstructorIdentifier.set(notification.getConstructor());
             }
 
             @Override
@@ -28,9 +28,10 @@ class CoreHandlerTest {
 
         var coreHandler = new CoreUpdateHandler(List.of(updateNewChatListener), obj -> {});
         var updateNewChat = new TdApi.UpdateNewChat();
+        int expectedConstructorIdentifier = updateNewChat.getConstructor();
         coreHandler.onResult(updateNewChat);
 
-        assertEquals(updateNewChat.getConstructor(), actualValue.get());
+        assertEquals(expectedConstructorIdentifier, actualConstructorIdentifier.get());
     }
 
 }
