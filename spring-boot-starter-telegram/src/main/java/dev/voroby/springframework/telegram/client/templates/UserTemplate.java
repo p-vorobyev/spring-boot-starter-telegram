@@ -67,10 +67,10 @@ public class UserTemplate {
      */
     public CompletableFuture<Response<TdApi.ProfilePhoto>> getProfilePhoto(long userId) {
         return getUser(userId).thenApply(userResponse -> {
-            if (userResponse.error() != null) {
-                return new Response<>(null, userResponse.error());
+            if (userResponse.getError().isPresent()) {
+                return new Response<>(null, userResponse.getError().get());
             }
-            return new Response<>(userResponse.object().profilePhoto, null);
+            return userResponse.map(user -> user.profilePhoto);
         });
     }
 
@@ -84,10 +84,10 @@ public class UserTemplate {
     public CompletableFuture<Response<TdApi.ChatPhoto>> getPublicPhoto(long userId) {
         return getUserFullInfo(userId)
                 .thenApply(userFullInfoResponse -> {
-                    if (userFullInfoResponse.error() != null) {
-                        return new Response<>(null, userFullInfoResponse.error());
+                    if (userFullInfoResponse.getError().isPresent()) {
+                        return new Response<>(null, userFullInfoResponse.getError().get());
                     }
-                    return new Response<>(userFullInfoResponse.object().publicPhoto, null);
+                    return userFullInfoResponse.map(userFullInfo -> userFullInfo.publicPhoto);
                 });
     }
 
@@ -124,13 +124,16 @@ public class UserTemplate {
         Objects.requireNonNull(username);
         return telegramClient.sendAsync(new TdApi.SearchPublicChat(username))
                 .thenCompose(chatResponse -> {
-                    if (chatResponse.error() != null) {
-                        return CompletableFuture.completedFuture(new Response<>(null, chatResponse.error()));
+                    if (chatResponse.getError().isPresent()) {
+                        var response = new Response<TdApi.User>(null, chatResponse.getError().get());
+                        return CompletableFuture.completedFuture(response);
                     }
-                    if (chatResponse.object().type instanceof TdApi.ChatTypePrivate typePrivate) {
+                    if (chatResponse.getObject().isPresent() &&
+                            chatResponse.getObject().get().type instanceof TdApi.ChatTypePrivate typePrivate) {
                         return getUser(typePrivate.userId);
                     }
-                    return CompletableFuture.completedFuture(new Response<>(null, null));
+                    var unknownError = new Response<TdApi.User>(null, new TdApi.Error(0, "Unknown error"));
+                    return CompletableFuture.completedFuture(unknownError);
                 });
     }
 

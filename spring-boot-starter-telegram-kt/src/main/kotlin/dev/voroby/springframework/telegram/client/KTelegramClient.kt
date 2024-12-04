@@ -2,7 +2,6 @@ package dev.voroby.springframework.telegram.client
 
 import arrow.core.Either
 import arrow.core.left
-import arrow.core.raise.nullable
 import arrow.core.right
 import dev.voroby.springframework.telegram.client.templates.response.Response
 import org.drinkless.tdlib.TdApi
@@ -21,8 +20,11 @@ class KTelegramClient(private val delegate: TelegramClient) {
         resultHandler: QueryResultHandler<T>
     ) = delegate.sendWithCallback(query, resultHandler)
 
-    private fun <T : TdApi.Object> Response<T>.toEither() =
-        nullable { `object`.bind() }?.right() ?: error.left()
+    private fun <T : TdApi.Object> Response<T>.toEither() = when {
+        `object`.isPresent -> `object`.get().right()
+        error.isPresent -> error.get().left()
+        else -> TdApi.Error().left()
+    }
 }
 
 fun TelegramClient.withKotlin() = KTelegramClient(this)
