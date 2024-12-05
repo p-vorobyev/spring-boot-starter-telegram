@@ -32,7 +32,7 @@
         <dependency>
             <groupId>dev.voroby</groupId>
             <artifactId>spring-boot-starter-telegram</artifactId>
-            <version>1.14.0</version>
+            <version>1.15.0</version>
         </dependency>
 
         <!--   Tools   -->
