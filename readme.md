@@ -275,9 +275,19 @@ client(official app, etc.).
 
 4) **TDLib query usage examples**:
 
-- An example of synchronous call. Let's get `TdApi.Chat` object by id:
+- Examples of synchronous call. Let's get `TdApi.Chat` object by id:
 ```java
-TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(chatId));
+// with Optional check
+Response<TdApi.Chat> response = telegramClient.send(new TdApi.GetChat(chatId));
+response.getObject().ifPresentOrElse(
+        chat -> System.out.println("Chat found: " + chat.title),
+        () -> System.out.println("Chat not found")
+);
+
+// with action functions
+telegramClient.send(new TdApi.GetChat(chatId))
+        .onSuccess(chat -> System.out.println("Chat found: " + chat.toString()))
+        .onError(error -> System.out.println("Error: " + error.toString()));
 ```
 
 - An example of asynchronous call with callback. Let's get info about ourselves:
@@ -295,11 +305,28 @@ telegramClient.sendWithCallback(new TdApi.GetMe(), (user, error) -> {
 - An example of asynchronous call with `CompletableFuture`. Let's send hello message to ourselves:
 ```java
 telegramClient.sendAsync(new TdApi.GetMe())
-        .thenApply(user -> user.object().usernames.activeUsernames[0])
-        .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1)))
-        .thenCompose(chatsFuture ->
-        chatsFuture.thenApply(chats -> chats.object().chatIds[0]))
-        .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
+        .thenApply(this::getActiveUsername)
+        .thenApply(this::searchChatByUsername)
+        .thenCompose(chatsFuture -> chatsFuture.thenApply(this::getMyChatId))
+        .thenAccept(this::sendHelloIfFound);
+
+private Result<String> getActiveUsername(Response<TdApi.User> userResponse) {
+    if (userResponse.getObject().isPresent()) {
+        String activeUsername = userResponse.getObject().get().usernames.activeUsernames[0];
+        return new Result<>(Optional.of(activeUsername), empty());
+    }
+    return new Result<>(empty(), userResponse.getError());
+}
+
+.
+.
+.
+
+private void sendHelloIfFound(Result<Long> chatId) {
+    if (chatId.object().isPresent()) {
+        telegramClient.sendAsync(sendMessageQuery(chatId.object().get()));
+    }
+}
 
 private TdApi.SendMessage sendMessageQuery(Long chatId) {
         var content = new TdApi.InputMessageText();
