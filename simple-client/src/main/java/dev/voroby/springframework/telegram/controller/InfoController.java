@@ -75,7 +75,7 @@ public class InfoController {
 
     private Result<String> getActiveUsername(Response<TdApi.User> userResponse) {
         if (userResponse.getObject().isPresent()) {
-            String activeUsername = userResponse.getObject().orElseThrow().usernames.activeUsernames[0];
+            String activeUsername = userResponse.getObject().get().usernames.activeUsernames[0];
             return new Result<>(Optional.of(activeUsername), empty());
         }
         return new Result<>(empty(), userResponse.getError());
