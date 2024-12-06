@@ -22,7 +22,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 | Technology  | Version  |
 |-------------|----------|
 | jdk         | 17       |
-| TDLib       | 1.8.37   |
+| TDLib       | 1.8.41   |
 | Spring Boot | 3        |
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
@@ -103,14 +103,14 @@ repositories {
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.14.0</version>
+    <version>1.15.0</version>
 </dependency>
 
 <!-- Kotlin -->
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram-kt</artifactId>
-    <version>1.14.0</version>
+    <version>1.15.0</version>
 </dependency>
 ```
 
@@ -118,20 +118,20 @@ repositories {
 
 ```kotlin
 // Java
-implementation("dev.voroby:spring-boot-starter-telegram:1.14.0")
+implementation("dev.voroby:spring-boot-starter-telegram:1.15.0")
 
 // Kotlin
-implementation("dev.voroby:spring-boot-starter-telegram-kt:1.14.0")
+implementation("dev.voroby:spring-boot-starter-telegram-kt:1.15.0")
 ```
 
-Or just download artifact by path `Releases -> 1.14.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.14.0.jar` 
+Or just download artifact by path `Releases -> 1.15.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.15.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
 -Djava.library.path=<path_to_shared_library>
 ```
-You can find compiled libraries for several platforms in the `libs.zip` archive from the latest [release](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/tag/1.14.0).
+You can find compiled libraries for several platforms in the `libs.zip` archive from the latest [release](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/tag/1.15.0).
 If you haven't found a library for your OS and architecture, you can build it yourself following these [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
 5) If you are using IntelliJ IDEA, set the property `idea.max.intellisense.filesize` for comfortable work with `TdApi` 
@@ -275,9 +275,19 @@ client(official app, etc.).
 
 4) **TDLib query usage examples**:
 
-- An example of synchronous call. Let's get `TdApi.Chat` object by id:
+- Examples of synchronous call. Let's get `TdApi.Chat` object by id:
 ```java
-TdApi.Chat chat = telegramClient.sendSync(new TdApi.GetChat(chatId));
+// with Optional check
+Response<TdApi.Chat> response = telegramClient.send(new TdApi.GetChat(chatId));
+response.getObject().ifPresentOrElse(
+        chat -> System.out.println("Chat found: " + chat.title),
+        () -> System.out.println("Chat not found")
+);
+
+// with action functions
+telegramClient.send(new TdApi.GetChat(chatId))
+        .onSuccess(chat -> System.out.println("Chat found: " + chat.toString()))
+        .onError(error -> System.out.println("Error: " + error.toString()));
 ```
 
 - An example of asynchronous call with callback. Let's get info about ourselves:
@@ -295,11 +305,28 @@ telegramClient.sendWithCallback(new TdApi.GetMe(), (user, error) -> {
 - An example of asynchronous call with `CompletableFuture`. Let's send hello message to ourselves:
 ```java
 telegramClient.sendAsync(new TdApi.GetMe())
-        .thenApply(user -> user.object().usernames.activeUsernames[0])
-        .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1)))
-        .thenCompose(chatsFuture ->
-        chatsFuture.thenApply(chats -> chats.object().chatIds[0]))
-        .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
+        .thenApply(this::getActiveUsername)
+        .thenApply(this::searchChatByUsername)
+        .thenCompose(chatsFuture -> chatsFuture.thenApply(this::getMyChatId))
+        .thenAccept(this::sendHelloIfFound);
+
+private Result<String> getActiveUsername(Response<TdApi.User> userResponse) {
+    if (userResponse.getObject().isPresent()) {
+        String activeUsername = userResponse.getObject().get().usernames.activeUsernames[0];
+        return new Result<>(Optional.of(activeUsername), empty());
+    }
+    return new Result<>(empty(), userResponse.getError());
+}
+
+.
+.
+.
+
+private void sendHelloIfFound(Result<Long> chatId) {
+    if (chatId.object().isPresent()) {
+        telegramClient.sendAsync(sendMessageQuery(chatId.object().get()));
+    }
+}
 
 private TdApi.SendMessage sendMessageQuery(Long chatId) {
         var content = new TdApi.InputMessageText();

@@ -1,9 +1,9 @@
 package dev.voroby.springframework.telegram.controller;
 
-import org.drinkless.tdlib.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.client.templates.UserTemplate;
 import dev.voroby.springframework.telegram.client.templates.response.Response;
+import org.drinkless.tdlib.TdApi;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.empty;
 
 @RestController
 @RequestMapping(value = "/api/info", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,10 +35,10 @@ public class InfoController {
     @GetMapping("/getMe")
     public TdApi.User getMe() {
         Response<TdApi.User> userResponse = telegramClient.send(new TdApi.GetMe());
-        return userResponse.object();
+        return userResponse.getObject().orElseThrow();
     }
 
-    record Query(String value){}
+    public record Query(String value){}
 
     @PostMapping(value = "/searchByPhone", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Response<TdApi.User> searchUserByPhone(@RequestBody Query query) {
@@ -51,23 +53,53 @@ public class InfoController {
     @GetMapping("/chatTitles")
     public List<String> getMyChats() {
         Response<TdApi.Chats> chatsResponse = telegramClient.send(new TdApi.GetChats(new TdApi.ChatListMain(), 100));
-        TdApi.Chats chats = ofNullable(chatsResponse.object()).orElseThrow();
+        TdApi.Chats chats = chatsResponse.getObject().orElseThrow();
         return Arrays.stream(chats.chatIds)
                 .mapToObj(chatId -> {
                     Response<TdApi.Chat> chatResponse = telegramClient.send(new TdApi.GetChat(chatId));
-                    TdApi.Chat chat = ofNullable(chatResponse.object()).orElseThrow();
+                    TdApi.Chat chat = chatResponse.getObject().orElseThrow();
                     return chat.title;
                 }).toList();
     }
 
+    record Result<T>(Optional<T> object, Optional<TdApi.Error> error) {}
+
     @GetMapping("/sendHello")
     public void helloToYourself() {
         telegramClient.sendAsync(new TdApi.GetMe())
-                .thenApply(user -> user.object().usernames.activeUsernames[0])
-                .thenApply(username -> telegramClient.sendAsync(new TdApi.SearchChats(username, 1)))
-                .thenCompose(chatsFuture ->
-                        chatsFuture.thenApply(chats -> chats.object().chatIds[0]))
-                .thenApply(chatId -> telegramClient.sendAsync(sendMessageQuery(chatId)));
+                .thenApply(this::getActiveUsername)
+                .thenApply(this::searchChatByUsername)
+                .thenCompose(chatsFuture -> chatsFuture.thenApply(this::getMyChatId))
+                .thenAccept(this::sendHelloIfFound);
+    }
+
+    private Result<String> getActiveUsername(Response<TdApi.User> userResponse) {
+        if (userResponse.getObject().isPresent()) {
+            String activeUsername = userResponse.getObject().get().usernames.activeUsernames[0];
+            return new Result<>(Optional.of(activeUsername), empty());
+        }
+        return new Result<>(empty(), userResponse.getError());
+    }
+
+    private CompletableFuture<Result<TdApi.Chats>> searchChatByUsername(Result<String> usernameResult) {
+        if (usernameResult.object().isPresent()) {
+            return telegramClient.sendAsync(new TdApi.SearchChats(usernameResult.object().get(), 1))
+                    .thenApply(chatsResponse -> new Result<>(chatsResponse.getObject(), chatsResponse.getError()));
+        }
+        return CompletableFuture.completedFuture(new Result<>(empty(), usernameResult.error()));
+    }
+
+    private Result<Long> getMyChatId(Result<TdApi.Chats> chatsResult) {
+        if (chatsResult.object().isPresent()) {
+            return new Result<>(Optional.of(chatsResult.object().get().chatIds[0]), empty());
+        }
+        return new Result<>(empty(), chatsResult.error());
+    }
+
+    private void sendHelloIfFound(Result<Long> chatId) {
+        if (chatId.object().isPresent()) {
+            telegramClient.sendAsync(sendMessageQuery(chatId.object().get()));
+        }
     }
 
     private TdApi.SendMessage sendMessageQuery(Long chatId) {
