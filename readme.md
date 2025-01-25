@@ -2,8 +2,6 @@
 
 Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https://github.com/tdlib/td).
 
-![](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/img/logo.png)
-
 ## Contents
 - [Requirements](#requirements)
 - [Installation](#installation)
