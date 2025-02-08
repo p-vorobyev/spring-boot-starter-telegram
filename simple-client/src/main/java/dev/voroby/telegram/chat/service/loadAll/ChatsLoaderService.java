@@ -1,5 +1,6 @@
-package dev.voroby.springframework.telegram;
+package dev.voroby.telegram.chat.service.loadAll;
 
+import dev.voroby.springframework.telegram.TelegramRunner;
 import org.drinkless.tdlib.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import lombok.extern.slf4j.Slf4j;
@@ -8,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class ChatsLoader implements TelegramRunner {
+public class ChatsLoaderService implements TelegramRunner {
 
     private final TelegramClient telegramClient;
 
-    public ChatsLoader(TelegramClient telegramClient) {
+    public ChatsLoaderService(TelegramClient telegramClient) {
         this.telegramClient = telegramClient;
     }
 
