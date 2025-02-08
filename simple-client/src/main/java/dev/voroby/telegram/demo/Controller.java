@@ -1,4 +1,4 @@
-package dev.voroby.springframework.telegram.controller;
+package dev.voroby.telegram.demo;
 
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.client.templates.UserTemplate;
@@ -18,16 +18,16 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.util.Optional.empty;
 
-@RestController
-@RequestMapping(value = "/api/info", produces = MediaType.APPLICATION_JSON_VALUE)
-public class InfoController {
+@RestController("demoController")
+@RequestMapping(value = "/api/demo", produces = MediaType.APPLICATION_JSON_VALUE)
+public class Controller {
 
     private final TelegramClient telegramClient;
 
     private final UserTemplate userTemplate;
 
-    public InfoController(TelegramClient telegramClient,
-                          UserTemplate userTemplate) {
+    public Controller(TelegramClient telegramClient,
+                      UserTemplate userTemplate) {
         this.telegramClient = telegramClient;
         this.userTemplate = userTemplate;
     }
