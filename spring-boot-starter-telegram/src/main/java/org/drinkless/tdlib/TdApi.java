@@ -8,7 +8,7 @@ package org.drinkless.tdlib;
  */
 public class TdApi {
 
-    private static final String GIT_COMMIT_HASH = "28c6f2e9c045372d50217919bf5768b7fbbe0294";
+    private static final String GIT_COMMIT_HASH = "51743dfd01dff6179e2d8f7095729caa4e2222e9";
 
     private TdApi() {
     }
