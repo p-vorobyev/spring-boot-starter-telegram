@@ -101,14 +101,14 @@ repositories {
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.16.0</version>
+    <version>1.17.0-SNAPSHOT</version>
 </dependency>
 
 <!-- Kotlin -->
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram-kt</artifactId>
-    <version>1.16.0</version>
+    <version>1.17.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -116,20 +116,20 @@ repositories {
 
 ```kotlin
 // Java
-implementation("dev.voroby:spring-boot-starter-telegram:1.16.0")
+implementation("dev.voroby:spring-boot-starter-telegram:1.17.0-SNAPSHOT")
 
 // Kotlin
-implementation("dev.voroby:spring-boot-starter-telegram-kt:1.16.0")
+implementation("dev.voroby:spring-boot-starter-telegram-kt:1.17.0-SNAPSHOT")
 ```
 
-Or just download artifact by path `Releases -> 1.16.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.16.0.jar` 
+Or just download artifact by path `Releases -> 1.17.0-SNAPSHOT -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.17.0-SNAPSHOT.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Specify JVM property for compiled TDLib shared library path:
 ```shell
 -Djava.library.path=<path_to_shared_library>
 ```
-You can find compiled libraries for several platforms in the `libs.zip` archive from the latest [release](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/tag/1.16.0).
+You can find compiled libraries for several platforms in the `libs.zip` archive from the latest [release](https://github.com/p-vorobyev/spring-boot-starter-telegram/releases/tag/1.17.0-SNAPSHOT).
 If you haven't found a library for your OS and architecture, you can build it yourself following these [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md).
 
 5) If you are using IntelliJ IDEA, set the property `idea.max.intellisense.filesize` for comfortable work with `TdApi` 
