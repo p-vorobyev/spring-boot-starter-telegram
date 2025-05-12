@@ -20,12 +20,12 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 | Technology  | Version  |
 |-------------|----------|
 | jdk         | 17       |
-| TDLib       | 1.8.44   |
+| TDLib       | 1.8.49   |
 | Spring Boot | 3        |
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
 
-- C++14 compatible compiler (Clang 3.4+, GCC 4.9+, MSVC 19.0+ (Visual Studio 2015+), Intel C++ Compiler 17+)
+- C++17 compatible compiler (Clang 5.0+, GCC 7.0+, MSVC 19.1+ (Visual Studio 2017.7+), Intel C++ Compiler 19+)
 - OpenSSL
 - zlib
 
