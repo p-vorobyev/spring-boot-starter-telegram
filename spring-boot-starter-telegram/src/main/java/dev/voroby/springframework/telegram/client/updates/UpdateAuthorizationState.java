@@ -1,14 +1,15 @@
 package dev.voroby.springframework.telegram.client.updates;
 
 import dev.voroby.springframework.telegram.client.QueryResultHandler;
-import org.drinkless.tdlib.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.exception.TelegramClientConfigurationException;
 import dev.voroby.springframework.telegram.properties.TelegramProperties;
+import org.drinkless.tdlib.TdApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static dev.voroby.springframework.telegram.client.updates.AuthorizationStateCache.*;
@@ -41,106 +42,123 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
      */
     @Override
     public void handleNotification(TdApi.UpdateAuthorizationState notification) {
-        if (notification != null) {
-            TdApi.AuthorizationState newAuthorizationState = notification.authorizationState;
-            if (newAuthorizationState != null) {
-                this.authorizationState = newAuthorizationState;
-            }
+        Optional.ofNullable(notification).ifPresent(this::processNotification);
+    }
+
+    private void processNotification(TdApi.UpdateAuthorizationState notification) {
+        TdApi.AuthorizationState newAuthorizationState = notification.authorizationState;
+        if (newAuthorizationState != null) {
+            this.authorizationState = newAuthorizationState;
         }
         switch (this.authorizationState.getConstructor()) {
-            case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR -> {
-                TdApi.SetTdlibParameters tdLibParameters = tdLibParameters();
-                log.info("TDLib version: {}", tdLibParameters.applicationVersion);
-                telegramClient.sendWithCallback(tdLibParameters, authorizationRequestHandler);
-                TelegramProperties.Proxy proxy = properties.proxy();
-                if (proxy != null) {
-                    addProxy(proxy);
-                }
-            }
-            case TdApi.AuthorizationStateWaitPhoneNumber.CONSTRUCTOR -> {
-                var setAuthenticationPhoneNumber = new TdApi.SetAuthenticationPhoneNumber(properties.phone(), null);
-                telegramClient.sendWithCallback(setAuthenticationPhoneNumber, authorizationRequestHandler);
-            }
-            case TdApi.AuthorizationStateWaitOtherDeviceConfirmation.CONSTRUCTOR -> {
-                String link = ((TdApi.AuthorizationStateWaitOtherDeviceConfirmation) this.authorizationState).link;
-                log.info("Please confirm this login link on another device: {}", link);
-            }
-            case TdApi.AuthorizationStateWaitCode.CONSTRUCTOR -> {
-                try {
-                    if (!hasText(codeInputToCheck)) {
-                        waitAuthenticationCode.set(true);
-                        while (!hasText(codeInputToCheck)) {
-                            log.info("Please enter authentication code");
-                            awaitInput();
-                        }
-                    }
-                    var checkAuthenticationCode = new TdApi.CheckAuthenticationCode(codeInputToCheck);
-                    telegramClient.sendWithCallback(checkAuthenticationCode, authorizationRequestHandler);
-                } finally {
-                    codeInputToCheck = null;
-                }
-            }
-            case TdApi.AuthorizationStateWaitPassword.CONSTRUCTOR -> {
-                try {
-                    if (!hasText(passwordInputToCheck)) {
-                        waitAuthenticationPassword.set(true);
-                        while (!hasText(passwordInputToCheck)) {
-                            log.info("Please enter password");
-                            awaitInput();
-                        }
-                    }
-                    var checkAuthenticationPassword = new TdApi.CheckAuthenticationPassword(passwordInputToCheck);
-                    telegramClient.sendWithCallback(checkAuthenticationPassword, authorizationRequestHandler);
-                } finally {
-                    passwordInputToCheck = null;
-                }
-            }
-            case TdApi.AuthorizationStateWaitEmailAddress.CONSTRUCTOR -> {
-                try {
-                    if (!hasText(emailAddressInputToCheck)) {
-                        waitEmailAddress.set(true);
-                        while (!hasText(emailAddressInputToCheck)) {
-                            log.info("Please enter email");
-                            awaitInput();
-                        }
-                    }
-                    var setAuthenticationEmailAddress = new TdApi.SetAuthenticationEmailAddress(emailAddressInputToCheck);
-                    telegramClient.sendWithCallback(setAuthenticationEmailAddress, authorizationRequestHandler);
-                } finally {
-                    emailAddressInputToCheck = null;
-                }
-            }
-            case TdApi.AuthorizationStateWaitEmailCode.CONSTRUCTOR -> {
-                try {
-                    if (!hasText(codeInputToCheck)) {
-                        waitAuthenticationCode.set(true);
-                        while (!hasText(codeInputToCheck)) {
-                            log.info("Please enter authentication code from email");
-                            awaitInput();
-                        }
-                    }
-                    var emailAuth = new TdApi.EmailAddressAuthenticationCode(codeInputToCheck);
-                    var checkAuthenticationEmailCode = new TdApi.CheckAuthenticationEmailCode(emailAuth);
-                    telegramClient.sendWithCallback(checkAuthenticationEmailCode, authorizationRequestHandler);
-                } finally {
-                    codeInputToCheck = null;
-                }
-            }
+            case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR -> setTdlibParameters();
+            case TdApi.AuthorizationStateWaitPhoneNumber.CONSTRUCTOR -> sendAuthenticationPhoneNumber();
+            case TdApi.AuthorizationStateWaitOtherDeviceConfirmation.CONSTRUCTOR -> logOtherDeviceConfirmationLink();
+            case TdApi.AuthorizationStateWaitCode.CONSTRUCTOR -> waitAndSendAuthenticationCode();
+            case TdApi.AuthorizationStateWaitPassword.CONSTRUCTOR -> waitAndSendAuthenticationPassword();
+            case TdApi.AuthorizationStateWaitEmailAddress.CONSTRUCTOR -> waitAndSendAuthenticationEmailAddress();
+            case TdApi.AuthorizationStateWaitEmailCode.CONSTRUCTOR -> waitAndSendAuthenticationEmailCode();
             case TdApi.AuthorizationStateReady.CONSTRUCTOR -> haveAuthorization.set(true);
-            case TdApi.AuthorizationStateLoggingOut.CONSTRUCTOR -> {
-                haveAuthorization.set(false);
-                log.info("Logging out");
-            }
-            case TdApi.AuthorizationStateClosing.CONSTRUCTOR -> {
-                haveAuthorization.set(false);
-                log.info("Closing");
-            }
-            case TdApi.AuthorizationStateClosed.CONSTRUCTOR -> {
-                stateClosed.set(true);
-                log.info("Closed");
-            }
+            case TdApi.AuthorizationStateLoggingOut.CONSTRUCTOR -> resetAuthorization("Logging out");
+            case TdApi.AuthorizationStateClosing.CONSTRUCTOR -> resetAuthorization("Closing");
+            case TdApi.AuthorizationStateClosed.CONSTRUCTOR -> closeState();
             default -> log.error("Unsupported authorization state:\n{}", this.authorizationState);
         }
+    }
+
+    private void setTdlibParameters() {
+        TdApi.SetTdlibParameters tdLibParameters = tdLibParameters();
+        log.info("TDLib version: {}", tdLibParameters.applicationVersion);
+        telegramClient.sendWithCallback(tdLibParameters, authorizationRequestHandler);
+        TelegramProperties.Proxy proxy = properties.proxy();
+        if (proxy != null) {
+            addProxy(proxy);
+        }
+    }
+
+    private void sendAuthenticationPhoneNumber() {
+        var setAuthenticationPhoneNumber = new TdApi.SetAuthenticationPhoneNumber(properties.phone(), null);
+        telegramClient.sendWithCallback(setAuthenticationPhoneNumber, authorizationRequestHandler);
+    }
+
+    private void logOtherDeviceConfirmationLink() {
+        String link = ((TdApi.AuthorizationStateWaitOtherDeviceConfirmation) this.authorizationState).link;
+        log.info("Please confirm this login link on another device: {}", link);
+    }
+
+    private void waitAndSendAuthenticationCode() {
+        try {
+            if (!hasText(codeInputToCheck)) {
+                waitAuthenticationCode.set(true);
+                while (!hasText(codeInputToCheck)) {
+                    log.info("Please enter authentication code");
+                    awaitInput();
+                }
+            }
+            var checkAuthenticationCode = new TdApi.CheckAuthenticationCode(codeInputToCheck);
+            telegramClient.sendWithCallback(checkAuthenticationCode, authorizationRequestHandler);
+        } finally {
+            codeInputToCheck = null;
+        }
+    }
+
+    private void waitAndSendAuthenticationPassword() {
+        try {
+            if (!hasText(passwordInputToCheck)) {
+                waitAuthenticationPassword.set(true);
+                while (!hasText(passwordInputToCheck)) {
+                    log.info("Please enter password");
+                    awaitInput();
+                }
+            }
+            var checkAuthenticationPassword = new TdApi.CheckAuthenticationPassword(passwordInputToCheck);
+            telegramClient.sendWithCallback(checkAuthenticationPassword, authorizationRequestHandler);
+        } finally {
+            passwordInputToCheck = null;
+        }
+    }
+
+    private void waitAndSendAuthenticationEmailAddress() {
+        try {
+            if (!hasText(emailAddressInputToCheck)) {
+                waitEmailAddress.set(true);
+                while (!hasText(emailAddressInputToCheck)) {
+                    log.info("Please enter email");
+                    awaitInput();
+                }
+            }
+            var setAuthenticationEmailAddress = new TdApi.SetAuthenticationEmailAddress(emailAddressInputToCheck);
+            telegramClient.sendWithCallback(setAuthenticationEmailAddress, authorizationRequestHandler);
+        } finally {
+            emailAddressInputToCheck = null;
+        }
+    }
+
+    private void waitAndSendAuthenticationEmailCode() {
+        try {
+            if (!hasText(codeInputToCheck)) {
+                waitAuthenticationCode.set(true);
+                while (!hasText(codeInputToCheck)) {
+                    log.info("Please enter authentication code from email");
+                    awaitInput();
+                }
+            }
+            var emailAuth = new TdApi.EmailAddressAuthenticationCode(codeInputToCheck);
+            var checkAuthenticationEmailCode = new TdApi.CheckAuthenticationEmailCode(emailAuth);
+            telegramClient.sendWithCallback(checkAuthenticationEmailCode, authorizationRequestHandler);
+        } finally {
+            codeInputToCheck = null;
+        }
+    }
+
+    private void resetAuthorization(String logMessage) {
+        haveAuthorization.set(false);
+        log.info(logMessage);
+    }
+
+    private void closeState() {
+        stateClosed.set(true);
+        log.info("Closed");
     }
 
     /**
