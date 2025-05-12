@@ -35,7 +35,7 @@ public class Controller {
     @GetMapping("/getMe")
     public TdApi.User getMe() {
         Response<TdApi.User> userResponse = telegramClient.send(new TdApi.GetMe());
-        return userResponse.getObject().orElseThrow();
+        return userResponse.getObjectOrThrow();
     }
 
     public record Query(String value){}
@@ -53,11 +53,11 @@ public class Controller {
     @GetMapping("/chatTitles")
     public List<String> getMyChats() {
         Response<TdApi.Chats> chatsResponse = telegramClient.send(new TdApi.GetChats(new TdApi.ChatListMain(), 100));
-        TdApi.Chats chats = chatsResponse.getObject().orElseThrow();
+        TdApi.Chats chats = chatsResponse.getObjectOrThrow();
         return Arrays.stream(chats.chatIds)
                 .mapToObj(chatId -> {
                     Response<TdApi.Chat> chatResponse = telegramClient.send(new TdApi.GetChat(chatId));
-                    TdApi.Chat chat = chatResponse.getObject().orElseThrow();
+                    TdApi.Chat chat = chatResponse.getObjectOrThrow();
                     return chat.title;
                 }).toList();
     }
