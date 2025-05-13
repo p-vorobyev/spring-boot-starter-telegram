@@ -1,5 +1,6 @@
 package dev.voroby.springframework.telegram.client.templates.response;
 
+import dev.voroby.springframework.telegram.exception.TelegramClientTdApiException;
 import org.drinkless.tdlib.TdApi;
 
 import java.util.Optional;
@@ -64,6 +65,17 @@ public final class Response<T extends TdApi.Object> {
 
     public Optional<T> getObject() {
         return Optional.ofNullable(object);
+    }
+
+    /**
+     * Returns the TdApi.Object if it is not null, otherwise throws a TelegramClientTdApiException.
+     *
+     * @return TdApi.Object
+     * @throws TelegramClientTdApiException if the object is null
+     */
+    public T getObjectOrThrow() {
+        return Optional.ofNullable(object)
+                .orElseThrow(() -> new TelegramClientTdApiException("TdApi.Object is null", error));
     }
 
     public Optional<TdApi.Error> getError() {

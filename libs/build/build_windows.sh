@@ -10,10 +10,10 @@
 rm -rf td
 git clone https://github.com/tdlib/td.git
 cd td
-git checkout 28c6f2e9c045372d50217919bf5768b7fbbe0294
+git checkout 51743dfd01dff6179e2d8f7095729caa4e2222e9
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
-git checkout 07b30b49e5136a36100a2ce644476e60d7f3ddc1
+git checkout bc3512a509f9d29b37346a7e7e929f9a26e66c7e
 ./bootstrap-vcpkg.bat
 ./vcpkg.exe install gperf:x64-windows openssl:x64-windows zlib:x64-windows
 cd ..
