@@ -20,7 +20,7 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 | Technology  | Version |
 |-------------|---------|
 | jdk         | 17      |
-| TDLib       | 1.8.49  |
+| TDLib       | 1.8.52  |
 | Spring Boot | 3.5.0   |
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
