@@ -5,7 +5,7 @@ echo "Starting build process..."
 rm -rf td
 git clone https://github.com/tdlib/td.git
 cd td
-git checkout 51743dfd01dff6179e2d8f7095729caa4e2222e9
+git checkout 5c77c4692c28eb48a68ef1c1eeb1b1d732d507d3
 rm -rf build
 mkdir build
 cd build
@@ -36,5 +36,5 @@ fi
 
 echo "Cleaning up temporary files..."
 cd ..
-rm -rf td
+#rm -rf td
 echo "Build process completed successfully!"
