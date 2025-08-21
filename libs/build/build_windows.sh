@@ -6,6 +6,7 @@
 # Download and unpack PHP. Add the path to php.exe to the PATH environment variable.
 # Download and install JDK.
 
+echo "Starting build process..."
 
 rm -rf td
 git clone https://github.com/tdlib/td.git
@@ -21,6 +22,7 @@ rm -rf build
 mkdir build
 cd build
 cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../example/java/td -DTD_ENABLE_JNI=ON -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake ..
+echo "Building and installing core TDLib..."
 cmake --build . --target install --config Release
 cd ..
 cd example/java
@@ -28,10 +30,13 @@ rm -rf build
 mkdir build
 cd build
 cmake -A x64 -DCMAKE_INSTALL_PREFIX:PATH=../../../tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../../../vcpkg/scripts/buildsystems/vcpkg.cmake -DTd_DIR:PATH=$(readlink -e ../td/lib/cmake/Td) ..
+echo "Building and installing Java JNI library..."
 cmake --build . --target install --config Release
 cd ../../..
 rm ../../windows_x64/*.dll
 cp tdlib/bin/*.dll ../../windows_x64
 echo "Library saved to project directory: libs/windows_x64"
+echo "Cleaning up temporary files..."
 cd ..
 rm -rf td
+echo "Build process completed successfully!"
