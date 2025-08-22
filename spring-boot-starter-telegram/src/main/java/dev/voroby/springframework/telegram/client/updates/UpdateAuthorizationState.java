@@ -90,8 +90,8 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
         try {
             if (!hasText(codeInputToCheck)) {
                 waitAuthenticationCode.set(true);
+                log.info("Please enter authentication code");
                 while (!hasText(codeInputToCheck)) {
-                    log.info("Please enter authentication code");
                     awaitInput();
                 }
             }
@@ -106,8 +106,8 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
         try {
             if (!hasText(passwordInputToCheck)) {
                 waitAuthenticationPassword.set(true);
+                log.info("Please enter password");
                 while (!hasText(passwordInputToCheck)) {
-                    log.info("Please enter password");
                     awaitInput();
                 }
             }
@@ -122,8 +122,8 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
         try {
             if (!hasText(emailAddressInputToCheck)) {
                 waitEmailAddress.set(true);
+                log.info("Please enter email");
                 while (!hasText(emailAddressInputToCheck)) {
-                    log.info("Please enter email");
                     awaitInput();
                 }
             }
@@ -138,8 +138,8 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
         try {
             if (!hasText(codeInputToCheck)) {
                 waitAuthenticationCode.set(true);
+                log.info("Please enter authentication code from email");
                 while (!hasText(codeInputToCheck)) {
-                    log.info("Please enter authentication code from email");
                     awaitInput();
                 }
             }
@@ -196,7 +196,7 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
         String systemLanguageCode = properties.systemLanguageCode();
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
-        String applicationVersion = "1.8.49";
+        String applicationVersion = "1.8.52";
         return new TdApi.SetTdlibParameters(
                 useTestDc,
                 databaseDirectory,

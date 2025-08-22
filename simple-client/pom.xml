@@ -5,12 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>3.5.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>simple-client</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -32,7 +33,7 @@
         <dependency>
             <groupId>dev.voroby</groupId>
             <artifactId>spring-boot-starter-telegram</artifactId>
-            <version>1.17.0</version>
+            <version>1.18.0</version>
         </dependency>
 
         <!--   Tools   -->

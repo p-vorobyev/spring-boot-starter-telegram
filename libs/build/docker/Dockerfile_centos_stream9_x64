@@ -1,0 +1,19 @@
+FROM quay.io/centos/centos@sha256:feafe3afc13d8bb4401953350dd0ce03be9b8262c388a9dac4210519ec167200
+
+USER root
+
+WORKDIR /tdlib
+
+# Update system packages and install required dependencies
+# Grouped into a single RUN command to reduce image layers
+RUN yum update -y && \
+    dnf --enablerepo=crb -y install gperf && \
+    yum -y install \
+        gcc-c++ \
+        make \
+        git \
+        zlib-devel \
+        openssl-devel \
+        php \
+        cmake \
+        java-11-openjdk-devel
