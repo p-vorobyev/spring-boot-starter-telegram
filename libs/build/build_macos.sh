@@ -36,5 +36,5 @@ fi
 
 echo "Cleaning up temporary files..."
 cd ..
-#rm -rf td
+rm -rf td
 echo "Build process completed successfully!"
