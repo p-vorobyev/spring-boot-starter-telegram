@@ -196,7 +196,7 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
         String systemLanguageCode = properties.systemLanguageCode();
         String deviceModel = properties.deviceModel();
         String systemVersion = checkStringOrEmpty(properties.systemVersion());
-        String applicationVersion = "1.8.60";
+        String applicationVersion = "1.8.66";
         return new TdApi.SetTdlibParameters(
                 useTestDc,
                 databaseDirectory,
@@ -219,15 +219,16 @@ public class UpdateAuthorizationState implements UpdateNotificationListener<TdAp
      * Configure and sends proxy settings for TDLib.
      * Proxies: http, socks5, mtProto
      *
-     * @param proxy proxy properties
+     * @param proxyProperties proxy properties
      */
-    private void addProxy(TelegramProperties.Proxy proxy) {
-        TdApi.ProxyType proxyType = getProxyType(proxy);
-        var addProxy = new TdApi.AddProxy(proxy.server(), proxy.port(), true, proxyType);
+    private void addProxy(TelegramProperties.Proxy proxyProperties) {
+        TdApi.ProxyType proxyType = getProxyType(proxyProperties);
+        var proxy = new TdApi.Proxy(proxyProperties.server(), proxyProperties.port(), proxyType);
+        var proxyTypeName = proxyType.getClass().getSimpleName();
+        var addProxy = new TdApi.AddProxy(proxy, true, proxyTypeName);
         telegramClient.sendWithCallback(addProxy, ((obj, error) -> {
             if (error == null) {
-                log.info("Proxy server: [server: {}, port: {}, type: {}]",
-                        addProxy.server, addProxy.port, proxyType.getClass().getSimpleName());
+                log.info("Proxy server: [server: {}, port: {}, type: {}]", proxy.server, proxy.port, proxyTypeName);
             }
         }));
     }

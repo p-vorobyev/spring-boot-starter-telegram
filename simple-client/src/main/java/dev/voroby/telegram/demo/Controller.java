@@ -87,8 +87,10 @@ public class Controller {
 
     private CompletableFuture<Result<TdApi.Chats>> searchChatByUsername(Result<String> usernameResult) {
         if (usernameResult.object().isPresent()) {
-            return telegramClient.sendAsync(new TdApi.SearchChats(usernameResult.object().get(), 1))
-                    .thenApply(chatsResponse -> new Result<>(chatsResponse.getObject(), chatsResponse.getError()));
+            return telegramClient.sendAsync(new TdApi.SearchChats(usernameResult.object().get(), null, 1))
+                    .thenApply(chatsResponse ->
+                            new Result<>(chatsResponse.getObject(), chatsResponse.getError())
+                    );
         }
         return CompletableFuture.completedFuture(new Result<>(empty(), usernameResult.error()));
     }

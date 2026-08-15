@@ -11,7 +11,7 @@ echo "Starting build process..."
 rm -rf td
 git clone https://github.com/tdlib/td.git
 cd td
-git checkout 0da5c72f8365fb4857096e716d53175ddbdf5a15
+git checkout 022d60202e446ad1287b9fb68e687c8a0760788b
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 git checkout bc3512a509f9d29b37346a7e7e929f9a26e66c7e

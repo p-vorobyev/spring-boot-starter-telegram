@@ -1,8 +1,8 @@
 package dev.voroby.springframework.telegram.client.templates;
 
-import org.drinkless.tdlib.TdApi;
 import dev.voroby.springframework.telegram.client.TelegramClient;
 import dev.voroby.springframework.telegram.client.templates.response.Response;
+import org.drinkless.tdlib.TdApi;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -35,9 +35,9 @@ public class ChatTemplate {
      * May return an error with a message "INVITE_REQUEST_SENT" if only a join request was created.
      *
      * @param chatId Chat identifier.
-     * @return {@link CompletableFuture<Response<TdApi.Ok>>} Response to action.
+     * @return {@link CompletableFuture<Response<TdApi.ChatJoinResult>>} Response to action.
      */
-    public CompletableFuture<Response<TdApi.Ok>> joinChat(long chatId) {
+    public CompletableFuture<Response<TdApi.ChatJoinResult>> joinChat(long chatId) {
         return telegramClient.sendAsync(new TdApi.JoinChat(chatId));
     }
 
@@ -51,11 +51,11 @@ public class ChatTemplate {
      */
     public CompletableFuture<Response<TdApi.Chats>> searchChats(String query, int limit) {
         Objects.requireNonNull(query);
-        return telegramClient.sendAsync(new TdApi.SearchChats(query, limit));
+        return telegramClient.sendAsync(new TdApi.SearchChats(query, null, limit));
     }
 
     /**
-     * Searches a public chat by its username. Currently, only private chats, supergroups and channels can be public.
+     * Searches a public chat by its username. Currently, only private chats (with public usernames), supergroups and channels can be public.
      * Returns the chat if found; otherwise, an error is returned.
      *
      * @param username Username to be resolved.
@@ -67,16 +67,16 @@ public class ChatTemplate {
     }
 
     /**
-     * Searches public chats by looking for specified query in their username and title. Currently, only private chats,
-     * supergroups and channels can be public. Returns a meaningful number of results.
-     * Excludes private chats with contacts and chats from the chat list from the results.
+     * Searches public chats by looking for specified query in their username and title. Currently, only private chats
+     * (with public usernames), supergroups and channels can be public. Returns a meaningful number of results.
+     * Excludes private chats with contacts and chats already in the chat list from the results.
      *
      * @param query Query to search for.
      * @return {@link CompletableFuture<Response<TdApi.Chats>>}.
      */
     public CompletableFuture<Response<TdApi.Chats>> searchPublicChats(String query) {
         Objects.requireNonNull(query);
-        return telegramClient.sendAsync(new TdApi.SearchPublicChats(query));
+        return telegramClient.sendAsync(new TdApi.SearchPublicChats(query, null));
     }
 
     /**

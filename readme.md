@@ -18,8 +18,8 @@ Spring Boot Starter for [Telegram](https://telegram.org) based on [TDLib](https:
 ## Requirements
 
 - jdk         17    
-- TDLib       1.8.60
-- Spring Boot 4.0.1 
+- TDLib       1.8.66
+- Spring Boot 4.1.0
 
 TDLib [depends](https://github.com/tdlib/td#dependencies) on:
 
@@ -99,14 +99,14 @@ repositories {
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram</artifactId>
-    <version>1.19.0</version>
+    <version>1.20.0</version>
 </dependency>
 
 <!-- Kotlin -->
 <dependency>
     <groupId>dev.voroby</groupId>
     <artifactId>spring-boot-starter-telegram-kt</artifactId>
-    <version>1.19.0</version>
+    <version>1.20.0</version>
 </dependency>
 ```
 
@@ -114,13 +114,13 @@ repositories {
 
 ```kotlin
 // Java
-implementation("dev.voroby:spring-boot-starter-telegram:1.19.0")
+implementation("dev.voroby:spring-boot-starter-telegram:1.20.0")
 
 // Kotlin
-implementation("dev.voroby:spring-boot-starter-telegram-kt:1.19.0")
+implementation("dev.voroby:spring-boot-starter-telegram-kt:1.20.0")
 ```
 
-Or just download artifact by path `Releases -> 1.19.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.19.0.jar` 
+Or just download artifact by path `Releases -> 1.20.0 -> dev.voroby.spring-boot-starter-telegram (maven) -> Assets -> spring-boot-starter-telegram-1.20.0.jar` 
 from the latest release and add it to your project's classpath instead of the steps above.
 
 4) Build `TDLib` native library for you operating system following these [instructions](https://github.com/p-vorobyev/spring-boot-starter-telegram/blob/master/libs/build/readme.md). 
